@@ -13,7 +13,6 @@ public class LogInCanva : MonoBehaviour
     [SerializeField] private GameObject hidePasswordImg;
 
     [Header("Buttons")]
-    public Button togglePasswordButton;
     public Button loginButton;
 
     [Header("Error Message")]
@@ -27,21 +26,15 @@ public class LogInCanva : MonoBehaviour
 
     private void Start()
     {
-        ClearError();
-
         passwordField.contentType = TMP_InputField.ContentType.Password;
 
         loginButton.onClick.AddListener(Login);
-        togglePasswordButton.onClick.AddListener(TogglePassword);
-
-        usernameField.onSelect.AddListener((_) => ShowUsernameList());
-        usernameField.onDeselect.AddListener((_) => HideUserListDelayed());
     }
 
     // --------------------------------------------------------
     // PASSWORD TOGGLE
     // --------------------------------------------------------
-    private void TogglePassword()
+    private void togglePassword()
     {
         passwordVisible = !passwordVisible;
 
@@ -58,8 +51,6 @@ public class LogInCanva : MonoBehaviour
     {
         string username = usernameField.text.Trim();
         string password = passwordField.text;
-
-        ClearError();
 
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -112,76 +103,12 @@ public class LogInCanva : MonoBehaviour
     // --------------------------------------------------------
     private void ShowError(string msg, bool success = false)
     {
-        if (errorText == null) return;
-
-        errorText.text = msg;
-        errorText.color = success ? new Color(0.1f, 0.85f, 0.1f) : Color.red;
     }
 
-    private void ClearError()
-    {
-        if (errorText != null)
-            errorText.text = "";
+    public void showPassword(bool isVisible) {
+        showPasswordImg.SetActive(isVisible);
+        hidePasswordImg.SetActive(!isVisible);
+        togglePassword();
     }
 
-    // --------------------------------------------------------
-    // USERNAME LIST (integrated with UsernameListUI)
-    // --------------------------------------------------------
-    private void ShowUsernameList()
-    {
-        if (usernameListPanel == null || usernameListUI == null)
-            return;
-
-
-        usernameListPanel.SetActive(true);
-
-
-        int count = PlayerPrefs.GetInt("UserCount", 0);
-
-        if (count == 0)
-        {
-            usernameListUI.PopulateEmpty();
-            usernameListPanel.SetActive(false);
-            return;
-        }
-
-        string[] users = new string[count];
-        for (int i = 0; i < count; i++)
-            users[i] = PlayerPrefs.GetString("User" + i, "");
-
-        usernameListUI.Populate(users);
-
-        usernameListUI.onSelectUsername = (selectedUser) =>
-        {
-            usernameField.text = selectedUser;
-            usernameListPanel.SetActive(false);
-        };
-    }
-
-
-    private void HideUserListDelayed()
-    {
-        Invoke(nameof(HideUsernameList), 0.15f);
-    }
-
-    private void HideUsernameList()
-    {
-        if (usernameListPanel != null)
-            usernameListPanel.SetActive(false);
-    }
-
-    
-    public void showPassword() {
-        showPasswordImg.SetActive(true);
-        hidePasswordImg.SetActive(false);
-    }
-
-    public void hidePassword() {
-        showPasswordImg.SetActive(false);
-        hidePasswordImg.SetActive(true);
-    }
-
-    private void passwordMask(bool showPass) {
-        
-    }
 }
