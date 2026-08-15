@@ -6,6 +6,7 @@ public class AccountCanva : MonoBehaviour
     [SerializeField] private GameObject loginCanvas;
     [SerializeField] private GameObject signupCanvas;
 
+
     private void Start()
     {
         // Ensure at least one is active
@@ -33,4 +34,5 @@ public class AccountCanva : MonoBehaviour
         if (signupCanvas != null) signupCanvas.SetActive(false);
         if (loginCanvas != null) loginCanvas.SetActive(true);
     }
+
 }

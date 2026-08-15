@@ -8,6 +8,9 @@ public class LogInCanva : MonoBehaviour
     [Header("Input Fields")]
     public TMP_InputField usernameField;
     public TMP_InputField passwordField;
+    
+    [SerializeField] private GameObject showPasswordImg;
+    [SerializeField] private GameObject hidePasswordImg;
 
     [Header("Buttons")]
     public Button togglePasswordButton;
@@ -165,5 +168,20 @@ public class LogInCanva : MonoBehaviour
     {
         if (usernameListPanel != null)
             usernameListPanel.SetActive(false);
+    }
+
+    
+    public void showPassword() {
+        showPasswordImg.SetActive(true);
+        hidePasswordImg.SetActive(false);
+    }
+
+    public void hidePassword() {
+        showPasswordImg.SetActive(false);
+        hidePasswordImg.SetActive(true);
+    }
+
+    private void passwordMask(bool showPass) {
+        
     }
 }
