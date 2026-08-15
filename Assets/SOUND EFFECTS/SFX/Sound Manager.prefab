@@ -1,0 +1,357 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8866293396762013077
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8618241268176495272}
+  - component: {fileID: 168917596758180083}
+  - component: {fileID: 7029882453377451683}
+  m_Layer: 0
+  m_Name: Sound Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8618241268176495272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866293396762013077}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 428.884, y: 476.76117, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &168917596758180083
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866293396762013077}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &7029882453377451683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866293396762013077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba7f9f4145cf2cb4fa2cca274cc6d365, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  categories:
+  - categoryName: CARD
+    category: 0
+    sounds:
+    - soundType: 0
+      clips:
+      - {fileID: 8300000, guid: 0d7c7d679f334e142a8833409d9c1029, type: 3}
+      volume: 1
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 1
+      clips:
+      - {fileID: 8300000, guid: 08675e47c31db7f4da8bc14a5836701c, type: 3}
+      volume: 1
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+    - soundType: 21
+      clips:
+      - {fileID: 8300000, guid: 5fd82f2846644624bb08952f8c359ddf, type: 3}
+      volume: 0.5
+      pitch: 3
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+  - categoryName: PLAYER
+    category: 1
+    sounds:
+    - soundType: 2
+      clips:
+      - {fileID: 8300000, guid: 8b0a5f1dbc03a8e40b6d810fe0ab1730, type: 3}
+      volume: 1
+      pitch: 1
+      randomizePitch: 1
+      minPitch: 1
+      maxPitch: 1.5
+      is3D: 0
+  - categoryName: ENEMY
+    category: 2
+    sounds:
+    - soundType: 3
+      clips:
+      - {fileID: 8300000, guid: 6c8b39e3f1d8d2340b079eab717b32f5, type: 3}
+      volume: 1
+      pitch: 0
+      randomizePitch: 1
+      minPitch: 1
+      maxPitch: 1.5
+      is3D: 0
+    - soundType: 4
+      clips:
+      - {fileID: 8300000, guid: d49ab5fd198e2784b8e651ad01c06a52, type: 3}
+      volume: 1
+      pitch: 0
+      randomizePitch: 1
+      minPitch: 2
+      maxPitch: 2.5
+      is3D: 0
+    - soundType: 20
+      clips:
+      - {fileID: 8300000, guid: d49ab5fd198e2784b8e651ad01c06a52, type: 3}
+      volume: 1
+      pitch: 0
+      randomizePitch: 1
+      minPitch: 1
+      maxPitch: 1.5
+      is3D: 0
+    - soundType: 6
+      clips:
+      - {fileID: 8300000, guid: d49ab5fd198e2784b8e651ad01c06a52, type: 3}
+      volume: 1
+      pitch: 0
+      randomizePitch: 1
+      minPitch: 0.255
+      maxPitch: 0.7
+      is3D: 0
+  - categoryName: STATUSEFFECTS
+    category: 3
+    sounds:
+    - soundType: 8
+      clips:
+      - {fileID: 8300000, guid: f05b60d61a9a57144a93a19ef8610e0e, type: 3}
+      volume: 1
+      pitch: 1
+      randomizePitch: 1
+      minPitch: 1
+      maxPitch: 2
+      is3D: 0
+    - soundType: 7
+      clips:
+      - {fileID: 8300000, guid: 6c8b39e3f1d8d2340b079eab717b32f5, type: 3}
+      volume: 1
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 9
+      clips:
+      - {fileID: 8300000, guid: bd53256ca00480e4f94b0faf293039ef, type: 3}
+      volume: 1
+      pitch: 0
+      randomizePitch: 1
+      minPitch: 1
+      maxPitch: 2
+      is3D: 0
+  - categoryName: EFFECTS
+    category: 4
+    sounds:
+    - soundType: 10
+      clips:
+      - {fileID: 8300000, guid: a3f85465e5fad5246b026a73d3df246d, type: 3}
+      volume: 1
+      pitch: 0.1
+      randomizePitch: 1
+      minPitch: 1
+      maxPitch: 2
+      is3D: 0
+    - soundType: 11
+      clips: []
+      volume: 0
+      pitch: 0
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 12
+      clips: []
+      volume: 0
+      pitch: 0
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 13
+      clips: []
+      volume: 0
+      pitch: 0.1
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+    - soundType: 14
+      clips: []
+      volume: 0
+      pitch: 0.1
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+    - soundType: 14
+      clips: []
+      volume: 0
+      pitch: 0.1
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+  - categoryName: MUSIC
+    category: 5
+    sounds:
+    - soundType: 16
+      clips:
+      - {fileID: 8300000, guid: 011c0c283e88b0e4685f4db372fbb302, type: 3}
+      volume: 0.5
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+    - soundType: 17
+      clips:
+      - {fileID: 8300000, guid: 1610ebcebef45844fa70dd7306c1fcdc, type: 3}
+      volume: 0.5
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 18
+      clips:
+      - {fileID: 8300000, guid: 56685cbb162f93c41b9e4a94aa1b00f3, type: 3}
+      volume: 0
+      pitch: 0
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 20
+      clips:
+      - {fileID: 8300000, guid: 2be34536c0d7a404cbc245a172955a9f, type: 3}
+      volume: 0.5
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0
+      maxPitch: 0
+      is3D: 0
+    - soundType: 19
+      clips:
+      - {fileID: 8300000, guid: 5f632de489698c74283732bc11f95dc9, type: 3}
+      volume: 0.5
+      pitch: 1
+      randomizePitch: 0
+      minPitch: 0.1
+      maxPitch: 0.1
+      is3D: 0
+  musicSource: {fileID: 168917596758180083}

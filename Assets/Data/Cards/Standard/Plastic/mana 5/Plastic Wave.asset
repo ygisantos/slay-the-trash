@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
+  m_Name: Plastic Wave
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: Deal 20 damage to all and add 25 armor to yourself.
+  <Mana>k__BackingField: 5
+  <Image>k__BackingField: {fileID: 8528801040806094061, guid: 7d52b0df0f4d74c40a3dae9ac1ea2e3b, type: 3}
+  <ImageBadge>k__BackingField: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - rid: 1877740621429997650
+  - rid: 1877740967954219008
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1877740621429997650
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740621429997651
+        <Effect>k__BackingField:
+          rid: 1877740621429997652
+    - rid: 1877740621429997651
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740621429997652
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 25
+    - rid: 1877740967954219008
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740967954219009
+        <Effect>k__BackingField:
+          rid: 1877740967954219010
+    - rid: 1877740967954219009
+      type: {class: AllEnemiesTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740967954219010
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 20

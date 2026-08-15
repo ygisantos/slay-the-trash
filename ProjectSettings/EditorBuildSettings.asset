@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainGame/LogInScene.unity
+    guid: 818efcf1183d7ed4688673289aa58bf5
+  - enabled: 1
+    path: Assets/Scenes/MainGame/MainMenuScene.unity
+    guid: 881ea1e81b876714cb4ec4cf136a0e94
+  - enabled: 1
+    path: Assets/Scenes/MainGame/CardCollectionScene.unity
+    guid: e5c165c1c3c78774cbec39a3d73bb060
+  - enabled: 1
+    path: Assets/Scenes/MainGame/AIScannerScene.unity
+    guid: 4596372794f588341910775d01297310
+  - enabled: 1
+    path: Assets/Scenes/Test/ThrowingInstructionsScene.unity
+    guid: 7142126497d53f34f9415f1e0ddfbd7a
+  - enabled: 1
+    path: Assets/Scenes/MainGame/DungeonSelection.unity
+    guid: a159fdd7d9fbd4a429f8b67360a7d772
+  - enabled: 1
+    path: Assets/Scenes/MainGame/Levels/DUNGEON 1.unity
+    guid: e9dca0274828b0e439ec8b7267827d27
+  - enabled: 1
+    path: Assets/Scenes/MainGame/Levels/DUNGEON 2.unity
+    guid: 97e4ccdbde32a6c48b9b99b618777e53
+  - enabled: 1
+    path: Assets/Scenes/MainGame/Levels/DUNGEON 3.unity
+    guid: 2a98a8c10fb6a2843bb7d7fc7f8dd404
+  - enabled: 1
+    path: Assets/Scenes/MainGame/Levels/DUNGEON 4.unity
+    guid: 2a7e81a91fbf89b49b473641eb41e4f2
+  - enabled: 1
+    path: Assets/Scenes/MainGame/Levels/DUNGEON 5.unity
+    guid: a2ff37d73d9643942b545118304ad5ff
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  m_UseUCBPForAssetBundles: 0

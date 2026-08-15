@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 214112480aba8ab44aea041e6b75fe6c, type: 3}
+  m_Name: CardPool
+  m_EditorClassIdentifier: 
+  cards:
+  - Name: Scavenge
+    Amount: 3
+  - Name: Cardboard Spire
+    Amount: 3
+  - Name: Box Slam
+    Amount: 3
+  - Name: Mache Plateguard
+    Amount: 3
+  - Name: Origami Shredfall
+    Amount: 3
+  - Name: Paper Shuriken
+    Amount: 3
+  - Name: Shredstorm Hurricane
+    Amount: 3
+  - Name: Bottle Blaster
+    Amount: 3
+  - Name: Eco-Edge Sword
+    Amount: 3
+  - Name: Recycled Polywall
+    Amount: 3
+  - Name: Banana Splitter
+    Amount: 3
+  - Name: Popping Wrapper
+    Amount: 3
+  - Name: Croissant
+    Amount: 3
+  - Name: The Bonkstick
+    Amount: 3
+  - Name: Bottle Cap Barrage
+    Amount: 3
+  - Name: Bottle Barrage
+    Amount: 3
+  - Name: Plastic Wave
+    Amount: 3
+  - Name: Crumpled
+    Amount: 3

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8ff377d8a72614b97ea01cfbbdc79f, type: 3}
+  m_Name: Q12
+  m_EditorClassIdentifier: 
+  question: Used batteries lie in a puddle, leaking chemicals.
+  choiceA: Dispose of them properly
+  choiceB: Step over them
+  correctAnswer: 0
+  answerAPopUp: Toxins avoided.
+  answerBPopUp: Water + batteries = poison.

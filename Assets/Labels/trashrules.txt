@@ -1,0 +1,5 @@
+food waste:biodegradable
+plastic bottle:recyclable
+plastic bottle:plastic
+paper:biodegradable
+paper:paper

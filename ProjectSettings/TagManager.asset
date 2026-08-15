@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags:
+  - FxTemporaire
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - DropArea
+  - EnemyView
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: BG
+    uniqueID: 2258992255
+    locked: 0
+  - name: Characters
+    uniqueID: 3779926089
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Cards
+    uniqueID: 234911835
+    locked: 0
+  - name: TextUI
+    uniqueID: 3722881009
+    locked: 0
+  m_RenderingLayers:
+  - Default

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
+  m_Name: Scavenge
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: Draw 2 cards
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: 733519108555454443, guid: 930452f365b50e044999f307e246083b, type: 3}
+  <ImageBadge>k__BackingField: {fileID: 0}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - rid: 1877740612581326943
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1877740612581326943
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740612581326944
+        <Effect>k__BackingField:
+          rid: 1877740612581326945
+    - rid: 1877740612581326944
+      type: {class: NoTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740612581326945
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        drawAmount: 2

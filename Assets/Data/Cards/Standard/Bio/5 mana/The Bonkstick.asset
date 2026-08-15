@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
+  m_Name: The Bonkstick
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: Deal 100  to the Enemy and 50 to yourslf.
+  <Mana>k__BackingField: 5
+  <Image>k__BackingField: {fileID: -2530729670480868988, guid: a1663488f99132f4eb6b54c52c3a3ad3, type: 3}
+  <ImageBadge>k__BackingField: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - rid: 1877740967954219052
+  - rid: 1877740996430397718
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1877740967954219052
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740967954219053
+        <Effect>k__BackingField:
+          rid: 1877740967954219054
+    - rid: 1877740967954219053
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740967954219054
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 50
+    - rid: 1877740996430397718
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740996430397719
+        <Effect>k__BackingField:
+          rid: 1877740996430397720
+    - rid: 1877740996430397719
+      type: {class: RandomEnemyTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740996430397720
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 100

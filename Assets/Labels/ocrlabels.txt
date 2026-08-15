@@ -1,0 +1,5 @@
+recyclable
+biodegradable
+non-biodegradable
+paper
+plastic
