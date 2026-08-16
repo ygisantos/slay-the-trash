@@ -17,6 +17,7 @@ public class LogInCanva : MonoBehaviour
 
     [Header("Error Message")]
     public TextMeshProUGUI errorText;
+    public DynamicText dynamicTxt;
 
     [Header("Username List UI")]
     public UsernameListUI usernameListUI; // New system
@@ -27,8 +28,7 @@ public class LogInCanva : MonoBehaviour
     private void Start()
     {
         passwordField.contentType = TMP_InputField.ContentType.Password;
-
-        loginButton.onClick.AddListener(Login);
+        errorText.text = "";
     }
 
     // --------------------------------------------------------
@@ -74,11 +74,11 @@ public class LogInCanva : MonoBehaviour
 
         if (!success)
         {
-            ShowError("Incorrect password.");
+            dynamicTxt.Error("Incorrect password.");
             return;
         }
 
-        ShowError("Login successful!", true);
+        dynamicTxt.Success("Login successful!");
         SceneManager.LoadScene("MainMenuScene");
     }
 

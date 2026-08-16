@@ -24,7 +24,6 @@ public class SignUpCanva : MonoBehaviour
     {
         togglePassButton.onClick.AddListener(TogglePasswordVisibility);
         toggleConfirmPassButton.onClick.AddListener(ToggleConfirmPasswordVisibility);
-        signUpButton.onClick.AddListener(SignUp);
         ClearError();
     }
 

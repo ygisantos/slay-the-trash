@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "582250956925",
+    "project_id": "slay-the-trash-42545",
+    "storage_bucket": "slay-the-trash-42545.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582250956925:android:d68b678206ae927f5b4914",
+        "android_client_info": {
+          "package_name": "com.whygi.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACb185xEiV6-5RQqI9hnaIiY0Uf5Hv_AQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

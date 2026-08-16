@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Sirenix.OdinInspector;
 
 public class Transitioner : MonoBehaviour
 {
+    private Canvas loading;
     const float MinimumTransitionTime = 0.1f;
     const float MaximumTransitionTime = 5.0f;
     const float MinimumTransitionBlockWidth = 1;
@@ -62,7 +64,9 @@ public class Transitioner : MonoBehaviour
                 instance = GameObject.FindObjectOfType<Transitioner>();
                 if (instance == null)
                 {
-                    Debug.LogError("No Transitioner was found in this scene. Make sure you place one in the scene.");
+                    GameObject singletonPrefab = Resources.Load<GameObject>("Transitioner");
+                    GameObject clone = Instantiate(singletonPrefab);
+                    instance = clone.GetComponent<Transitioner>();
                     return instance;
                 }
             }
@@ -89,6 +93,9 @@ public class Transitioner : MonoBehaviour
         {
             DestroyNonInstanceTransitioners();
         }
+
+        // loading = GetComponentInChildren<Canvas>();
+        // loading.gameObject.SetActive(false);
     }
 
     public void OnApplicationQuit()
@@ -108,6 +115,7 @@ public class Transitioner : MonoBehaviour
 
     #endregion
     
+    [Button]
     public void TransitionToScene(string sceneName, bool waitUntilReady = false)
     {
         if (_canTransition)
@@ -119,13 +127,24 @@ public class Transitioner : MonoBehaviour
             StartCoroutine(RunCoroutineWhenCanTransition(TransitionOutThenLoadScene(sceneName)));
         }
     }
-
+    public void PreloadScene(string sceneName)
+    {
+        Application.backgroundLoadingPriority = ThreadPriority.High;
+        SceneManager.LoadSceneAsync(sceneName);
+    }
+    public void PreloadScene(int sceneIndex)
+    {
+        Application.backgroundLoadingPriority = ThreadPriority.High;
+        SceneManager.LoadSceneAsync(sceneIndex);
+    }
     private IEnumerator TransitionOutThenLoadScene(string sceneName)
     {
         yield return StartCoroutine(Transition(TransitionType.Out));
-        SceneManager.LoadScene(sceneName);
+        PreloadScene(sceneName);
+        
     }
 
+    [Button]
     public void TransitionToScene(int sceneNumber, bool waitUntilReady = false)
     {
         if (_canTransition)
@@ -141,7 +160,7 @@ public class Transitioner : MonoBehaviour
     private IEnumerator TransitionOutThenLoadScene(int sceneNumber)
     {
         yield return StartCoroutine(Transition(TransitionType.Out));
-        SceneManager.LoadScene(sceneNumber);
+        PreloadScene(sceneNumber);
     }
 
     public void TransitionOutWithoutChangingScene()
@@ -213,20 +232,56 @@ public class Transitioner : MonoBehaviour
             yield return new WaitUntil(() => _transitionInTriggered);
         }
 
-        float timer = 0.0f;
-        while (timer < _transitionTime)
-        {
-            transitionOrderer.SetPercent(timer / _transitionTime);
-            timer += Time.deltaTime;
-            yield return new WaitForFixedUpdate();
-        }
+        // float timer = 0.0f;
+        // while (timer < _transitionTime)
+        // {
+        //     transitionOrderer.SetPercent(timer / _transitionTime);
+        //     timer += Time.deltaTime;
+        //     if(timer > _transitionTime/1.1) {
+        //         if(transitionType == TransitionType.Out && !loading.gameObject.activeInHierarchy) 
+        //             loading.gameObject.SetActive(true);
+        //     }
+
+        //     if(timer > _transitionTime/3) {
+        //         if(transitionType == TransitionType.In && loading.gameObject.activeInHierarchy) 
+        //             loading.gameObject.SetActive(false);  
+        //     }
+        //     yield return new WaitForFixedUpdate();
+        // }
         transitionOrderer.SetPercent(1.0f);
 
         yield return new WaitForSeconds(_transitionBlockAnimationTime);
+        Application.backgroundLoadingPriority = ThreadPriority.Normal;
     }
 
     private TransitionOrderBase MakeTransitionOrderer(TransitionType transitionType)
     {
+        if (_transitionCamera == null)
+        {
+            _transitionCamera = Camera.main;
+        }
+
+        if (_transitionCamera == null)
+        {
+            Debug.LogError("Transitioner: No transition camera assigned and no Main Camera was found.");
+            return null;
+        }
+        for(int i = 0; i < _transitionCamera.transform.childCount; i++) {
+            if(_transitionCamera.transform.GetChild(i).gameObject != null)
+                Destroy(_transitionCamera.transform.GetChild(i).gameObject);
+        }
+        if (_transitionBlockPrefab == null)
+        {
+            Debug.LogWarning("A transition block prefab hasn't been added to the transitioner. Please add one in the inspector.");
+            return null;
+        }
+
+        if (_transitionOrderPrefab == null)
+        {
+            Debug.LogWarning("A transition block order hasn't been added to the transitioner. Please add one in the inspector.");
+            return null;
+        }
+        
         if (_transitionBlockPrefab == null)
         {
             Debug.LogWarning("A transition block prefab hasn't been added to the transitioner. Please add one in the inspector.");

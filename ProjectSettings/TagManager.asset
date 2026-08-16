@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - FxTemporaire
+  - Firebase
   layers:
   - Default
   - TransparentFX
