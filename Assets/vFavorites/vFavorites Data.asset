@@ -12,5 +12,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 066cf82f8f80d408c856e48fc8f1127b, type: 3}
   m_Name: vFavorites Data
   m_EditorClassIdentifier: VFavorites::VFavorites.VFavoritesData
-  pages: []
+  pages:
+  - items:
+    - globalId:
+        globalObjectIdString: GlobalObjectId_V1-1-3d5c1fd4c91bf8148a738e4f72f299df-102900000-0
+      _typeString: UnityEditor.DefaultAsset, UnityEditor.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      _obj: {fileID: 102900000, guid: 3d5c1fd4c91bf8148a738e4f72f299df, type: 3}
+      isSceneGameObject: 0
+      isFolder: 1
+      isAsset: 0
+      _id: 1054566418
+    - globalId:
+        globalObjectIdString: GlobalObjectId_V1-1-e25b94a8270f84a478a64548bfddae16-102900000-0
+      _typeString: UnityEditor.DefaultAsset, UnityEditor.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      _obj: {fileID: 102900000, guid: e25b94a8270f84a478a64548bfddae16, type: 3}
+      isSceneGameObject: 0
+      isFolder: 1
+      isAsset: 0
+      _id: 1052477173
+    - globalId:
+        globalObjectIdString: GlobalObjectId_V1-1-f41fa94e1c4f3dc4f9fce5aa6510a39c-102900000-0
+      _typeString: UnityEditor.DefaultAsset, UnityEditor.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      _obj: {fileID: 102900000, guid: f41fa94e1c4f3dc4f9fce5aa6510a39c, type: 3}
+      isSceneGameObject: 0
+      isFolder: 1
+      isAsset: 0
+      _id: 1057689721
+    - globalId:
+        globalObjectIdString: GlobalObjectId_V1-1-109e9bdd0fcc649c5bc59085c35bdc83-102900000-0
+      _typeString: UnityEditor.DefaultAsset, UnityEditor.CoreModule, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      _obj: {fileID: 102900000, guid: 109e9bdd0fcc649c5bc59085c35bdc83, type: 3}
+      isSceneGameObject: 0
+      isFolder: 1
+      isAsset: 0
+      _id: 1041964977
+    name: Page 1
+    _id: 1055022838
+  - items: []
+    name: Page 2
+    _id: 0
   rowScale: 1

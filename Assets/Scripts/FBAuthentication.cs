@@ -55,10 +55,10 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        username = username.Trim();
+        username = username.Trim().ToLowerInvariant();
 
         if (!string.IsNullOrWhiteSpace(email))
-            email = email.Trim();
+            email = email.Trim().ToLowerInvariant();
         else
             email = null;
 
@@ -214,7 +214,7 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        usernameOrEmail = usernameOrEmail.Trim();
+        usernameOrEmail = usernameOrEmail.Trim().ToLowerInvariant();
 
 
         // --------------------------------------------------------
@@ -447,7 +447,7 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        newEmail = newEmail.Trim();
+        newEmail = newEmail.Trim().ToLowerInvariant();
 
 
         // --------------------------------------------------------
@@ -532,7 +532,7 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        usernameOrEmail = usernameOrEmail.Trim();
+        usernameOrEmail = usernameOrEmail.Trim().ToLowerInvariant();
 
 
         // --------------------------------------------------------

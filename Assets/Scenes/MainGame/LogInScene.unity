@@ -155,8 +155,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -748.38684}
-  m_SizeDelta: {x: 1564.2715, y: 63.377987}
+  m_AnchoredPosition: {x: 646.13574, y: -756.7205}
+  m_SizeDelta: {x: 1164.2715, y: 46.71085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &87871307
 MonoBehaviour:
@@ -286,8 +286,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40.715027, y: 0}
-  m_SizeDelta: {x: -81.42995, y: -50}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -160, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &93344627
 MonoBehaviour:
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -22.275696, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -424,7 +424,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -46.210022, y: 0}
+  m_AnchoredPosition: {x: -71.600006, y: 0}
   m_SizeDelta: {x: 64, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &102333607
@@ -471,10 +471,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1416202345}
-        m_TargetAssemblyTypeName: LogInCanva, Assembly-CSharp
-        m_MethodName: showPassword
-        m_Mode: 6
+      - m_Target: {fileID: 2135894465}
+        m_TargetAssemblyTypeName: UserManager, Assembly-CSharp
+        m_MethodName: TogglePasswordConfirm
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -605,8 +605,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -693,7 +693,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -55.5, y: 0}
+  m_AnchoredPosition: {x: -69.8, y: 0}
   m_SizeDelta: {x: 64, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &210041050
@@ -740,10 +740,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1416202345}
-        m_TargetAssemblyTypeName: LogInCanva, Assembly-CSharp
-        m_MethodName: showPassword
-        m_Mode: 6
+      - m_Target: {fileID: 2135894465}
+        m_TargetAssemblyTypeName: UserManager, Assembly-CSharp
+        m_MethodName: TogglePasswordLogin
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -961,8 +961,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.500061, y: 0}
-  m_SizeDelta: {x: -60.999905, y: 0}
+  m_AnchoredPosition: {x: -35, y: 0}
+  m_SizeDelta: {x: -209.99997, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &216362243
 MonoBehaviour:
@@ -1011,7 +1011,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 24
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1175,7 +1175,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -55.5, y: 0}
+  m_AnchoredPosition: {x: -69.8, y: 0}
   m_SizeDelta: {x: 64, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &284951049
@@ -1222,10 +1222,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1416202345}
-        m_TargetAssemblyTypeName: LogInCanva, Assembly-CSharp
-        m_MethodName: showPassword
-        m_Mode: 6
+      - m_Target: {fileID: 2135894465}
+        m_TargetAssemblyTypeName: UserManager, Assembly-CSharp
+        m_MethodName: TogglePasswordLogin
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1492,7 +1492,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -46.210022, y: 0}
+  m_AnchoredPosition: {x: -71.600006, y: 0}
   m_SizeDelta: {x: 64, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &435480430
@@ -1539,10 +1539,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1416202345}
-        m_TargetAssemblyTypeName: LogInCanva, Assembly-CSharp
-        m_MethodName: showPassword
-        m_Mode: 6
+      - m_Target: {fileID: 2135894465}
+        m_TargetAssemblyTypeName: UserManager, Assembly-CSharp
+        m_MethodName: TogglePasswordConfirm
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1738,6 +1738,7 @@ GameObject:
   - component: {fileID: 460541577}
   - component: {fileID: 460541576}
   - component: {fileID: 460541575}
+  - component: {fileID: 460541578}
   m_Layer: 5
   m_Name: Password
   m_TagString: Untagged
@@ -1764,8 +1765,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -379.70496}
-  m_SizeDelta: {x: 1564.2715, y: 102.817986}
+  m_AnchoredPosition: {x: 646.13574, y: -413.87714}
+  m_SizeDelta: {x: 1164.2715, y: 136.71085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &460541575
 MonoBehaviour:
@@ -1906,6 +1907,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 460541573}
   m_CullTransparentMesh: 1
+--- !u!114 &460541578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460541573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 100
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &486219451
 GameObject:
   m_ObjectHideFlags: 0
@@ -1990,12 +2011,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 20
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 32
+  m_fontSizeMax: 20
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -2157,8 +2178,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.800049, y: 0}
-  m_SizeDelta: {x: -61.59995, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -140, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &545950032
 MonoBehaviour:
@@ -2227,7 +2248,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 24
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2319,8 +2340,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.800049, y: 0}
-  m_SizeDelta: {x: -61.59995, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -140, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &597144842
 MonoBehaviour:
@@ -2369,7 +2390,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 24
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2457,8 +2478,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40.715027, y: 0}
-  m_SizeDelta: {x: -81.42995, y: -50}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -160, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &630545823
 MonoBehaviour:
@@ -2500,7 +2521,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: enter uisername
+  m_text: enter USERNAME
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: af78ec8f754895945b2b86e62171f2c8, type: 2}
   m_sharedMaterial: {fileID: 2196026911491292788, guid: af78ec8f754895945b2b86e62171f2c8, type: 2}
@@ -2566,7 +2587,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 1.7970581, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2591,6 +2612,14 @@ PrefabInstance:
     - target: {fileID: 35101956032349946, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1134113558469233634, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -800
+      objectReference: {fileID: 0}
+    - target: {fileID: 1134113558469233634, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1408795804819266317, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
       propertyPath: m_Camera
@@ -2908,8 +2937,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -153.23898}
-  m_SizeDelta: {x: 1564.2715, y: 144.47798}
+  m_AnchoredPosition: {x: 646.13574, y: -144.90543}
+  m_SizeDelta: {x: 1164.2715, y: 127.81085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &839626866
 MonoBehaviour:
@@ -3046,8 +3075,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40.715027, y: 0}
-  m_SizeDelta: {x: -81.42995, y: -50}
+  m_AnchoredPosition: {x: -27.5, y: 0}
+  m_SizeDelta: {x: -215, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &867724091
 MonoBehaviour:
@@ -3155,7 +3184,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 132.22046, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3204,8 +3233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.500061, y: 0}
-  m_SizeDelta: {x: -60.999905, y: 0}
+  m_AnchoredPosition: {x: -35, y: 0}
+  m_SizeDelta: {x: -209.99997, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &874857985
 MonoBehaviour:
@@ -3274,7 +3303,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 24
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3698,7 +3727,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 1
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -3976,6 +4005,7 @@ GameObject:
   - component: {fileID: 1267756485}
   - component: {fileID: 1267756484}
   - component: {fileID: 1267756483}
+  - component: {fileID: 1267756486}
   m_Layer: 5
   m_Name: ConfirmPassword
   m_TagString: Untagged
@@ -4002,8 +4032,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -482.52295}
-  m_SizeDelta: {x: 1564.2715, y: 102.817986}
+  m_AnchoredPosition: {x: 646.13574, y: -550.58795}
+  m_SizeDelta: {x: 1164.2715, y: 136.71085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1267756483
 MonoBehaviour:
@@ -4144,6 +4174,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267756481}
   m_CullTransparentMesh: 1
+--- !u!114 &1267756486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267756481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 100
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1397088073
 GameObject:
   m_ObjectHideFlags: 0
@@ -4800,6 +4850,7 @@ GameObject:
   - component: {fileID: 1548668879}
   - component: {fileID: 1548668878}
   - component: {fileID: 1548668877}
+  - component: {fileID: 1548668880}
   m_Layer: 5
   m_Name: Username
   m_TagString: Untagged
@@ -4824,8 +4875,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -276.88696}
-  m_SizeDelta: {x: 1564.2715, y: 102.817986}
+  m_AnchoredPosition: {x: 646.13574, y: -277.16626}
+  m_SizeDelta: {x: 1164.2715, y: 136.71085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1548668877
 MonoBehaviour:
@@ -4966,6 +5017,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1548668875}
   m_CullTransparentMesh: 1
+--- !u!114 &1548668880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548668875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 100
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1565046145
 GameObject:
   m_ObjectHideFlags: 0
@@ -5301,8 +5372,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -669.5089}
-  m_SizeDelta: {x: 1564.2715, y: 94.37799}
+  m_AnchoredPosition: {x: 646.13574, y: -694.50964}
+  m_SizeDelta: {x: 1164.2715, y: 77.710846}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1760123426
 MonoBehaviour:
@@ -5434,8 +5505,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 846.13574, y: -578.1259}
-  m_SizeDelta: {x: 1564.2715, y: 88.387985}
+  m_AnchoredPosition: {x: 646.13574, y: -637.29877}
+  m_SizeDelta: {x: 1164.2715, y: 36.71085}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1769412103
 MonoBehaviour:
@@ -5660,8 +5731,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.800049, y: 0}
-  m_SizeDelta: {x: -61.59995, y: 0}
+  m_AnchoredPosition: {x: -35, y: 0}
+  m_SizeDelta: {x: -209.99997, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1824165081
 MonoBehaviour:
@@ -5710,7 +5781,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 24
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5798,8 +5869,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.800049, y: 0}
-  m_SizeDelta: {x: -61.59995, y: 0}
+  m_AnchoredPosition: {x: -35, y: 0}
+  m_SizeDelta: {x: -209.99997, y: -30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1915627012
 MonoBehaviour:
@@ -5868,7 +5939,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 24
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5955,8 +6026,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 40.715027, y: 0}
-  m_SizeDelta: {x: -81.42995, y: -50}
+  m_AnchoredPosition: {x: -27.5, y: 0}
+  m_SizeDelta: {x: -215, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2019233190
 MonoBehaviour:
@@ -6138,7 +6209,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -46.210022, y: 0}
+  m_AnchoredPosition: {x: -71.600006, y: 0}
   m_SizeDelta: {x: 64, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &2097874605
@@ -6185,10 +6256,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1416202345}
-        m_TargetAssemblyTypeName: LogInCanva, Assembly-CSharp
-        m_MethodName: showPassword
-        m_Mode: 6
+      - m_Target: {fileID: 2135894465}
+        m_TargetAssemblyTypeName: UserManager, Assembly-CSharp
+        m_MethodName: TogglePasswordRegister
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6270,7 +6341,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -46.210022, y: 0}
+  m_AnchoredPosition: {x: -71.600006, y: 0}
   m_SizeDelta: {x: 64, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &2134513512
@@ -6317,10 +6388,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1416202345}
-        m_TargetAssemblyTypeName: LogInCanva, Assembly-CSharp
-        m_MethodName: showPassword
-        m_Mode: 6
+      - m_Target: {fileID: 2135894465}
+        m_TargetAssemblyTypeName: UserManager, Assembly-CSharp
+        m_MethodName: TogglePasswordRegister
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6411,13 +6482,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b190a10e22be75f4692a643d183e2a6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UserManager
-  username: {fileID: 597144842}
-  password: {fileID: 1824165081}
-  passwordConfirm: {fileID: 216362243}
+  username: {fileID: 1548668877}
+  password: {fileID: 460541575}
+  passwordConfirm: {fileID: 1267756483}
+  unhidePassword: {fileID: 2134513510}
+  hidePassword: {fileID: 2097874603}
+  unhidePasswordConfirm: {fileID: 435480428}
+  hidePasswordConfirm: {fileID: 102333605}
   errorText: {fileID: 1769412103}
-  modal: {fileID: 0}
-  usernameLogin: {fileID: 93344627}
-  passwordLogin: {fileID: 2019233190}
+  modal: {fileID: 1708504839}
+  usernameLogin: {fileID: 890934992}
+  passwordLogin: {fileID: 1435962978}
+  unhidePasswordLogin: {fileID: 210041048}
+  hidePasswordLogin: {fileID: 284951047}
   errorLoginText: {fileID: 1747178420}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
