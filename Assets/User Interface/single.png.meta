@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: d7439139de2899d4d94a62d55dd6c669
+guid: f4e2d2f4006cb4f46a40a3aa05c1f4eb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2165174723802490018
-    second: 2tab_0
-  - first:
-      213: -5504538580831716873
-    second: 2tab_1
-  - first:
-      213: 5794398582929268070
-    second: 2tab_2
+      213: 5038269175885218742
+    second: single_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -78,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 8192
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -132,45 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 2tab_1
+      name: single_0
       rect:
         serializedVersion: 2
-        x: 695
+        x: 0
         y: 0
-        width: 378
+        width: 154
         height: 110
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 123, y: 38, z: 63, w: 30}
+      border: {x: 45, y: 41, z: 40, w: 32}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7f9b7153353fb93b0800000000000000
-      internalID: -5504538580831716873
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: 2tab_2
-      rect:
-        serializedVersion: 2
-        x: 1723
-        y: 0
-        width: 377
-        height: 110
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 92, y: 31, z: 98, w: 34}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 66d9686afc6d96050800000000000000
-      internalID: 5794398582929268070
+      spriteID: 6b3407f1f178be540800000000000000
+      internalID: 5038269175885218742
       vertices: []
       indices: 
       edges: []
@@ -179,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b26e2887f1ea40f4894b0b829a8cefe0
+    spriteID: d591f57215cd0ca499a2cc4c7257b3fa
     internalID: 0
     vertices: []
     indices: 
@@ -187,13 +159,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":700.0,"y":200.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      2tab_0: 2165174723802490018
-      2tab_1: -5504538580831716873
-      2tab_2: 5794398582929268070
+      single_0: 5038269175885218742
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
