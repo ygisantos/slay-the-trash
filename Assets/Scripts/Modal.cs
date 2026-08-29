@@ -71,6 +71,7 @@ public class Modal : MonoBehaviour
         gameObject.SetActive(true);
         background.SetActive(true);
         panel.SetActive(true);
+        // PostProcessingManager.Instance?.EnableDepthOfField();
 
         // Reset visual state
         canvasGroup.alpha = 1f;
@@ -97,6 +98,8 @@ public class Modal : MonoBehaviour
             return;
 
         OnClose?.Invoke();
+        
+        // PostProcessingManager.Instance?.DisableDepthOfField();
 
         animationCoroutine = StartCoroutine(
             PlayAnimation(

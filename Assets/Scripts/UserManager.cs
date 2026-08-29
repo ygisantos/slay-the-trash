@@ -3,6 +3,40 @@ using TMPro;
 
 public class UserManager : MonoBehaviour
 {
+    private static UserManager instance;
+
+    public static UserManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindFirstObjectByType<UserManager>();
+
+                if (instance == null)
+                {
+                    GameObject singletonPrefab =
+                        Resources.Load<GameObject>("UserManager");
+
+                    if (singletonPrefab == null)
+                    {
+                        Debug.LogError(
+                            "UserManager prefab not found in Resources folder."
+                        );
+
+                        return null;
+                    }
+
+                    GameObject clone = Instantiate(singletonPrefab);
+                    instance = clone.GetComponent<UserManager>();
+                }
+            }
+
+            return instance;
+        }
+    }
+
+
     [Header("Register")]
     [SerializeField] private TMP_InputField username;
     [SerializeField] private TMP_InputField password;
@@ -27,6 +61,24 @@ public class UserManager : MonoBehaviour
 
     private DynamicText registerDynamicText;
     private DynamicText loginDynamicText;
+
+
+    // =========================================================
+    // SINGLETON
+    // =========================================================
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
 
     private void Start()
@@ -86,6 +138,8 @@ public class UserManager : MonoBehaviour
 
                 Debug.Log($"Registered: {userId}");
 
+                DataManager.Instance.SetUsername(usernameValue);
+
                 Transitioner.Instance.TransitionToScene(
                     "MainMenuScene"
                 );
@@ -120,6 +174,15 @@ public class UserManager : MonoBehaviour
         {
             registerDynamicText.Error(
                 "Username is required."
+            );
+
+            return false;
+        }
+
+        if (username.text.Length > 12)
+        {
+            registerDynamicText.Error(
+                "Username cannot exceed 12 characters."
             );
 
             return false;
@@ -242,6 +305,8 @@ public class UserManager : MonoBehaviour
                     $"Welcome {profile["username"]}"
                 );
 
+                DataManager.Instance.SetUsername(usernameValue);
+
                 Transitioner.Instance.TransitionToScene(
                     "MainMenuScene"
                 );
@@ -253,6 +318,20 @@ public class UserManager : MonoBehaviour
 
                 Debug.LogError(error);
             }
+        );
+    }
+
+
+    public void Logout()
+    {
+        FBAuthentication.Instance.Logout();
+
+        DataManager.Instance.ClearUsername();
+
+        Debug.Log("Logged out.");
+
+        Transitioner.Instance.TransitionToScene(
+            "LoginScene"
         );
     }
 

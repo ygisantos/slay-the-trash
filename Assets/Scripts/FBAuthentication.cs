@@ -7,7 +7,39 @@ using UnityEngine;
 
 public class FBAuthentication : MonoBehaviour
 {
-    public static FBAuthentication Instance { get; private set; }
+    private static FBAuthentication instance;
+
+    public static FBAuthentication Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindFirstObjectByType<FBAuthentication>();
+
+                if (instance == null)
+                {
+                    GameObject singletonPrefab =
+                        Resources.Load<GameObject>("FirebaseManager");
+
+                    if (singletonPrefab == null)
+                    {
+                        Debug.LogError(
+                            "FBAuthentication prefab not found in Resources folder."
+                        );
+
+                        return null;
+                    }
+
+                    GameObject clone = Instantiate(singletonPrefab);
+                    instance = clone.GetComponent<FBAuthentication>();
+                }
+            }
+
+            return instance;
+        }
+    }
+
 
     private const string USERS_COLLECTION = "users";
 
@@ -19,16 +51,21 @@ public class FBAuthentication : MonoBehaviour
         !string.IsNullOrEmpty(CurrentUserId);
 
 
+    // ============================================================
+    // SINGLETON
+    // ============================================================
+
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
         {
             Destroy(gameObject);
-            return;
         }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
 
@@ -214,7 +251,8 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        usernameOrEmail = usernameOrEmail.Trim().ToLowerInvariant();
+        usernameOrEmail =
+            usernameOrEmail.Trim().ToLowerInvariant();
 
 
         // --------------------------------------------------------
@@ -447,7 +485,8 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        newEmail = newEmail.Trim().ToLowerInvariant();
+        newEmail =
+            newEmail.Trim().ToLowerInvariant();
 
 
         // --------------------------------------------------------
@@ -532,7 +571,8 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
-        usernameOrEmail = usernameOrEmail.Trim().ToLowerInvariant();
+        usernameOrEmail =
+            usernameOrEmail.Trim().ToLowerInvariant();
 
 
         // --------------------------------------------------------
