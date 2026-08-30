@@ -189,6 +189,8 @@ public class FBAuthentication : MonoBehaviour
     {
         string userId = Guid.NewGuid().ToString();
 
+        Timestamp now = ServerTimeHelper.GetFirestoreTimestamp();
+
         Dictionary<string, object> profile =
             new Dictionary<string, object>
             {
@@ -201,8 +203,12 @@ public class FBAuthentication : MonoBehaviour
                 { "disabled", false },
                 { "onDisabled", null },
 
-                // Account creation date
-                { "createdAt", Timestamp.GetCurrentTimestamp() }
+                // Account timestamps
+                { "registered_at", now },
+                { "createdAt", now },
+                { "email_update_at", null },
+                { "logged_in_at", null },
+                { "password_update_at", null }
             };
 
         FirebaseManager.Instance.CreateDocument(
@@ -366,10 +372,37 @@ public class FBAuthentication : MonoBehaviour
         // LOGIN SUCCESS
         // --------------------------------------------------------
 
-        CurrentUserId = document.Id;
-        CurrentProfile = profile;
+        Timestamp now = ServerTimeHelper.GetFirestoreTimestamp();
 
-        onSuccess?.Invoke(profile);
+        Dictionary<string, object> updates =
+            new Dictionary<string, object>
+            {
+                { "logged_in_at", now }
+            };
+
+        profile["logged_in_at"] = now;
+
+        FirebaseManager.Instance.UpdateDocument(
+            USERS_COLLECTION,
+            document.Id,
+            updates,
+
+            () =>
+            {
+                CurrentUserId = document.Id;
+                CurrentProfile = profile;
+
+                onSuccess?.Invoke(profile);
+            },
+
+            error =>
+            {
+                CurrentUserId = document.Id;
+                CurrentProfile = profile;
+
+                onSuccess?.Invoke(profile);
+            }
+        );
     }
 
 
@@ -431,12 +464,18 @@ public class FBAuthentication : MonoBehaviour
             return;
         }
 
+        Timestamp now = ServerTimeHelper.GetFirestoreTimestamp();
+
         Dictionary<string, object> updates =
             new Dictionary<string, object>
             {
                 {
                     "password",
                     newPassword
+                },
+                {
+                    "password_update_at",
+                    now
                 }
             };
 
@@ -449,6 +488,8 @@ public class FBAuthentication : MonoBehaviour
             {
                 CurrentProfile["password"] =
                     newPassword;
+                CurrentProfile["password_update_at"] =
+                    now;
 
                 onSuccess?.Invoke();
             },
@@ -522,12 +563,18 @@ public class FBAuthentication : MonoBehaviour
                 // UPDATE EMAIL
                 // ------------------------------------------------
 
+                Timestamp now = ServerTimeHelper.GetFirestoreTimestamp();
+
                 Dictionary<string, object> updates =
                     new Dictionary<string, object>
                     {
                         {
                             "email",
                             newEmail
+                        },
+                        {
+                            "email_update_at",
+                            now
                         }
                     };
 
@@ -540,6 +587,8 @@ public class FBAuthentication : MonoBehaviour
                     {
                         CurrentProfile["email"] =
                             newEmail;
+                        CurrentProfile["email_update_at"] =
+                            now;
 
                         onSuccess?.Invoke();
                     },

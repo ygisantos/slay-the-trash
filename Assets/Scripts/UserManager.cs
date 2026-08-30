@@ -127,6 +127,8 @@ public class UserManager : MonoBehaviour
         string usernameValue = username.text.Trim();
         string passwordValue = password.text;
 
+        LoadingScreenManager.Instance.Show("Creating account...");
+
         FBAuthentication.Instance.Register(
             usernameValue,
             null,
@@ -134,6 +136,7 @@ public class UserManager : MonoBehaviour
 
             userId =>
             {
+                LoadingScreenManager.Instance.Hide();
                 registerDynamicText.Success("Registration successful!");
 
                 Debug.Log($"Registered: {userId}");
@@ -147,7 +150,9 @@ public class UserManager : MonoBehaviour
 
             error =>
             {
+                LoadingScreenManager.Instance.Hide();
                 registerDynamicText.Error(error);
+                DialogueManager.Instance.ShowErrorDialog(error);
 
                 Debug.LogError(error);
             }
@@ -291,12 +296,15 @@ public class UserManager : MonoBehaviour
         string usernameValue = usernameLogin.text.Trim();
         string passwordValue = passwordLogin.text;
 
+        LoadingScreenManager.Instance.Show("Signing in...");
+
         FBAuthentication.Instance.Login(
             usernameValue,
             passwordValue,
 
             profile =>
             {
+                LoadingScreenManager.Instance.Hide();
                 loginDynamicText.Success(
                     "Login successful!"
                 );
@@ -305,7 +313,7 @@ public class UserManager : MonoBehaviour
                     $"Welcome {profile["username"]}"
                 );
 
-                DataManager.Instance.SetUsername(usernameValue);
+                DataManager.Instance.SetProfile(profile);
 
                 Transitioner.Instance.TransitionToScene(
                     "MainMenuScene"
@@ -314,7 +322,9 @@ public class UserManager : MonoBehaviour
 
             error =>
             {
+                LoadingScreenManager.Instance.Hide();
                 loginDynamicText.Error(error);
+                DialogueManager.Instance.ShowErrorDialog(error);
 
                 Debug.LogError(error);
             }

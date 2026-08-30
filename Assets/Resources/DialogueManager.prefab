@@ -167,8 +167,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 291.6557, y: -57.27479}
-  m_SizeDelta: {x: 583.3114, y: 114.54958}
+  m_AnchoredPosition: {x: 241.6557, y: -50.02874}
+  m_SizeDelta: {x: 483.3114, y: 100.05748}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5103597345758719126
 CanvasRenderer:
@@ -287,8 +287,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 659.8114, y: -374.86896}
-  m_SizeDelta: {x: 1191.6228, y: 449.7379}
+  m_AnchoredPosition: {x: 559.8114, y: -350.11496}
+  m_SizeDelta: {x: 991.6228, y: 400.22992}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4151764329856682940
 CanvasRenderer:
@@ -345,12 +345,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 47.51
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 47.51
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -404,11 +404,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinHeight: 0
   m_PreferredWidth: -1
-  m_PreferredHeight: -1
+  m_PreferredHeight: 0
   m_FlexibleWidth: -1
-  m_FlexibleHeight: 5
+  m_FlexibleHeight: 4
   m_LayoutPriority: 1
 --- !u!1 &4262372932600979592
 GameObject:
@@ -446,8 +446,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 899.9671, y: -57.27479}
-  m_SizeDelta: {x: 583.3114, y: 114.54958}
+  m_AnchoredPosition: {x: 749.9671, y: -50.02874}
+  m_SizeDelta: {x: 483.3114, y: 100.05748}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7433911557760343265
 CanvasRenderer:
@@ -565,8 +565,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 11.650002}
-  m_SizeDelta: {x: -63.999992, y: -61.1}
+  m_AnchoredPosition: {x: 0, y: 14}
+  m_SizeDelta: {x: -104, y: -68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &393456937691697125
 CanvasRenderer:
@@ -623,7 +623,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46.9
+  m_fontSize: 28.15
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -780,8 +780,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 659.8114, y: -657.0127}
-  m_SizeDelta: {x: 1191.6228, y: 114.54958}
+  m_AnchoredPosition: {x: 559.8114, y: -612.25867}
+  m_SizeDelta: {x: 991.6228, y: 100.05748}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6646728127610813822
 MonoBehaviour:
@@ -823,9 +823,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinHeight: 0
   m_PreferredWidth: -1
-  m_PreferredHeight: -1
+  m_PreferredHeight: 0
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
@@ -867,7 +867,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -800, y: -199.99997}
+  m_SizeDelta: {x: -1000, y: -252}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7249829319792506026
 CanvasRenderer:
@@ -925,7 +925,7 @@ MonoBehaviour:
     m_Top: 150
     m_Bottom: 64
   m_ChildAlignment: 4
-  m_Spacing: 0
+  m_Spacing: 12
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -1088,8 +1088,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 11.650002}
-  m_SizeDelta: {x: -63.999992, y: -61.1}
+  m_AnchoredPosition: {x: 0, y: 14}
+  m_SizeDelta: {x: -104, y: -68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4478492992489545722
 CanvasRenderer:
@@ -1146,7 +1146,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46.9
+  m_fontSize: 28.15
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1

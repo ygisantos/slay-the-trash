@@ -91,4 +91,26 @@ public class DialogueManager : MonoBehaviour
         });
         modal.Open();
     }
+
+    public void ShowErrorDialog(string message)
+    {
+        if (modal == null)
+        {
+            Debug.LogError(message);
+            return;
+        }
+
+        ShowDialogue(
+            message,
+            "OK",
+            "",
+            new UnityEvent()
+        );
+
+        if (negativeText != null)
+            negativeText.gameObject.SetActive(false);
+
+        if (negativeButton != null)
+            negativeButton.gameObject.SetActive(false);
+    }
 }

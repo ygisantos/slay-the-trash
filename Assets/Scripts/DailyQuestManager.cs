@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
 
 [Serializable]
 public class QuestDefinition
@@ -27,12 +26,6 @@ public class DailyQuestManager : MonoBehaviour
     [Header("Countdown")]
     [SerializeField] private TMP_Text countdownText;
 
-    private DateTime serverTimeAtSync;
-    private float realtimeAtSync;
-
-    private const string TimeApi =
-        "https://timeapi.io/api/Time/current/zone?timeZone=UTC";
-
     private void Start()
     {
         StartCoroutine(Initialize());
@@ -40,95 +33,28 @@ public class DailyQuestManager : MonoBehaviour
 
     private IEnumerator Initialize()
     {
-        yield return StartCoroutine(SyncServerTime());
+        yield return StartCoroutine(
+            ServerTimeHelper.SyncServerTimeCoroutine(
+                success =>
+                {
+                    if (!success)
+                    {
+                        Debug.LogError(
+                            "Daily Quest Manager could not synchronize server time."
+                        );
+                    }
+                }
+            )
+        );
 
-        if (serverTimeAtSync == default)
+        if (!ServerTimeHelper.IsReady)
         {
-            Debug.LogError(
-                "Daily Quest Manager could not synchronize server time."
-            );
-
             yield break;
         }
 
         GenerateDailyQuests();
 
         StartCoroutine(CountdownRoutine());
-    }
-
-    // =========================================================
-    // SERVER TIME
-    // =========================================================
-
-    [Serializable]
-    private class TimeApiResponse
-    {
-        public string dateTime;
-    }
-
-    private IEnumerator SyncServerTime()
-    {
-        using (UnityWebRequest request = UnityWebRequest.Get(TimeApi))
-        {
-            request.timeout = 10;
-
-            yield return request.SendWebRequest();
-
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(
-                    $"Failed to get server time: {request.error}"
-                );
-
-                yield break;
-            }
-
-            string json = request.downloadHandler.text;
-
-            try
-            {
-                TimeApiResponse response =
-                    JsonUtility.FromJson<TimeApiResponse>(json);
-
-                if (response == null ||
-                    string.IsNullOrEmpty(response.dateTime))
-                {
-                    Debug.LogError(
-                        "Server returned an invalid time response."
-                    );
-
-                    yield break;
-                }
-
-                serverTimeAtSync = DateTime.Parse(
-                    response.dateTime,
-                    null,
-                    System.Globalization.DateTimeStyles.RoundtripKind
-                ).ToUniversalTime();
-
-                realtimeAtSync =
-                    Time.realtimeSinceStartup;
-
-                Debug.Log(
-                    $"Server UTC Time: " +
-                    $"{serverTimeAtSync:yyyy-MM-dd HH:mm:ss}"
-                );
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(
-                    $"Failed to parse server time: {e.Message}"
-                );
-            }
-        }
-    }
-
-    private DateTime GetServerTime()
-    {
-        float elapsed =
-            Time.realtimeSinceStartup - realtimeAtSync;
-
-        return serverTimeAtSync.AddSeconds(elapsed);
     }
 
     // =========================================================
@@ -156,7 +82,7 @@ public class DailyQuestManager : MonoBehaviour
             return;
         }
 
-        DateTime serverTime = GetServerTime();
+        DateTime serverTime = ServerTimeHelper.GetUtcNow();
 
         string date =
             serverTime.ToString("yyyy-MM-dd");
@@ -289,7 +215,7 @@ public class DailyQuestManager : MonoBehaviour
         while (true)
         {
             DateTime now =
-                GetServerTime();
+                ServerTimeHelper.GetUtcNow();
 
             DateTime nextReset =
                 now.Date.AddDays(1);
@@ -302,10 +228,10 @@ public class DailyQuestManager : MonoBehaviour
                 // Synchronize again so the new date
                 // is definitely based on server time.
                 yield return StartCoroutine(
-                    SyncServerTime()
+                    ServerTimeHelper.SyncServerTimeCoroutine()
                 );
 
-                if (serverTimeAtSync != default)
+                if (ServerTimeHelper.IsReady)
                 {
                     GenerateDailyQuests();
                 }
