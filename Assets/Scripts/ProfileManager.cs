@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ProfileManager : MonoBehaviour
 {
@@ -17,11 +18,77 @@ public class ProfileManager : MonoBehaviour
     [SerializeField] private TMP_Text lastPasswordUpdateLabel;
     [SerializeField] private TMP_Text lastLoginLabel;
 
+    [Header("Security")]
+    [SerializeField] private GameObject unhidePassword;
+    [SerializeField] private GameObject hidePassword;
+    [SerializeField] private GameObject unhidePasswordConfirm;
+    [SerializeField] private GameObject hidePasswordConfirm;
     private void Start()
     {
         SetupProfile();
     }
 
+    
+    private void TogglePassword(
+        TMP_InputField passwordField,
+        GameObject unhideObj,
+        GameObject hideObj)
+    {
+        if (passwordField == null)
+            return;
+
+        bool passwordVisible =
+            passwordField.contentType ==
+            TMP_InputField.ContentType.Standard;
+
+        SetPasswordVisibility(
+            passwordField,
+            unhideObj,
+            hideObj,
+            !passwordVisible
+        );
+    }
+    
+    public void ToggleNewPasswordVisibility()
+    {
+        TogglePassword(
+            newPasswordField,
+            unhidePassword,
+            hidePassword
+        );
+    }
+    
+    public void ToggleConfirmPasswordVisibility()
+    {
+        TogglePassword(
+            confirmPasswordField,
+            unhidePasswordConfirm,
+            hidePasswordConfirm
+        );
+    }
+
+    private void SetPasswordVisibility(
+        TMP_InputField passwordField,
+        GameObject unhideObj,
+        GameObject hideObj,
+        bool visible)
+    {
+        if (passwordField == null)
+            return;
+
+        passwordField.contentType =
+            visible
+                ? TMP_InputField.ContentType.Standard
+                : TMP_InputField.ContentType.Password;
+
+        passwordField.ForceLabelUpdate();
+
+        if (unhideObj != null)
+            unhideObj.SetActive(!visible);
+
+        if (hideObj != null)
+            hideObj.SetActive(visible);
+    }
     private void SetupProfile()
     {
         if (usernameField != null)
@@ -97,22 +164,22 @@ public class ProfileManager : MonoBehaviour
 
         SetLabel(
             registeredAtLabel,
-            "Registered: " + FormatTimestamp(profile, "registered_at")
+            "" + FormatTimestamp(profile, "registered_at")
         );
 
         SetLabel(
             lastEmailUpdateLabel,
-            "Last email update: " + FormatTimestamp(profile, "email_update_at")
+            "" + FormatTimestamp(profile, "email_update_at")
         );
 
         SetLabel(
             lastPasswordUpdateLabel,
-            "Last password update: " + FormatTimestamp(profile, "password_update_at")
+            "" + FormatTimestamp(profile, "password_update_at")
         );
 
         SetLabel(
             lastLoginLabel,
-            "Last login: " + FormatTimestamp(profile, "logged_in_at")
+            "" + FormatTimestamp(profile, "logged_in_at")
         );
     }
 
@@ -168,7 +235,7 @@ public class ProfileManager : MonoBehaviour
     {
         if (emailField == null)
         {
-            Debug.LogError("Email field is not assigned.");
+            ShowProfileError("Email field is not assigned.");
             return;
         }
 
@@ -176,40 +243,72 @@ public class ProfileManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(email))
         {
-            Debug.LogError("Email is required.");
+            ShowProfileError("Email is required.");
             return;
         }
 
         if (!ValidationHelper.IsEmail(email))
         {
-            Debug.LogError("Please enter a valid email address.");
+            ShowProfileError("Please enter a valid email address.");
             return;
         }
 
         if (FBAuthentication.Instance == null ||
             !FBAuthentication.Instance.IsLoggedIn)
         {
-            Debug.LogError("No user is currently logged in.");
+            ShowProfileError("No user is currently logged in.");
             return;
         }
 
-        LoadingScreenManager.Instance.Show("Updating email...");
+        string oldEmail =
+            FBAuthentication.Instance.CurrentProfile != null
+                && FBAuthentication.Instance.CurrentProfile.TryGetValue(
+                    "email",
+                    out object oldEmailObj
+                )
+                    ? oldEmailObj?.ToString() ?? string.Empty
+                    : string.Empty;
 
-        FBAuthentication.Instance.ChangeEmail(
-            email,
-            () =>
-            {
-                LoadingScreenManager.Instance.Hide();
-                Debug.Log("Email updated successfully.");
-                DataManager.Instance.SetProfile(FBAuthentication.Instance.CurrentProfile);
-                SetupProfile();
-            },
-            error =>
-            {
-                LoadingScreenManager.Instance.Hide();
-                Debug.LogError(error);
-                DialogueManager.Instance.ShowErrorDialog(error);
-            }
+        if (string.Equals(oldEmail, email, StringComparison.OrdinalIgnoreCase))
+        {
+            ShowProfileError("This is the same email you already use.");
+            return;
+        }
+
+        UnityEngine.Events.UnityAction onConfirm = new UnityEngine.Events.UnityAction(() =>
+        {
+            LoadingScreenManager.Instance.Show("Updating email...");
+
+            FBAuthentication.Instance.ChangeEmail(
+                email,
+                () =>
+                {
+                    LoadingScreenManager.Instance.Hide(() =>
+                    {
+                        Debug.Log("Email updated successfully.");
+                        DataManager.Instance.SetProfile(FBAuthentication.Instance.CurrentProfile);
+                        DialogueManager.Instance.ShowSuccessDialog(
+                            "Email updated successfully. Please log in again.",
+                            LogoutAndReturnToLogin
+                        );
+                    });
+                },
+                error =>
+                {
+                    LoadingScreenManager.Instance.Hide(() =>
+                    {
+                        Debug.LogError(error);
+                        DialogueManager.Instance.ShowErrorDialog(error);
+                    });
+                }
+            );
+        });
+
+        DialogueManager.Instance.ShowDialogue(
+            "Update your email to:\n" + email + "?",
+            "Yes, update",
+            "Cancel",
+            onConfirm
         );
     }
 
@@ -218,7 +317,7 @@ public class ProfileManager : MonoBehaviour
         if (newPasswordField == null ||
             confirmPasswordField == null)
         {
-            Debug.LogError("Password fields are not assigned.");
+            ShowProfileError("Password fields are not assigned.");
             return;
         }
 
@@ -227,32 +326,32 @@ public class ProfileManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(newPassword))
         {
-            Debug.LogError("New password is required.");
+            ShowProfileError("New password is required.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(confirmPassword))
         {
-            Debug.LogError("Please confirm your password.");
+            ShowProfileError("Please confirm your password.");
             return;
         }
 
         if (!ValidationHelper.IsPasswordLengthValid(newPassword, 8, 128))
         {
-            Debug.LogError("Password must be at least 8 characters.");
+            ShowProfileError("Password must be at least 8 characters.");
             return;
         }
 
         if (newPassword != confirmPassword)
         {
-            Debug.LogError("Passwords do not match.");
+            ShowProfileError("Passwords do not match.");
             return;
         }
 
         if (FBAuthentication.Instance == null ||
             !FBAuthentication.Instance.IsLoggedIn)
         {
-            Debug.LogError("No user is currently logged in.");
+            ShowProfileError("No user is currently logged in.");
             return;
         }
 
@@ -265,26 +364,65 @@ public class ProfileManager : MonoBehaviour
                     ? currentPasswordObj?.ToString()
                     : string.Empty;
 
-        LoadingScreenManager.Instance.Show("Updating password...");
+        UnityEngine.Events.UnityAction onConfirm = new UnityEngine.Events.UnityAction(() =>
+        {
+            LoadingScreenManager.Instance.Show("Updating password...");
 
-        FBAuthentication.Instance.ChangePassword(
-            currentPassword,
-            newPassword,
-            () =>
-            {
-                LoadingScreenManager.Instance.Hide();
-                newPasswordField.text = "";
-                confirmPasswordField.text = "";
+            FBAuthentication.Instance.ChangePassword(
+                currentPassword,
+                newPassword,
+                () =>
+                {
+                    LoadingScreenManager.Instance.Hide(() =>
+                    {
+                        newPasswordField.text = "";
+                        confirmPasswordField.text = "";
+                        Debug.Log("Password updated successfully.");
+                        DataManager.Instance.SetProfile(FBAuthentication.Instance.CurrentProfile);
+                        DialogueManager.Instance.ShowSuccessDialog(
+                            "Password updated successfully. Please log in again.",
+                            LogoutAndReturnToLogin
+                        );
+                    });
+                },
+                error =>
+                {
+                    LoadingScreenManager.Instance.Hide(() =>
+                    {
+                        Debug.LogError(error);
+                        DialogueManager.Instance.ShowErrorDialog(error);
+                    });
+                }
+            );
+        });
 
-                Debug.Log("Password updated successfully.");
-                DataManager.Instance.SetProfile(FBAuthentication.Instance.CurrentProfile);
-            },
-            error =>
-            {
-                LoadingScreenManager.Instance.Hide();
-                Debug.LogError(error);
-                DialogueManager.Instance.ShowErrorDialog(error);
-            }
+        DialogueManager.Instance.ShowDialogue(
+            "Update your password?",
+            "Yes, update",
+            "Cancel",
+            onConfirm
         );
+    }
+
+    private void ShowProfileError(string message)
+    {
+        Debug.LogError(message);
+
+        if (DialogueManager.Instance != null)
+            DialogueManager.Instance.ShowErrorDialog(message);
+    }
+
+    private void LogoutAndReturnToLogin()
+    {
+        if (FBAuthentication.Instance != null)
+            FBAuthentication.Instance.Logout();
+
+        if (DataManager.Instance != null)
+            DataManager.Instance.ClearAll();
+
+        if (Transitioner.Instance != null)
+            Transitioner.Instance.TransitionToScene("LoginScene");
+        else
+            UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
     }
 }

@@ -304,29 +304,30 @@ public class UserManager : MonoBehaviour
 
             profile =>
             {
-                LoadingScreenManager.Instance.Hide();
-                loginDynamicText.Success(
-                    "Login successful!"
-                );
-
-                Debug.Log(
-                    $"Welcome {profile["username"]}"
-                );
-
                 DataManager.Instance.SetProfile(profile);
+                LoadingScreenManager.Instance.Hide(() =>
+                {
+                    loginDynamicText.Success("Login successful!");
 
-                Transitioner.Instance.TransitionToScene(
-                    "MainMenuScene"
-                );
+                    Debug.Log(
+                        $"Welcome {profile["username"]}"
+                    );
+
+                    DialogueManager.Instance.ShowSuccessDialog(
+                        "Login successful!",
+                        () => Transitioner.Instance.TransitionToScene("MainMenuScene")
+                    );
+                });
             },
 
             error =>
             {
-                LoadingScreenManager.Instance.Hide();
-                loginDynamicText.Error(error);
-                DialogueManager.Instance.ShowErrorDialog(error);
-
-                Debug.LogError(error);
+                LoadingScreenManager.Instance.Hide(() =>
+                {
+                    loginDynamicText.Error(error);
+                    DialogueManager.Instance.ShowErrorDialog(error);
+                    Debug.LogError(error);
+                });
             }
         );
     }
@@ -334,6 +335,7 @@ public class UserManager : MonoBehaviour
 
     public void Logout()
     {
+        modal.Close();
         FBAuthentication.Instance.Logout();
 
         DataManager.Instance.ClearUsername();

@@ -49,6 +49,7 @@ public class LoadingScreenManager : MonoBehaviour
     private Coroutine spinRoutine;
     private Coroutine pulseRoutine;
     private Coroutine hideRoutine;
+    private System.Action onHidden;
 
     private const float SpinnerSpeed = 180f;
     private const float MinVisibleTime = 1f;
@@ -219,8 +220,18 @@ public class LoadingScreenManager : MonoBehaviour
 
     public void Hide()
     {
+        Hide(null);
+    }
+
+    public void Hide(System.Action afterHidden)
+    {
         if (!isLoading)
+        {
+            afterHidden?.Invoke();
             return;
+        }
+
+        onHidden = afterHidden;
 
         float elapsed = Time.unscaledTime - showStartedAt;
 
@@ -304,6 +315,10 @@ public class LoadingScreenManager : MonoBehaviour
 
         if (root != null)
             root.SetActive(false);
+
+        System.Action completed = onHidden;
+        onHidden = null;
+        completed?.Invoke();
     }
 
     private IEnumerator SpinRoutine()
