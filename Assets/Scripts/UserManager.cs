@@ -141,10 +141,20 @@ public class UserManager : MonoBehaviour
 
                 Debug.Log($"Registered: {userId}");
 
-                DataManager.Instance.SetUsername(usernameValue);
+                // DataManager.Instance.SetProfile(
+                //     FBAuthentication.Instance.CurrentProfile
+                // );
 
-                Transitioner.Instance.TransitionToScene(
-                    "MainMenuScene"
+                // Transitioner.Instance.TransitionToScene(
+                //     "MainMenuScene"
+                // );
+
+                modal.Close();
+                username.text = "";
+                password.text = "";
+                passwordConfirm.text = "";
+                DialogueManager.Instance.ShowSuccessDialog(
+                    "Registration successful! You can now log in."
                 );
             },
 
@@ -337,8 +347,6 @@ public class UserManager : MonoBehaviour
     {
         modal.Close();
         FBAuthentication.Instance.Logout();
-
-        DataManager.Instance.ClearUsername();
 
         Debug.Log("Logged out.");
 

@@ -42,6 +42,7 @@ public class FBAuthentication : MonoBehaviour
 
 
     private const string USERS_COLLECTION = "users";
+    private const string POINTS_COLLECTION = "Points";
 
     public string CurrentUserId { get; private set; }
 
@@ -201,11 +202,11 @@ public class FBAuthentication : MonoBehaviour
 
                 // Account status
                 { "disabled", false },
-                { "onDisabled", null },
+                { "disabled_at", null },
 
                 // Account timestamps
                 { "registered_at", now },
-                { "createdAt", now },
+                { "created_at", now },
                 { "email_update_at", null },
                 { "logged_in_at", null },
                 { "password_update_at", null }
@@ -218,10 +219,22 @@ public class FBAuthentication : MonoBehaviour
 
             id =>
             {
-                CurrentUserId = id;
-                CurrentProfile = profile;
+                Dictionary<string, object> points =
+                    FBLeaderboard.CreateDefaultPoints(id, username);
 
-                onSuccess?.Invoke(id);
+                FirebaseManager.Instance.CreateDocument(
+                    POINTS_COLLECTION,
+                    username,
+                    points,
+                    pointsId =>
+                    {
+                        CurrentUserId = id;
+                        CurrentProfile = profile;
+                        MergePointsIntoProfile(CurrentProfile, points);
+                        onSuccess?.Invoke(id);
+                    },
+                    onError
+                );
             },
 
             onError
@@ -356,7 +369,7 @@ public class FBAuthentication : MonoBehaviour
         // --------------------------------------------------------
 
         bool disabled =
-            GetBool(profile, "disabled");
+            FirebaseDataHelper.GetBool(profile, "disabled");
 
         if (disabled)
         {
@@ -389,18 +402,22 @@ public class FBAuthentication : MonoBehaviour
 
             () =>
             {
-                CurrentUserId = document.Id;
-                CurrentProfile = profile;
-
-                onSuccess?.Invoke(profile);
+                CompleteProfileLoad(
+                    document.Id,
+                    profile,
+                    onSuccess,
+                    onError
+                );
             },
 
             error =>
             {
-                CurrentUserId = document.Id;
-                CurrentProfile = profile;
-
-                onSuccess?.Invoke(profile);
+                CompleteProfileLoad(
+                    document.Id,
+                    profile,
+                    onSuccess,
+                    null
+                );
             }
         );
     }
@@ -444,7 +461,7 @@ public class FBAuthentication : MonoBehaviour
         }
 
         string storedPassword =
-            GetString(CurrentProfile, "password");
+            FirebaseDataHelper.GetString(CurrentProfile, "password");
 
         if (storedPassword != currentPassword)
         {
@@ -725,11 +742,11 @@ public class FBAuthentication : MonoBehaviour
                     return;
                 }
 
-                CurrentProfile =
-                    snapshot.ToDictionary();
-
-                onSuccess?.Invoke(
-                    CurrentProfile
+                CompleteProfileLoad(
+                    CurrentUserId,
+                    snapshot.ToDictionary(),
+                    onSuccess,
+                    onError
                 );
             },
 
@@ -748,41 +765,87 @@ public class FBAuthentication : MonoBehaviour
         CurrentProfile = null;
     }
 
-
-    // ============================================================
-    // HELPERS
-    // ============================================================
-
-    private string GetString(
-        Dictionary<string, object> data,
-        string key)
+    private void CompleteProfileLoad(
+        string userId,
+        Dictionary<string, object> profile,
+        Action<Dictionary<string, object>> onSuccess,
+        Action<string> onError)
     {
-        if (data == null)
-            return null;
+        FirebaseManager.Instance.GetDocument(
+            POINTS_COLLECTION,
+            FirebaseDataHelper.GetString(profile, "username"),
+            pointsSnapshot =>
+            {
+                if (pointsSnapshot.Exists)
+                {
+                    FinishProfileLoad(
+                        userId,
+                        profile,
+                        pointsSnapshot.ToDictionary(),
+                        onSuccess
+                    );
+                    return;
+                }
 
-        if (!data.TryGetValue(key, out object value))
-            return null;
+                Dictionary<string, object> defaultPoints =
+                    FBLeaderboard.CreateDefaultPoints(
+                        userId,
+                        FirebaseDataHelper.GetString(profile, "username")
+                    );
 
-        return value?.ToString();
+                string username =
+                    FirebaseDataHelper.GetString(profile, "username");
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    onError?.Invoke("User profile has no username.");
+                    return;
+                }
+
+                FirebaseManager.Instance.CreateDocument(
+                    POINTS_COLLECTION,
+                    username,
+                    defaultPoints,
+                    pointsId => FinishProfileLoad(
+                        userId,
+                        profile,
+                        defaultPoints,
+                        onSuccess
+                    ),
+                    onError
+                );
+            },
+            error =>
+            {
+                onError?.Invoke(error);
+            }
+        );
+    }
+
+    private void FinishProfileLoad(
+        string userId,
+        Dictionary<string, object> profile,
+        Dictionary<string, object> points,
+        Action<Dictionary<string, object>> onSuccess)
+    {
+        CurrentUserId = userId;
+        CurrentProfile = profile;
+        MergePointsIntoProfile(CurrentProfile, points);
+        onSuccess?.Invoke(CurrentProfile);
+    }
+
+    private static void MergePointsIntoProfile(
+        Dictionary<string, object> profile,
+        Dictionary<string, object> points)
+    {
+        if (profile == null || points == null)
+            return;
+
+        foreach (KeyValuePair<string, object> point in points)
+        {
+            if (point.Key != "userId" && point.Key != "username")
+                profile[point.Key] = point.Value;
+        }
     }
 
 
-    private bool GetBool(
-        Dictionary<string, object> data,
-        string key)
-    {
-        if (data == null)
-            return false;
-
-        if (!data.TryGetValue(key, out object value))
-            return false;
-
-        if (value is bool boolValue)
-            return boolValue;
-
-        return bool.TryParse(
-            value?.ToString(),
-            out bool result
-        ) && result;
-    }
 }

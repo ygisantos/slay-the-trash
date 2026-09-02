@@ -33,7 +33,7 @@ public class MainMenu : MonoBehaviour
                     profile != null &&
                     profile.TryGetValue("username", out object usernameObj)
                         ? usernameObj?.ToString() ?? string.Empty
-                        : DataManager.Instance.GetUsername();
+                        : string.Empty;
 
                 if (ValidationHelper.IsNullOrWhiteSpace(username))
                 {
@@ -41,8 +41,7 @@ public class MainMenu : MonoBehaviour
                     return;
                 }
 
-                if (usernameText != null)
-                    usernameText.text = username;
+                usernameText.text = username;
             },
             error =>
             {

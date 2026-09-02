@@ -23,6 +23,7 @@ public class ProfileManager : MonoBehaviour
     [SerializeField] private GameObject hidePassword;
     [SerializeField] private GameObject unhidePasswordConfirm;
     [SerializeField] private GameObject hidePasswordConfirm;
+    
     private void Start()
     {
         SetupProfile();

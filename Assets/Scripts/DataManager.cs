@@ -6,7 +6,6 @@ public class DataManager : MonoBehaviour
 {
     private static DataManager instance;
 
-    private const string USERNAME_KEY = "username";
     private const string PROFILE_KEY = "user_profile";
     private const string PROFILE_KEYS_KEY = "user_profile_keys";
 
@@ -68,21 +67,6 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    // =========================
-    // USERNAME
-    // =========================
-
-    public void SetUsername(string username)
-    {
-        PlayerPrefs.SetString(USERNAME_KEY, username);
-        PlayerPrefs.Save();
-    }
-
-    public string GetUsername()
-    {
-        return PlayerPrefs.GetString(USERNAME_KEY, string.Empty);
-    }
-
     public void SetProfile(Dictionary<string, object> profile)
     {
         if (profile == null)
@@ -130,8 +114,6 @@ public class DataManager : MonoBehaviour
                 }
             );
 
-            if (pair.Key == "username")
-                SetUsername(value);
         }
 
         string json = JsonUtility.ToJson(cache);
@@ -204,15 +186,8 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public void ClearUsername()
-    {
-        PlayerPrefs.DeleteKey(USERNAME_KEY);
-        PlayerPrefs.Save();
-    }
-
     public void ClearAll()
     {
-        PlayerPrefs.DeleteKey(USERNAME_KEY);
         PlayerPrefs.DeleteKey(PROFILE_KEY);
         PlayerPrefs.DeleteKey(PROFILE_KEYS_KEY);
         PlayerPrefs.Save();
