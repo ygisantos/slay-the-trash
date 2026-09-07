@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class QuestDefinition
@@ -10,6 +11,7 @@ public class QuestDefinition
     public string title;
     public int minAmount;
     public int maxAmount;
+    [HideInInspector] public int targetAmount;
 }
 
 public class DailyQuestManager : MonoBehaviour
@@ -25,6 +27,16 @@ public class DailyQuestManager : MonoBehaviour
 
     [Header("Countdown")]
     [SerializeField] private TMP_Text countdownText;
+
+    [Header("Quest Status Colors")]
+    [SerializeField] private Color incompleteQuestColor = Color.white;
+    [SerializeField] private Color completedQuestColor = Color.green;
+
+    private readonly int[] questTargets = new int[5];
+    private readonly int[] questProgress = new int[5];
+    private readonly bool[] questCompleted = new bool[5];
+    private string currentDate;
+    private string currentUsername;
 
     private void Start()
     {
@@ -48,203 +60,361 @@ public class DailyQuestManager : MonoBehaviour
         );
 
         if (!ServerTimeHelper.IsReady)
-        {
             yield break;
-        }
 
         GenerateDailyQuests();
-
         StartCoroutine(CountdownRoutine());
     }
-
-    // =========================================================
-    // DAILY QUEST GENERATION
-    // =========================================================
 
     private void GenerateDailyQuests()
     {
         if (questItems.Count != 5)
         {
             Debug.LogWarning(
-                $"Daily quests are designed for 5 UI items. " +
-                $"Currently assigned: {questItems.Count}"
+                $"Daily quests are designed for 5 UI items. Currently assigned: {questItems.Count}"
             );
         }
 
-        if (possibleQuests.Count < questItems.Count)
+        if (questItems.Count < 5 || possibleQuests.Count < questItems.Count)
         {
             Debug.LogError(
-                $"You need at least {questItems.Count} " +
-                $"unique quests, but only have " +
-                $"{possibleQuests.Count}."
+                $"You need 5 UI items and at least {questItems.Count} unique quests."
             );
-
             return;
         }
 
         DateTime serverTime = ServerTimeHelper.GetUtcNow();
-
-        string date =
-            serverTime.ToString("yyyy-MM-dd");
-
-        int dailySeed =
-            CreateDailySeed(date);
-
-        System.Random random =
-            new System.Random(dailySeed);
-
-        // Copy the possible quests into a temporary pool.
+        string date = serverTime.ToString("yyyy-MM-dd");
+        int dailySeed = CreateDailySeed(date);
+        System.Random random = new System.Random(dailySeed);
         List<QuestDefinition> availableQuests =
             new List<QuestDefinition>(possibleQuests);
+        List<QuestDefinition> generatedQuests =
+            new List<QuestDefinition>();
 
-        // Generate one unique quest per UI item.
-        for (int i = 0; i < questItems.Count; i++)
+        for (int index = 0; index < 5; index++)
         {
-            int randomIndex =
-                random.Next(availableQuests.Count);
-
-            QuestDefinition selectedQuest =
-                availableQuests[randomIndex];
-
-            // Remove the quest from the pool.
-            // This guarantees it cannot appear again today.
+            int randomIndex = random.Next(availableQuests.Count);
+            QuestDefinition selectedQuest = availableQuests[randomIndex];
             availableQuests.RemoveAt(randomIndex);
 
-            int amount =
-                random.Next(
-                    selectedQuest.minAmount,
-                    selectedQuest.maxAmount + 1
-                );
+            int amount = random.Next(
+                selectedQuest.minAmount,
+                selectedQuest.maxAmount + 1
+            );
 
-            SetQuestUI(
-                questItems[i],
-                selectedQuest.title,
-                amount
+            generatedQuests.Add(
+                new QuestDefinition
+                {
+                    title = selectedQuest.title,
+                    minAmount = selectedQuest.minAmount,
+                    maxAmount = selectedQuest.maxAmount,
+                    targetAmount = amount
+                }
             );
         }
 
-        Debug.Log(
-            $"Generated {questItems.Count} unique quests " +
-            $"for {date}"
+        currentDate = date;
+        currentUsername = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(currentUsername))
+        {
+            Debug.LogError("Cannot load daily quests without a username.");
+            return;
+        }
+
+        FBDailyQuest.Instance.EnsureDailyQuest(
+            date,
+            generatedQuests,
+            ApplyQuestDocument,
+            error => Debug.LogError(error)
         );
     }
 
-    // =========================================================
-    // UI
-    // =========================================================
+    private void ApplyQuestDocument(Dictionary<string, object> document)
+    {
+        for (int index = 0; index < 5; index++)
+        {
+            if (!document.TryGetValue(
+                    $"quest{index + 1}",
+                    out object questValue
+                ))
+            {
+                continue;
+            }
+
+            Dictionary<string, object> quest =
+                questValue as Dictionary<string, object>;
+            if (quest == null)
+                continue;
+
+            string title = FirebaseDataHelper.GetString(quest, "title");
+            int amount = GetInt(quest, "amount");
+            if (string.IsNullOrWhiteSpace(title) || amount < 0)
+                continue;
+
+            questTargets[index] = amount;
+            SetQuestUI(
+                questItems[index],
+                title,
+                amount,
+                questProgress[index]
+            );
+        }
+
+        FBDailyQuest.Instance.LoadUserProgress(
+            currentDate,
+            currentUsername,
+            ApplyProgress,
+            error => Debug.LogError(error)
+        );
+    }
+
+    private void ApplyProgress(Dictionary<string, object> progress)
+    {
+        for (int index = 0; index < 5; index++)
+        {
+            int questNumber = index + 1;
+            questProgress[index] = Mathf.Max(
+                0,
+                GetInt(progress, $"quest{questNumber}_progress")
+            );
+            questCompleted[index] = GetBool(
+                progress,
+                $"quest{questNumber}_completed"
+            );
+
+            if (questProgress[index] >= questTargets[index])
+            {
+                questProgress[index] = questTargets[index];
+                if (!questCompleted[index])
+                {
+                    questCompleted[index] = true;
+                    SaveQuestState(index);
+                }
+            }
+
+            SetQuestProgressUI(index);
+        }
+    }
+
+    public void AddQuestProgress(int questNumber, int amount = 1)
+    {
+        int index = questNumber - 1;
+        if (index < 0 || index >= 5)
+        {
+            Debug.LogError("Quest number must be between 1 and 5.");
+            return;
+        }
+
+        if (amount <= 0)
+            return;
+
+        if (string.IsNullOrWhiteSpace(currentDate) ||
+            string.IsNullOrWhiteSpace(currentUsername))
+        {
+            Debug.LogError("Daily quest data has not finished loading.");
+            return;
+        }
+
+        if (questCompleted[index])
+            return;
+
+        questProgress[index] = Mathf.Min(
+            questTargets[index],
+            questProgress[index] + amount
+        );
+        questCompleted[index] =
+            questProgress[index] >= questTargets[index];
+        SetQuestProgressUI(index);
+
+        Dictionary<string, object> updates =
+            new Dictionary<string, object>
+            {
+                { $"quest{questNumber}_progress", questProgress[index] },
+                { $"quest{questNumber}_completed", questCompleted[index] }
+            };
+
+        FBDailyQuest.Instance.SaveUserProgress(
+            currentDate,
+            currentUsername,
+            updates,
+            null,
+            error => Debug.LogError(error)
+        );
+    }
+
+    private void SaveQuestState(int index)
+    {
+        int questNumber = index + 1;
+        FBDailyQuest.Instance.SaveUserProgress(
+            currentDate,
+            currentUsername,
+            new Dictionary<string, object>
+            {
+                { $"quest{questNumber}_progress", questProgress[index] },
+                { $"quest{questNumber}_completed", questCompleted[index] }
+            },
+            null,
+            error => Debug.LogError(error)
+        );
+    }
+
+    public void UpdateQuestProgress(int questNumber, int amount = 1)
+    {
+        AddQuestProgress(questNumber, amount);
+    }
 
     private void SetQuestUI(
         GameObject item,
         string title,
-        int amount)
+        int amount,
+        int progress)
     {
-        Transform titleTransform =
-            item.transform.Find("name/Text");
+        Transform titleTransform = item.transform.Find("name/Text");
+        Transform amountTransform = item.transform.Find("status/Text");
 
-        Transform amountTransform =
-            item.transform.Find("status/Text");
-
-        if (titleTransform == null)
+        if (titleTransform == null || amountTransform == null)
         {
-            Debug.LogError(
-                $"Title not found in {item.name}"
-            );
-
+            Debug.LogError($"Quest UI structure is incomplete: {item.name}");
             return;
         }
 
-        if (amountTransform == null)
+        TMP_Text titleText = titleTransform.GetComponent<TMP_Text>();
+        TMP_Text amountText = amountTransform.GetComponent<TMP_Text>();
+        if (titleText == null || amountText == null)
         {
-            Debug.LogError(
-                $"Amount not found in {item.name}"
-            );
-
-            return;
-        }
-
-        TMP_Text titleText =
-            titleTransform.GetComponent<TMP_Text>();
-
-        TMP_Text amountText =
-            amountTransform.GetComponent<TMP_Text>();
-
-        if (titleText == null)
-        {
-            Debug.LogError(
-                $"Title does not contain TMP_Text: {item.name}"
-            );
-
-            return;
-        }
-
-        if (amountText == null)
-        {
-            Debug.LogError(
-                $"Amount does not contain TMP_Text: {item.name}"
-            );
-
+            Debug.LogError($"Quest UI text is missing: {item.name}");
             return;
         }
 
         titleText.text = title;
-        amountText.text = "0 / " + amount.ToString();
+        amountText.text = $"{progress} / {amount}";
+        SetQuestStatusColor(
+            questItems.IndexOf(item),
+            progress >= amount
+        );
     }
 
-    // =========================================================
-    // DETERMINISTIC DAILY SEED
-    // =========================================================
+    private void SetQuestProgressUI(int index)
+    {
+        if (index < 0 || index >= questItems.Count)
+            return;
+
+        Transform amountTransform =
+            questItems[index].transform.Find("status/Text");
+        TMP_Text amountText = amountTransform != null
+            ? amountTransform.GetComponent<TMP_Text>()
+            : null;
+
+        if (amountText != null)
+            amountText.text = $"{questProgress[index]} / {questTargets[index]}";
+
+        SetQuestStatusColor(index, questCompleted[index]);
+    }
+
+    private void SetQuestStatusColor(int index, bool completed)
+    {
+        if (index < 0 || index >= questItems.Count)
+            return;
+
+        Transform statusTransform =
+            questItems[index].transform.Find("status");
+        Image statusImage = statusTransform != null
+            ? statusTransform.GetComponent<Image>()
+            : null;
+
+        if (statusImage == null)
+        {
+            Debug.LogWarning(
+                $"Status Image not found on quest item {index + 1}."
+            );
+            return;
+        }
+
+        statusImage.color = completed
+            ? completedQuestColor
+            : incompleteQuestColor;
+    }
+
+    private string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
+    }
 
     private int CreateDailySeed(string date)
     {
         int hash = 17;
-
-        foreach (char c in date)
-        {
-            hash = hash * 31 + c;
-        }
+        foreach (char character in date)
+            hash = hash * 31 + character;
 
         return seed ^ hash;
     }
-
-    // =========================================================
-    // COUNTDOWN
-    // =========================================================
 
     private IEnumerator CountdownRoutine()
     {
         while (true)
         {
-            DateTime now =
-                ServerTimeHelper.GetUtcNow();
-
-            DateTime nextReset =
-                now.Date.AddDays(1);
-
-            TimeSpan remaining =
-                nextReset - now;
+            DateTime now = ServerTimeHelper.GetUtcNow();
+            DateTime nextReset = now.Date.AddDays(1);
+            TimeSpan remaining = nextReset - now;
 
             if (remaining.TotalSeconds <= 0)
             {
-                // Synchronize again so the new date
-                // is definitely based on server time.
                 yield return StartCoroutine(
                     ServerTimeHelper.SyncServerTimeCoroutine()
                 );
 
                 if (ServerTimeHelper.IsReady)
-                {
                     GenerateDailyQuests();
-                }
 
                 continue;
             }
 
-            countdownText.text =
-                $"{(int)remaining.TotalHours:00}:" +
-                $"{remaining.Minutes:00}:" +
-                $"{remaining.Seconds:00}";
+            if (countdownText != null)
+            {
+                countdownText.text =
+                    $"{(int)remaining.TotalHours:00}:" +
+                    $"{remaining.Minutes:00}:" +
+                    $"{remaining.Seconds:00}";
+            }
 
             yield return new WaitForSecondsRealtime(1f);
         }
+    }
+
+    private static int GetInt(
+        Dictionary<string, object> data,
+        string key)
+    {
+        if (data == null || !data.TryGetValue(key, out object value))
+            return -1;
+
+        if (value is int intValue)
+            return intValue;
+
+        return int.TryParse(value?.ToString(), out int result)
+            ? result
+            : -1;
+    }
+
+    private static bool GetBool(
+        Dictionary<string, object> data,
+        string key)
+    {
+        if (data == null || !data.TryGetValue(key, out object value))
+            return false;
+
+        if (value is bool boolValue)
+            return boolValue;
+
+        return bool.TryParse(value?.ToString(), out bool result) && result;
     }
 }

@@ -48,8 +48,14 @@ public class FBAuthentication : MonoBehaviour
 
     public Dictionary<string, object> CurrentProfile { get; private set; }
 
-    public bool IsLoggedIn =>
-        !string.IsNullOrEmpty(CurrentUserId);
+    public bool IsLoggedIn
+    {
+        get
+        {
+            RestoreCachedSession();
+            return !string.IsNullOrEmpty(CurrentUserId);
+        }
+    }
 
 
     // ============================================================
@@ -62,6 +68,7 @@ public class FBAuthentication : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            RestoreCachedSession();
         }
         else if (instance != this)
         {
@@ -763,6 +770,32 @@ public class FBAuthentication : MonoBehaviour
     {
         CurrentUserId = null;
         CurrentProfile = null;
+
+        if (DataManager.Instance != null)
+            DataManager.Instance.ClearAll();
+    }
+
+    private void RestoreCachedSession()
+    {
+        if (!string.IsNullOrEmpty(CurrentUserId) ||
+            DataManager.Instance == null)
+        {
+            return;
+        }
+
+        Dictionary<string, object> cachedProfile =
+            DataManager.Instance.GetProfile();
+
+        string cachedUserId = FirebaseDataHelper.GetString(
+            cachedProfile,
+            "userId"
+        );
+
+        if (string.IsNullOrWhiteSpace(cachedUserId))
+            return;
+
+        CurrentUserId = cachedUserId;
+        CurrentProfile = cachedProfile;
     }
 
     private void CompleteProfileLoad(

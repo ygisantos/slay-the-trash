@@ -6,6 +6,39 @@ using UnityEngine;
 
 public class FBLeaderboard : MonoBehaviour
 {
+    private static FBLeaderboard instance;
+
+    public static FBLeaderboard Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindFirstObjectByType<FBLeaderboard>();
+
+                if (instance == null)
+                {
+                    GameObject singletonPrefab =
+                        Resources.Load<GameObject>("LeaderboardManager");
+
+                    if (singletonPrefab == null)
+                    {
+                        Debug.LogError(
+                            "FBLeaderboard prefab not found in Resources folder."
+                        );
+
+                        return null;
+                    }
+
+                    GameObject clone = Instantiate(singletonPrefab);
+                    instance = clone.GetComponent<FBLeaderboard>();
+                }
+            }
+
+            return instance;
+        }
+    }
+
     public const string POINTS_COLLECTION = "Points";
 
     private static readonly string[] PointFields =
@@ -21,6 +54,19 @@ public class FBLeaderboard : MonoBehaviour
         "dun4",
         "dun5"
     };
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public static Dictionary<string, object> CreateDefaultPoints(
         string userId,

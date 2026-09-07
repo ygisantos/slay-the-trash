@@ -118,6 +118,8 @@ public class Transitioner : MonoBehaviour
     [Button]
     public void TransitionToScene(string sceneName, bool waitUntilReady = false)
     {
+        HideLoadingScreen();
+
         if (_canTransition)
         {
             StartCoroutine(TransitionOutThenLoadScene(sceneName));
@@ -147,6 +149,8 @@ public class Transitioner : MonoBehaviour
     [Button]
     public void TransitionToScene(int sceneNumber, bool waitUntilReady = false)
     {
+        HideLoadingScreen();
+
         if (_canTransition)
         {
             StartCoroutine(TransitionOutThenLoadScene(sceneNumber));
@@ -155,6 +159,12 @@ public class Transitioner : MonoBehaviour
         {
             StartCoroutine(RunCoroutineWhenCanTransition(TransitionOutThenLoadScene(sceneNumber)));
         }
+    }
+
+    private void HideLoadingScreen()
+    {
+        if (LoadingScreenManager.Instance != null)
+            LoadingScreenManager.Instance.Hide();
     }
 
     private IEnumerator TransitionOutThenLoadScene(int sceneNumber)

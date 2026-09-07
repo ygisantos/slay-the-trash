@@ -10,6 +10,8 @@ public class FirebaseManager : MonoBehaviour
     public static FirebaseManager Instance { get; private set; }
 
     private FirebaseFirestore db;
+    private bool initializationFailed;
+    private bool initializationFinished;
 
     public FirebaseFirestore DB => db;
 
@@ -38,6 +40,8 @@ public class FirebaseManager : MonoBehaviour
             {
                 if (task.IsFaulted)
                 {
+                    initializationFailed = true;
+                    initializationFinished = true;
                     Debug.LogError(
                         $"Firebase dependency check failed: {task.Exception}"
                     );
@@ -47,6 +51,8 @@ public class FirebaseManager : MonoBehaviour
 
                 if (task.IsCanceled)
                 {
+                    initializationFailed = true;
+                    initializationFinished = true;
                     Debug.LogError(
                         "Firebase dependency check was canceled."
                     );
@@ -61,6 +67,7 @@ public class FirebaseManager : MonoBehaviour
                     db = FirebaseFirestore.DefaultInstance;
 
                     IsInitialized = true;
+                    initializationFinished = true;
 
                     Debug.Log(
                         "Firebase Firestore initialized successfully."
@@ -68,6 +75,8 @@ public class FirebaseManager : MonoBehaviour
                 }
                 else
                 {
+                    initializationFailed = true;
+                    initializationFinished = true;
                     Debug.LogError(
                         $"Could not resolve Firebase dependencies: {status}"
                     );
@@ -88,7 +97,19 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => CreateDocument(
+                    collection,
+                    documentId,
+                    data,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(collection))
         {
@@ -145,7 +166,18 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => CreateDocument(
+                    collection,
+                    data,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(collection))
         {
@@ -196,7 +228,18 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => GetDocument(
+                    collection,
+                    documentId,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(collection))
         {
@@ -246,7 +289,17 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => GetCollection(
+                    collection,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(collection))
         {
@@ -288,7 +341,17 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => QueryDocuments(
+                    query,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (query == null)
         {
@@ -331,7 +394,19 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => UpdateDocument(
+                    collection,
+                    documentId,
+                    updates,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(collection))
         {
@@ -388,7 +463,18 @@ public class FirebaseManager : MonoBehaviour
         Action<string> onError = null)
     {
         if (!CheckInitialized(onError))
+        {
+            WaitForInitialization(
+                () => DeleteDocument(
+                    collection,
+                    documentId,
+                    onSuccess,
+                    onError
+                ),
+                onError
+            );
             return;
+        }
 
         if (string.IsNullOrWhiteSpace(collection))
         {
@@ -458,16 +544,38 @@ public class FirebaseManager : MonoBehaviour
 
     private bool CheckInitialized(Action<string> onError)
     {
-        if (!IsInitialized || db == null)
-        {
-            onError?.Invoke(
-                "Firebase Firestore is not initialized yet."
-            );
+        return IsInitialized && db != null;
+    }
 
-            return false;
+    private void WaitForInitialization(
+        Action operation,
+        Action<string> onError)
+    {
+        StartCoroutine(WaitForInitializationRoutine(operation, onError));
+    }
+
+    private System.Collections.IEnumerator WaitForInitializationRoutine(
+        Action operation,
+        Action<string> onError)
+    {
+        float timeout = 15f;
+        while (!IsInitialized && !initializationFinished && timeout > 0f)
+        {
+            timeout -= Time.unscaledDeltaTime;
+            yield return null;
         }
 
-        return true;
+        if (IsInitialized && db != null)
+        {
+            operation?.Invoke();
+            yield break;
+        }
+
+        onError?.Invoke(
+            initializationFailed
+                ? "Firebase dependencies could not be initialized."
+                : "Firebase Firestore initialization timed out."
+        );
     }
 
 

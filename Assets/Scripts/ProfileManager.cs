@@ -105,7 +105,39 @@ public class ProfileManager : MonoBehaviour
 
         if (profile == null || profile.Count == 0)
         {
-            Debug.LogWarning("No profile cache found.");
+            if (FBAuthentication.Instance != null &&
+                FBAuthentication.Instance.IsLoggedIn)
+            {
+                LoadingScreenManager.Instance.Show("Fetching profile...");
+                FBAuthentication.Instance.GetProfile(
+                    refreshedProfile =>
+                    {
+                        LoadingScreenManager.Instance.Hide();
+                        DataManager.Instance.SetProfile(refreshedProfile);
+                        ApplyProfile(refreshedProfile);
+                    },
+                    error =>
+                    {
+                        LoadingScreenManager.Instance.Hide();
+                        Debug.LogError(error);
+                        ReturnToLogin();
+                    }
+                );
+                return;
+            }
+
+            Debug.LogWarning("No profile cache found and no active session.");
+            ReturnToLogin();
+            return;
+        }
+
+        ApplyProfile(profile);
+    }
+
+    private void ApplyProfile(Dictionary<string, object> profile)
+    {
+        if (profile == null || profile.Count == 0)
+        {
             ReturnToLogin();
             return;
         }
