@@ -166,7 +166,16 @@ public class FBDailyQuest : MonoBehaviour
     [Button("Debug Complete Quest")]
     private void DebugCompleteQuest()
     {
-        StartCoroutine(DebugChangeProgressRoutine(true));
+        DailyQuestManager manager =
+            FindFirstObjectByType<DailyQuestManager>();
+
+        if (manager == null)
+        {
+            Debug.LogError("DailyQuestManager could not be found in the scene.");
+            return;
+        }
+
+        manager.CompleteQuestForDebug(debugQuestNumber);
     }
 
     private IEnumerator DebugChangeProgressRoutine(bool complete)
@@ -390,6 +399,12 @@ public class FBDailyQuest : MonoBehaviour
                 { "quest3_completed", false },
                 { "quest4_completed", false },
                 { "quest5_completed", false }
+                ,
+                { "quest1_rewarded", false },
+                { "quest2_rewarded", false },
+                { "quest3_rewarded", false },
+                { "quest4_rewarded", false },
+                { "quest5_rewarded", false }
             };
 
         return progress;

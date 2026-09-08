@@ -206,6 +206,14 @@ public class FBAuthentication : MonoBehaviour
                 { "username", username },
                 { "email", email },
                 { "password", password },
+                {
+                    "currencies",
+                    new Dictionary<string, object>
+                    {
+                        { "total_water", 0 },
+                        { "used_water", 0 }
+                    }
+                },
 
                 // Account status
                 { "disabled", false },
@@ -773,6 +781,94 @@ public class FBAuthentication : MonoBehaviour
 
         if (DataManager.Instance != null)
             DataManager.Instance.ClearAll();
+    }
+
+    public void AddDailyQuestReward(
+        Action onSuccess = null,
+        Action<string> onError = null)
+    {
+        if (!IsLoggedIn || CurrentProfile == null)
+        {
+            onError?.Invoke("No user is currently logged in.");
+            return;
+        }
+
+        string username = FirebaseDataHelper.GetString(
+            CurrentProfile,
+            "username"
+        );
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            onError?.Invoke("Current user has no username.");
+            return;
+        }
+
+        FBLeaderboard.Instance.UpdatePoints(
+            username,
+            new Dictionary<string, object>
+            {
+                { "dailies", FieldValue.Increment(1) }
+            },
+            () =>
+            {
+                FirebaseManager.Instance.UpdateDocument(
+                    USERS_COLLECTION,
+                    CurrentUserId,
+                    new Dictionary<string, object>
+                    {
+                        {
+                            "currencies.total_water",
+                            FieldValue.Increment(1)
+                        }
+                    },
+                    () =>
+                    {
+                        IncrementCachedReward();
+                        onSuccess?.Invoke();
+                    },
+                    onError
+                );
+            },
+            onError
+        );
+    }
+
+    private void IncrementCachedReward()
+    {
+        if (CurrentProfile == null)
+            return;
+
+        int dailies = GetInt(CurrentProfile, "dailies");
+        CurrentProfile["dailies"] = dailies + 1;
+
+        if (!CurrentProfile.TryGetValue("currencies", out object currenciesValue) ||
+            !(currenciesValue is Dictionary<string, object> currencies))
+        {
+            currencies = new Dictionary<string, object>();
+            CurrentProfile["currencies"] = currencies;
+        }
+
+        int totalWater = GetInt(currencies, "total_water");
+        currencies["total_water"] = totalWater + 1;
+
+        if (DataManager.Instance != null)
+            DataManager.Instance.SetProfile(CurrentProfile);
+    }
+
+    private static int GetInt(
+        Dictionary<string, object> data,
+        string key)
+    {
+        if (data == null || !data.TryGetValue(key, out object value))
+            return 0;
+
+        if (value is int intValue)
+            return intValue;
+
+        return int.TryParse(value?.ToString(), out int result)
+            ? result
+            : 0;
     }
 
     private void RestoreCachedSession()

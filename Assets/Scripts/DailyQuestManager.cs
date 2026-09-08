@@ -35,6 +35,8 @@ public class DailyQuestManager : MonoBehaviour
     private readonly int[] questTargets = new int[5];
     private readonly int[] questProgress = new int[5];
     private readonly bool[] questCompleted = new bool[5];
+    private readonly bool[] questRewarded = new bool[5];
+    private readonly bool[] rewardInProgress = new bool[5];
     private string currentDate;
     private string currentUsername;
 
@@ -182,18 +184,21 @@ public class DailyQuestManager : MonoBehaviour
                 progress,
                 $"quest{questNumber}_completed"
             );
+            questRewarded[index] = GetBool(
+                progress,
+                $"quest{questNumber}_rewarded"
+            );
 
             if (questProgress[index] >= questTargets[index])
             {
                 questProgress[index] = questTargets[index];
-                if (!questCompleted[index])
-                {
-                    questCompleted[index] = true;
-                    SaveQuestState(index);
-                }
+                questCompleted[index] = true;
             }
 
             SetQuestProgressUI(index);
+
+            if (questCompleted[index] && !questRewarded[index])
+                CompleteQuest(index);
         }
     }
 
@@ -227,20 +232,10 @@ public class DailyQuestManager : MonoBehaviour
             questProgress[index] >= questTargets[index];
         SetQuestProgressUI(index);
 
-        Dictionary<string, object> updates =
-            new Dictionary<string, object>
-            {
-                { $"quest{questNumber}_progress", questProgress[index] },
-                { $"quest{questNumber}_completed", questCompleted[index] }
-            };
-
-        FBDailyQuest.Instance.SaveUserProgress(
-            currentDate,
-            currentUsername,
-            updates,
-            null,
-            error => Debug.LogError(error)
-        );
+        if (questCompleted[index])
+            CompleteQuest(index);
+        else
+            SaveQuestState(index);
     }
 
     private void SaveQuestState(int index)
@@ -252,16 +247,72 @@ public class DailyQuestManager : MonoBehaviour
             new Dictionary<string, object>
             {
                 { $"quest{questNumber}_progress", questProgress[index] },
-                { $"quest{questNumber}_completed", questCompleted[index] }
+                { $"quest{questNumber}_completed", questCompleted[index] },
+                { $"quest{questNumber}_rewarded", questRewarded[index] }
             },
             null,
             error => Debug.LogError(error)
         );
     }
 
+    private void CompleteQuest(int index)
+    {
+        if (index < 0 || index >= 5 ||
+            questRewarded[index] || rewardInProgress[index])
+        {
+            return;
+        }
+
+        rewardInProgress[index] = true;
+        SaveQuestState(index);
+
+        if (FBAuthentication.Instance == null)
+        {
+            rewardInProgress[index] = false;
+            Debug.LogError("Cannot reward quest without authentication.");
+            return;
+        }
+
+        FBAuthentication.Instance.AddDailyQuestReward(
+            () =>
+            {
+                questRewarded[index] = true;
+                rewardInProgress[index] = false;
+                SaveQuestState(index);
+
+                if (DynamicPopupToast.Instance != null)
+                {
+                    DynamicPopupToast.Instance.ShowToast(
+                        "Quest completed! +1 water"
+                    );
+                }
+            },
+            error =>
+            {
+                rewardInProgress[index] = false;
+                Debug.LogError(error);
+            }
+        );
+    }
+
     public void UpdateQuestProgress(int questNumber, int amount = 1)
     {
         AddQuestProgress(questNumber, amount);
+    }
+
+    public void CompleteQuestForDebug(int questNumber)
+    {
+        int index = questNumber - 1;
+        if (index < 0 || index >= 5)
+        {
+            Debug.LogError("Quest number must be between 1 and 5.");
+            return;
+        }
+
+        questProgress[index] = questTargets[index];
+        questCompleted[index] = true;
+        SetQuestProgressUI(index);
+        CompleteQuest(index);
     }
 
     private void SetQuestUI(
