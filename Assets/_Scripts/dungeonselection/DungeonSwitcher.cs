@@ -97,6 +97,14 @@ public class DungeonSwitcher : MonoBehaviour
         for (int i = 0; i < dungeons.Length; i++)
             dungeons[i].SetActive(i == index);
 
+        if (DungeonBackgroundManager.Instance != null)
+        {
+            DungeonBackgroundManager.Instance.ShowBackground(
+                index,
+                animate
+            );
+        }
+
         // Popup animation
         if (animate)
             StartCoroutine(PopAnim(dungeons[index].transform));
