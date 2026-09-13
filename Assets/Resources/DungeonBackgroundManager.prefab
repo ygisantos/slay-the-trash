@@ -1983,6 +1983,14 @@ MonoBehaviour:
     - layer: {fileID: 6903969517773710457}
     - layer: {fileID: 6947319603628845144}
     - layer: {fileID: 5897562945187050926}
+  enabledSceneNames:
+  - CardCollectionScene
+  - DungeonSelection
+  - DUNGEON 1
+  - DUNGEON 2
+  - DUNGEON 3
+  - DUNGEON 4
+  - DUNGEON 5
   transitionCanvas: {fileID: 0}
   fadeDuration: 0.25
   minimumSpeed: 0.3

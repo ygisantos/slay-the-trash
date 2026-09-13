@@ -778,6 +778,7 @@ public class FBAuthentication : MonoBehaviour
     {
         CurrentUserId = null;
         CurrentProfile = null;
+        DungeonBackgroundManager.ResetSavedSelection();
 
         if (DataManager.Instance != null)
             DataManager.Instance.ClearAll();

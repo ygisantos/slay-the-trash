@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class DungeonBackgroundManager : MonoBehaviour
 {
@@ -58,6 +61,10 @@ public class DungeonBackgroundManager : MonoBehaviour
     [Header("Dungeon Backgrounds")]
     [SerializeField] private DungeonBackground[] backgrounds;
 
+    [Header("Enabled Scenes")]
+    [SerializeField] private List<string> enabledSceneNames =
+        new List<string>();
+
     [Header("Transition")]
     [SerializeField] private CanvasGroup transitionCanvas;
     [SerializeField] private float fadeDuration = 0.25f;
@@ -72,6 +79,12 @@ public class DungeonBackgroundManager : MonoBehaviour
     private Coroutine transitionRoutine;
 
     public int CurrentIndex => currentIndex;
+
+    public static void ResetSavedSelection()
+    {
+        PlayerPrefs.DeleteKey("selected_dungeon_index");
+        PlayerPrefs.Save();
+    }
 
     private void Awake()
     {
@@ -89,6 +102,63 @@ public class DungeonBackgroundManager : MonoBehaviour
         RandomizeLayerSettings();
         CacheLayerPositions();
         HideAllBackgrounds();
+        ApplySceneVisibility(SceneManager.GetActiveScene().name);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ApplySceneVisibility(scene.name);
+    }
+
+    private void ApplySceneVisibility(string sceneName)
+    {
+        if (!IsEnabledInScene(sceneName))
+        {
+            HideAllBackgrounds();
+            SetTransitionAlpha(0f);
+            return;
+        }
+
+        if (backgrounds == null || backgrounds.Length == 0)
+            return;
+
+        currentIndex = Mathf.Clamp(
+            PlayerPrefs.GetInt("selected_dungeon_index", 0),
+            0,
+            backgrounds.Length - 1
+        );
+
+        ShowBackground(currentIndex, false);
+    }
+
+    private bool IsEnabledInScene(string sceneName)
+    {
+        if (enabledSceneNames == null || enabledSceneNames.Count == 0)
+            return false;
+
+        foreach (string enabledSceneName in enabledSceneNames)
+        {
+            if (string.Equals(
+                    enabledSceneName?.Trim(),
+                    sceneName,
+                    StringComparison.OrdinalIgnoreCase
+                ))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void Update()
@@ -122,15 +192,33 @@ public class DungeonBackgroundManager : MonoBehaviour
 
     public void ShowBackground(int index, bool animate = true)
     {
-        if (!IsValidIndex(index))
+        ShowBackground(index, animate, null);
+    }
+
+    public void ShowBackground(
+        int index,
+        bool animate,
+        Action onComplete)
+    {
+        if (!IsEnabledInScene(SceneManager.GetActiveScene().name))
+        {
+            HideAllBackgrounds();
+            onComplete?.Invoke();
             return;
+        }
+
+        if (!IsValidIndex(index))
+        {
+            onComplete?.Invoke();
+            return;
+        }
 
         if (transitionRoutine != null)
             StopCoroutine(transitionRoutine);
 
         currentIndex = index;
         transitionRoutine = StartCoroutine(
-            ShowBackgroundRoutine(index, animate)
+            ShowBackgroundRoutine(index, animate, onComplete)
         );
     }
 
@@ -155,7 +243,10 @@ public class DungeonBackgroundManager : MonoBehaviour
         ShowBackground(previousIndex);
     }
 
-    private IEnumerator ShowBackgroundRoutine(int index, bool animate)
+    private IEnumerator ShowBackgroundRoutine(
+        int index,
+        bool animate,
+        Action onComplete)
     {
         if (animate && transitionCanvas != null)
             yield return Fade(0f, 1f);
@@ -172,6 +263,7 @@ public class DungeonBackgroundManager : MonoBehaviour
             SetTransitionAlpha(0f);
 
         transitionRoutine = null;
+        onComplete?.Invoke();
     }
 
     private IEnumerator Fade(float startAlpha, float endAlpha)
@@ -208,7 +300,15 @@ public class DungeonBackgroundManager : MonoBehaviour
             foreach (BackgroundLayer layer in background.layers)
             {
                 if (layer?.layer != null)
+                {
                     layer.startPosition = layer.layer.localPosition;
+                    layer.layer.gameObject.SetActive(true);
+
+                    Graphic[] graphics =
+                        layer.layer.GetComponentsInChildren<Graphic>(true);
+                    foreach (Graphic graphic in graphics)
+                        graphic.raycastTarget = false;
+                }
             }
         }
     }

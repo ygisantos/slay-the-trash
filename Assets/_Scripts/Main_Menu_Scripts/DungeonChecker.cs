@@ -46,7 +46,7 @@ public class DungeonChecker : MonoBehaviour
         };
 
         // Update UI text
-        requirementsText.text = $"{currentCards}/{requiredAmount} {requiredType} Cards\nTo Enter";
+        requirementsText.text = $"{currentCards}/{requiredAmount} {requiredType} Cards To Enter";
 
         // Apply transparency
         UpdateTransparency();

@@ -32,6 +32,8 @@ public class DungeonSwitcher : MonoBehaviour
     [Header("Arrows")]
     public Image leftArrow;
     public Image rightArrow;
+    public Color enabledArrowColor = Color.white;
+    public Color disabledArrowColor = new Color(1f, 1f, 1f, 0.35f);
 
     [Header("Popup Animation Settings")]
     public float popScale = 1.15f;
@@ -45,6 +47,8 @@ public class DungeonSwitcher : MonoBehaviour
     public DungeonChecker dungeonChecker5;   // ✅ NEW
 
     private DungeonChecker[] dungeonCheckers;
+    private bool isSwitching;
+    private const string SelectedDungeonKey = "selected_dungeon_index";
 
     void Start()
     {
@@ -68,14 +72,24 @@ public class DungeonSwitcher : MonoBehaviour
             dungeonChecker5
         };
 
-        ShowDungeon(0, false);
+        currentIndex = Mathf.Clamp(
+            PlayerPrefs.GetInt(SelectedDungeonKey, 0),
+            0,
+            dungeons.Length - 1
+        );
+
+        ShowDungeon(currentIndex, false);
     }
 
     public void NextDungeon()
     {
+        if (isSwitching)
+            return;
+
         if (currentIndex < dungeons.Length - 1)
         {
             currentIndex++;
+            SaveSelectedDungeon();
             SoundManager.PlaySound(SoundType.CLICK);
             ShowDungeon(currentIndex, true);
         }
@@ -83,9 +97,13 @@ public class DungeonSwitcher : MonoBehaviour
 
     public void PreviousDungeon()
     {
+        if (isSwitching)
+            return;
+
         if (currentIndex > 0)
         {
             currentIndex--;
+            SaveSelectedDungeon();
             SoundManager.PlaySound(SoundType.CLICK);
             ShowDungeon(currentIndex, true);
         }
@@ -93,6 +111,8 @@ public class DungeonSwitcher : MonoBehaviour
 
     private void ShowDungeon(int index, bool animate)
     {
+        isSwitching = animate;
+
         // Activate correct dungeon
         for (int i = 0; i < dungeons.Length; i++)
             dungeons[i].SetActive(i == index);
@@ -101,8 +121,13 @@ public class DungeonSwitcher : MonoBehaviour
         {
             DungeonBackgroundManager.Instance.ShowBackground(
                 index,
-                animate
+                animate,
+                UnlockSwitch
             );
+        }
+        else
+        {
+            UnlockSwitch();
         }
 
         // Popup animation
@@ -134,8 +159,50 @@ public class DungeonSwitcher : MonoBehaviour
 
     private void UpdateArrows()
     {
-        leftArrow.gameObject.SetActive(currentIndex > 0);
-        rightArrow.gameObject.SetActive(currentIndex < dungeons.Length - 1);
+        SetArrowState(
+            leftArrow,
+            currentIndex > 0 && !isSwitching
+        );
+        SetArrowState(
+            rightArrow,
+            currentIndex < dungeons.Length - 1 && !isSwitching
+        );
+    }
+
+    private void SetArrowState(Image arrow, bool enabled)
+    {
+        if (arrow == null)
+            return;
+
+        arrow.color = enabled
+            ? enabledArrowColor
+            : disabledArrowColor;
+
+        Button button = arrow.GetComponent<Button>();
+        if (button == null)
+            button = arrow.GetComponentInParent<Button>();
+
+        if (button != null)
+        {
+            button.interactable = enabled;
+            arrow.raycastTarget = true;
+        }
+        else
+        {
+            arrow.raycastTarget = enabled;
+        }
+    }
+
+    private void SaveSelectedDungeon()
+    {
+        PlayerPrefs.SetInt(SelectedDungeonKey, currentIndex);
+        PlayerPrefs.Save();
+    }
+
+    private void UnlockSwitch()
+    {
+        isSwitching = false;
+        UpdateArrows();
     }
 
     private IEnumerator PopAnim(Transform t)
@@ -147,7 +214,12 @@ public class DungeonSwitcher : MonoBehaviour
         while (time < popSpeed)
         {
             time += Time.deltaTime;
-            t.localScale = Vector3.Lerp(original, bigger, time / popSpeed);
+            float progress = Mathf.Clamp01(time / popSpeed);
+            t.localScale = Vector3.Lerp(
+                original,
+                bigger,
+                Mathf.SmoothStep(0f, 1f, progress)
+            );
             yield return null;
         }
 
@@ -155,7 +227,12 @@ public class DungeonSwitcher : MonoBehaviour
         while (time < popSpeed)
         {
             time += Time.deltaTime;
-            t.localScale = Vector3.Lerp(bigger, original, time / popSpeed);
+            float progress = Mathf.Clamp01(time / popSpeed);
+            t.localScale = Vector3.Lerp(
+                bigger,
+                original,
+                Mathf.SmoothStep(0f, 1f, progress)
+            );
             yield return null;
         }
     }
