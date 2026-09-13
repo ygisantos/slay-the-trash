@@ -108,13 +108,13 @@ public class PauseManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Transitioner.Instance.TransitionToScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void MainMenu()
     {
         Time.timeScale = 1f;
         SoundManager.PlaySound(SoundType.CLICK);
-        SceneManager.LoadScene("MainMenuScene");
+        Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 }

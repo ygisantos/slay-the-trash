@@ -8,13 +8,13 @@ public class OCRSceneHandlerScript : MonoBehaviour
     public void LoadAIScannerScene()
     {
         StopCameraIfRunning();
-        SceneManager.LoadScene("AIScannerScene");
+        Transitioner.Instance.TransitionToScene("AIScannerScene");
     }
 
     public void LoadBinResultScene()
     {
         StopCameraIfRunning();
-        SceneManager.LoadScene("BinResultScene");
+        Transitioner.Instance.TransitionToScene("BinResultScene");
     }
 
     private void StopCameraIfRunning()

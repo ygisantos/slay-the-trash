@@ -7,11 +7,11 @@ public class BinResultSceneHandler: MonoBehaviour
 {
     public void LoadOCRScene()
     {
-        SceneManager.LoadScene("OCRScene");
+        Transitioner.Instance.TransitionToScene("OCRScene");
     }
     
     public void LoadMainMenuScene()
     {
-        SceneManager.LoadScene("MainMenuScene");
+        Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 }

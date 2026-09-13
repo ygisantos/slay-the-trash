@@ -96,7 +96,7 @@ public class DungeonChecker : MonoBehaviour
         if (currentCards >= requiredAmount)
         {
             SoundManager.PlayMusic(SoundType.GAMEMUSIC);
-            SceneManager.LoadScene(sceneToLoad);
+            Transitioner.Instance.TransitionToScene(sceneToLoad);
         }
         else
         {

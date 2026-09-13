@@ -8,18 +8,18 @@ public class AIScannerSceneHandlerScript : MonoBehaviour
     public void LoadMainMenuScene()
     {
         StopCameraIfRunning();
-        SceneManager.LoadScene("MainMenuScene");
+        Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 
     public void LoadThrowingInstructionsScene()
     {
         StopCameraIfRunning();
-        SceneManager.LoadScene("ThrowingInstructionsScene");
+        Transitioner.Instance.TransitionToScene("ThrowingInstructionsScene");
     }
 
     public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        Transitioner.Instance.TransitionToScene(sceneName);
     }
 
     private void StopCameraIfRunning()

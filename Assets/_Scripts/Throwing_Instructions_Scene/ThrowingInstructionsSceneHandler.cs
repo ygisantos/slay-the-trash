@@ -7,21 +7,21 @@ public class ThrowingInstructionsSceneHandler: MonoBehaviour
 {
     public void LoadTrashScannerScene()
     {
-        SceneManager.LoadScene("AIScannerScene");
+        Transitioner.Instance.TransitionToScene("AIScannerScene");
     }
     
     public void LoadOCRSceneScene()
     {
-        SceneManager.LoadScene("OCRScene");
+        Transitioner.Instance.TransitionToScene("OCRScene");
     }
 
     public void LoadMainMenuScene()
     {
-        SceneManager.LoadScene("MainMenuScene");
+        Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 
     public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        Transitioner.Instance.TransitionToScene(sceneName);
     }
 }

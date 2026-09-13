@@ -13,6 +13,6 @@ public class SceneChanger : MonoBehaviour
         }
 
         // Load scene
-        SceneManager.LoadScene(sceneName);
+        Transitioner.Instance.TransitionToScene(sceneName);
     }
 }

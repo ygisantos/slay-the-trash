@@ -79,7 +79,7 @@ public class LogInCanva : MonoBehaviour
         }
 
         dynamicTxt.Success("Login successful!");
-        SceneManager.LoadScene("MainMenuScene");
+        Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 
     // --------------------------------------------------------

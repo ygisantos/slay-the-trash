@@ -48,10 +48,8 @@ public class LosePanel : MonoBehaviour
         Debug.Log("Retry button clicked - Reloading scene...");
 
         // Reload the current scene
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Transitioner.Instance.TransitionToScene(SceneManager.GetActiveScene().buildIndex);
 
-        // OR if you want to load a specific scene:
-        // SceneManager.LoadScene(gameSceneName);
     }
 
     public void OnMainMenuClicked()
@@ -59,7 +57,7 @@ public class LosePanel : MonoBehaviour
         Debug.Log("Main Menu button clicked - Loading main menu...");
 
         // Load main menu scene
-        SceneManager.LoadScene(mainMenuSceneName);
+        Transitioner.Instance.TransitionToScene(mainMenuSceneName);
     }
 
 

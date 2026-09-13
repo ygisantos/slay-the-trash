@@ -6,17 +6,17 @@ public class MainMenuHandler : MonoBehaviour
 
     public void LoadTrashScannerScene()
     {
-        SceneManager.LoadScene("AIScannerScene");
+        Transitioner.Instance.TransitionToScene("AIScannerScene");
     }
 
     public void LoadCardCollectionScene()
     {
-        SceneManager.LoadScene("CardCollectionScene");
+        Transitioner.Instance.TransitionToScene("CardCollectionScene");
     }
 
     public void LoadGame()
     {
-        SceneManager.LoadScene("UiCreation");
+        Transitioner.Instance.TransitionToScene("UiCreation");
     }
 
     public void QuitGame()

@@ -10,17 +10,17 @@ public class GameSceneHandler : MonoBehaviour
     public void ToGameMedium()
     {
         SoundManager.PlaySound(SoundType.CLICK);
-        SceneManager.LoadScene("MainGame2");
+        Transitioner.Instance.TransitionToScene("MainGame2");
     }
     public void ToGameBoss()
     {
         SoundManager.PlaySound(SoundType.CLICK);
-        SceneManager.LoadScene("MainGame3");
+        Transitioner.Instance.TransitionToScene("MainGame3");
     }
 
     public void ToGameScene (string scene)
     {
         SoundManager.PlaySound(SoundType.CLICK);
-        SceneManager.LoadScene(scene);
+        Transitioner.Instance.TransitionToScene(scene);
     }
 }

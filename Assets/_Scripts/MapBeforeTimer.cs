@@ -23,8 +23,7 @@ public class MapBeforeTimer : MonoBehaviour
 
         if (Time.time >= timeEnd)
         {
-            SceneManager.LoadScene(sceneToLoad);
-
+            Transitioner.Instance.TransitionToScene(sceneToLoad);
         }
     }
 }

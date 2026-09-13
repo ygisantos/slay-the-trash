@@ -171,7 +171,7 @@ public class ProfileManager : MonoBehaviour
             return;
         }
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
+        Transitioner.Instance.TransitionToScene("LoginScene");
     }
 
     private void UpdateProfileLabels()
@@ -456,6 +456,6 @@ public class ProfileManager : MonoBehaviour
         if (Transitioner.Instance != null)
             Transitioner.Instance.TransitionToScene("LoginScene");
         else
-            UnityEngine.SceneManagement.SceneManager.LoadScene("LoginScene");
+            Transitioner.Instance.TransitionToScene("LoginScene");
     }
 }
