@@ -484,9 +484,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraFeedDisplay: {fileID: 594414659069755566}
-  modelAsset: {fileID: 0}
   predictionText: {fileID: 9040099768141816681}
   captureButton: {fileID: 8926727268880837457}
+  modelAsset: {fileID: 5022602860645237092, guid: 1bf307b149da7394e900b3c6b2446ed2, type: 3}
   sceneHandler: {fileID: 6774779066269542801}
 --- !u!114 &6774779066269542801
 MonoBehaviour:
@@ -926,7 +926,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00012207031, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &3104317127277031017

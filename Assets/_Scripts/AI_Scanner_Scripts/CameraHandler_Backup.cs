@@ -1,10 +1,11 @@
+// Backup of CameraHandler.cs before switching to the WasteWise 8-class model (SriramRokkam/wastewise-garbage-cls).
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 using Unity.Barracuda;
 
-public class CameraHandler : MonoBehaviour
+public class CameraHandler_Backup : MonoBehaviour
 {
     [Header("UI")]
     public RawImage cameraFeedDisplay;
@@ -24,43 +25,11 @@ public class CameraHandler : MonoBehaviour
     private Model runtimeModel;
     private IWorker worker;
 
-    // Model output order: SriramRokkam/wastewise-garbage-cls
-    private readonly string[] classLabels =
+    private string[] classLabels =
     {
-        "battery",
-        "biological",
-        "cardboard",
-        "glass",
-        "metal",
+        "food waste",
         "paper",
-        "plastic",
-        "trash"
-    };
-
-    // Maps each raw model class to one of the 3 bin categories
-    private readonly string[] categoryLabels =
-    {
-        "non-bio",     // battery
-        "biological",  // biological
-        "recyclable",  // cardboard
-        "recyclable",  // glass
-        "recyclable",  // metal
-        "recyclable",  // paper
-        "recyclable",  // plastic
-        "non-bio"      // trash
-    };
-
-    // Maps each raw model class to one of the 5 display categories
-    private readonly string[] displayLabels =
-    {
-        "trash",       // battery
-        "food waste",  // biological
-        "paper",       // cardboard
-        "trash",       // glass
-        "metal",       // metal
-        "paper",       // paper
-        "plastic",     // plastic
-        "trash"        // trash
+        "plastic bottle"
     };
 
     private Texture2D reusableTexture;
@@ -544,22 +513,10 @@ public class CameraHandler : MonoBehaviour
         // LABEL
         // ============================================================
 
-        string rawLabel =
+        string label =
             predictedIndex >= 0 &&
             predictedIndex < classLabels.Length
                 ? classLabels[predictedIndex]
-                : "Unknown";
-
-        string category =
-            predictedIndex >= 0 &&
-            predictedIndex < categoryLabels.Length
-                ? categoryLabels[predictedIndex]
-                : "Unknown";
-
-        string label =
-            predictedIndex >= 0 &&
-            predictedIndex < displayLabels.Length
-                ? displayLabels[predictedIndex]
                 : "Unknown";
 
         // ============================================================
@@ -598,10 +555,7 @@ public class CameraHandler : MonoBehaviour
             textColor
         );
 
-        Debug.Log(
-            $"Predicted: {rawLabel} ({category})\n" +
-            $"Confidence: {confidencePercent:F2}%"
-        );
+        Debug.Log(displayMessage);
 
         // ============================================================
         // SAVE PREDICTION
