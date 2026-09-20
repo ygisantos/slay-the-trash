@@ -4176,7 +4176,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 799467181}
-  - {fileID: 985754951}
   - {fileID: 1032607252}
   - {fileID: 510903487}
   - {fileID: 530213663}
@@ -15225,6 +15224,7 @@ Transform:
   - {fileID: 135996198}
   - {fileID: 2061472379}
   - {fileID: 1607735870}
+  - {fileID: 985754951}
   - {fileID: 1137973498}
   - {fileID: 839297948}
   - {fileID: 264786210}
@@ -19824,7 +19824,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 17387687}
-  m_Father: {fileID: 208356737}
+  m_Father: {fileID: 625885275}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -19892,7 +19892,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1001 &994568480
 PrefabInstance:

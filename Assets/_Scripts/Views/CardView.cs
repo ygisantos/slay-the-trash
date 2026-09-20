@@ -181,17 +181,26 @@ public class CardView : MonoBehaviour
     void OnMouseEnter()
     {
         if (!interactable) return;
+        if (Interactions.Instance == null || !Interactions.Instance.PlayerCanHover()) return;
+        if (CardViewHoverSystem.Instance == null) return;
 
-        wrapper.SetActive(false);
-        Vector3 pos = new(transform.position.x, -2, 0);
+        if (wrapper != null)
+            wrapper.SetActive(false);
+
+        Vector3 pos = transform.position;
+        pos.y = -2f;
+        pos.z = transform.position.z - 0.5f;
         CardViewHoverSystem.Instance.Show(Card, pos);
-        if (!Interactions.Instance.PlayerCanHover()) return;
     }
 
     void OnMouseExit()
     {
-        if (!Interactions.Instance.PlayerCanHover() || !interactable) return;
-        CardViewHoverSystem.Instance.Hide();
-        wrapper.SetActive(true);
+        if (!interactable) return;
+        if (Interactions.Instance != null && !Interactions.Instance.PlayerCanHover()) return;
+
+        if (CardViewHoverSystem.Instance != null)
+            CardViewHoverSystem.Instance.Hide();
+        if (wrapper != null)
+            wrapper.SetActive(true);
     }
 }

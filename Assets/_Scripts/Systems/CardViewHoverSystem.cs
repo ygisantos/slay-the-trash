@@ -27,12 +27,17 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
         cardViewHoever.Setup(card);
         cardViewHoever.interactable = false;
         cardViewHoever.sg.sortingOrder = 99;
+
+        // Hover copy must not steal the mouse from the hand card (first card sits at z=0
+        // and otherwise enter/exit-loops with this preview).
+        foreach (var col in cardObject.GetComponentsInChildren<Collider>(true))
+            col.enabled = false;
+
         cardObject.SetActive(true);
     }
 
     public void Hide()
     {
-        CardViewCreator.Instance.ShowWrappers();
         if (cardObject != null)
         {
             Destroy(cardObject);

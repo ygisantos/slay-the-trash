@@ -31114,6 +31114,7 @@ Transform:
   - {fileID: 397505969}
   - {fileID: 777062155}
   - {fileID: 72643635}
+  - {fileID: 1799133726}
   - {fileID: 1947089181}
   - {fileID: 1029577656}
   - {fileID: 1644473797}
@@ -34842,7 +34843,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1747492628}
-  - {fileID: 1799133726}
   - {fileID: 258324413}
   - {fileID: 1626717701}
   - {fileID: 2068816943}
@@ -44131,7 +44131,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 136266174}
-  m_Father: {fileID: 1292282183}
+  m_Father: {fileID: 1072152672}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -44199,7 +44199,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1 &1803785263
 GameObject:
