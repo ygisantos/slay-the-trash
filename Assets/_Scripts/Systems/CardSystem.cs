@@ -160,8 +160,17 @@ public class CardSystem : Singleton<CardSystem>
 
     private void ClearAllCardsImmediate()
     {
+        if (CardViewHoverSystem.Instance != null)
+            CardViewHoverSystem.Instance.Hide();
+
+        if (Interactions.Instance != null)
+            Interactions.Instance.PlayerIsDragging = false;
+
         if (handView != null)
             handView.Clear();
+
+        if (CardViewCreator.Instance != null)
+            CardViewCreator.Instance.ClearAll();
 
         hand.Clear();
         drawPile.Clear();

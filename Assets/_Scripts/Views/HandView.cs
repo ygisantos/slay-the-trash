@@ -32,7 +32,10 @@ public class HandView : MonoBehaviour
         for (int i = cards.Count - 1; i >= 0; i--)
         {
             if (cards[i] != null)
+            {
+                cards[i].transform.DOKill();
                 Destroy(cards[i].gameObject);
+            }
         }
         cards.Clear();
     }

@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,6 +52,18 @@ public class EnemyBoardView : MonoBehaviour
         }
     }
 
+    public void PrepareForCombat()
+    {
+        gameStart = true;
+        isWin = false;
+        if (allClearedPanel != null)
+            allClearedPanel.SetActive(false);
+        if (winPanel != null)
+            winPanel.SetActive(false);
+        if (scorePanel != null && !MapManager.Instance.isBossLevel)
+            scorePanel.SetActive(false);
+    }
+
     /// ✅ If no remaining enemies, show panel
     private void CheckIfBoardCleared()
     {
@@ -65,19 +77,7 @@ public class EnemyBoardView : MonoBehaviour
             }
         }
 
-        if (allClearedPanel != null)
-            allClearedPanel.SetActive(!anyChild);
-        if (scorePanel != null && MapManager.Instance.isBossLevel && !isWin)
-        {
-            if (!anyChild)
-            {
-                scorePanel.SetActive(true);
-                isWin = true;
-            }
-        }
-        if (winPanel != null && MapManager.Instance.isBossLevel)
-            winPanel.SetActive(!anyChild);
-        EnemyManager.Instance.isLevelCleared = anyChild;
+        EnemyManager.Instance.isLevelCleared = !anyChild;
         bool boardEmpty = !anyChild && EnemyViews.Count == 0;
         if (boardEmpty && gameStart)
         {
@@ -93,5 +93,16 @@ public class EnemyBoardView : MonoBehaviour
 
         if (CardSystem.Instance != null)
             CardSystem.Instance.EndCombat();
+
+        if (allClearedPanel != null)
+            allClearedPanel.SetActive(true);
+
+        if (scorePanel != null && MapManager.Instance.isBossLevel && !isWin)
+        {
+            scorePanel.SetActive(true);
+            isWin = true;
+        }
+        if (winPanel != null && MapManager.Instance.isBossLevel)
+            winPanel.SetActive(true);
     }
 }

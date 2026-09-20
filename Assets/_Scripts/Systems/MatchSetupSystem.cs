@@ -38,7 +38,8 @@ public class MatchSetupSystem : MonoBehaviour
     {
         enemyDatas = EnemyManager.Instance.GetEnemyDataList(MapManager.Instance.level);
         EnemySystem.Instance.Setup(enemyDatas);
-        enemy.gameStart = true;
+        if (enemy != null)
+            enemy.PrepareForCombat();
     }
 
 }

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Rendering;
 using TMPro;
+using DG.Tweening;
 
 public class CardView : MonoBehaviour
 {
@@ -202,5 +203,26 @@ public class CardView : MonoBehaviour
             CardViewHoverSystem.Instance.Hide();
         if (wrapper != null)
             wrapper.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        if (isDragging)
+        {
+            isDragging = false;
+            if (Interactions.Instance != null)
+                Interactions.Instance.PlayerIsDragging = false;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        transform.DOKill();
+        if (isDragging)
+        {
+            isDragging = false;
+            if (Interactions.Instance != null)
+                Interactions.Instance.PlayerIsDragging = false;
+        }
     }
 }

@@ -16,6 +16,20 @@ public class CardViewCreator : Singleton<CardViewCreator>
         cardViewList.Add(cardView);
         return cardView;
     }
+    public void ClearAll()
+    {
+        CleanList();
+        foreach (CardView card in cardViewList)
+        {
+            if (card != null)
+            {
+                card.transform.DOKill();
+                Destroy(card.gameObject);
+            }
+        }
+        cardViewList.Clear();
+    }
+
     public void CleanList()
     {
         cardViewList.RemoveAll(c => c == null);
@@ -50,5 +64,4 @@ public class CardViewCreator : Singleton<CardViewCreator>
             card.wrapper.SetActive(true);
         }
     }
-
 }
