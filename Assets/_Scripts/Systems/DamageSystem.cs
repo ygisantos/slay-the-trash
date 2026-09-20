@@ -18,9 +18,17 @@ public class DamageSystem : MonoBehaviour
     {
         foreach (var target in dealDamageGA.Targets)
         {
+            // Guard against null or destroyed targets (e.g., enemy killed itself earlier)
+            if (target == null) continue;
+
             target.Damage(dealDamageGA.Amount);
-            Instantiate(damageVFX, target.transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(0.15f);
+            // The target may have been destroyed by Damage, so verify before accessing transform
+            if (target != null)
+            {
+                Instantiate(damageVFX, target.transform.position, Quaternion.identity);
+                yield return new WaitForSeconds(0.15f);
+            }
+
             if (target.CurrentHealth <= 0)
             {
                 if (target is EnemyView enemyView)

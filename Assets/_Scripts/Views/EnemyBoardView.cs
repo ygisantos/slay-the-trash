@@ -88,7 +88,7 @@ public class EnemyBoardView : MonoBehaviour
 
     private IEnumerator EndCombatWhenIdle()
     {
-        while (ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming)
+        while (ActionSystem.Instance != null && (ActionSystem.Instance.IsPerforming || EnemyViews.Count > 0))
             yield return null;
 
         if (CardSystem.Instance != null)
