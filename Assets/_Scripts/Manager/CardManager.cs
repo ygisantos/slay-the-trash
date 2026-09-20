@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CardManager : MonoBehaviour
@@ -12,7 +12,6 @@ public class CardManager : MonoBehaviour
     [Header("Runtime Pool (Hidden)")]
     [SerializeField] private List<CardPoolEntry> runtimePool = new List<CardPoolEntry>();
 
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -23,37 +22,70 @@ public class CardManager : MonoBehaviour
 
         Instance = this;
     }
+
     private void Start()
     {
-        if(DeckManager.instance.cardNames.Count != 0)
-            PullDeckManagerData();
+        PullDeckManagerData();
     }
 
-    private void PullDeckManagerData()
+    private void OnEnable()
     {
-        if (DeckManager.instance == null) return;
-
-        var names = DeckManager.instance.cardNames;
-
-        originalPool.cards.Clear();
-        foreach (var n in names)
-            originalPool.cards.Add(new CardPoolEntry(n, 1));
-        originalPool.cards.Add(new CardPoolEntry("Scavenge", 5));
-        ResetRuntimePool();
+        DeckManager.OnDeckUpdated += OnDeckUpdated;
     }
 
+    private void OnDisable()
+    {
+        DeckManager.OnDeckUpdated -= OnDeckUpdated;
+    }
 
-    /// <summary>s
-    /// Copies the original CardPool into the runtime pool.
+    private void OnDeckUpdated()
+    {
+        PullDeckManagerData();
+    }
+
+    public void PullDeckManagerData()
+    {
+        runtimePool.Clear();
+
+        DeckManager deck = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
+
+        if (deck != null && deck.cardNames != null && deck.cardNames.Count > 0)
+        {
+            var cardCounts = new Dictionary<string, int>();
+            foreach (var name in deck.cardNames)
+            {
+                if (string.IsNullOrWhiteSpace(name)) continue;
+                if (!cardCounts.ContainsKey(name))
+                    cardCounts[name] = 0;
+                cardCounts[name]++;
+            }
+
+            foreach (var kvp in cardCounts)
+            {
+                runtimePool.Add(new CardPoolEntry(kvp.Key, kvp.Value));
+            }
+        }
+
+        // Always include basic starter cards
+        runtimePool.Add(new CardPoolEntry("Scavenge", 5));
+    }
+
+    /// <summary>
+    /// Refills the runtime pool with unlocked cards.
     /// </summary>
     private void ResetRuntimePool()
     {
-        if (originalPool == null) return;
-        runtimePool = new List<CardPoolEntry>(originalPool.cards);
+        PullDeckManagerData();
     }
+
     public List<CardData> GetCardDataList(int count)
     {
         List<CardData> result = new List<CardData>();
+
+        if (runtimePool.Count == 0)
+        {
+            ResetRuntimePool();
+        }
 
         for (int i = 0; i < count; i++)
         {
@@ -61,6 +93,9 @@ public class CardManager : MonoBehaviour
             {
                 ResetRuntimePool();
             }
+
+            if (runtimePool.Count == 0)
+                break;
 
             int randomIndex = Random.Range(0, runtimePool.Count);
             var entry = runtimePool[randomIndex];
@@ -84,7 +119,7 @@ public class CardManager : MonoBehaviour
                 runtimePool[randomIndex] = entry;
             }
 
-            // When 10 entries left, refill
+            // When only 1 entry left, refill
             if (runtimePool.Count <= 1)
             {
                 ResetRuntimePool();
@@ -99,13 +134,15 @@ public class CardManager : MonoBehaviour
     /// </summary>
     private CardData FindCardData(string name)
     {
+        if (library == null || library.cards == null) return null;
+
         foreach (var c in library.cards)
         {
             if (c.Name == name)
                 return c.Data;
         }
 
-        Debug.LogWarning($"[CardManager] Card not found in pool: {name}");
+        Debug.LogWarning($"[CardManager] Card not found in library: {name}");
         return null;
     }
 }

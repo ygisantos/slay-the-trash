@@ -16,7 +16,8 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private List<RarityTypes> cardRarity;
     private List<(string trashType, string cardName, int rarity)> cardEntries = new();
     public static DeckManager instance { get; private set; }
-    public List<string> cardNames;
+    public static event Action OnDeckUpdated;
+    public List<string> cardNames = new List<string>();
 
     public enum RarityTypes
     {
@@ -67,6 +68,7 @@ public class DeckManager : MonoBehaviour
                 cardEntries = cards;
                 UpdateDeck();
                 UpdateCardNames();
+                OnDeckUpdated?.Invoke();
             },
             error => Debug.LogError($"Failed to load card collection: {error}")
         );
