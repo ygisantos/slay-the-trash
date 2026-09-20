@@ -78,10 +78,20 @@ public class EnemyBoardView : MonoBehaviour
         if (winPanel != null && MapManager.Instance.isBossLevel)
             winPanel.SetActive(!anyChild);
         EnemyManager.Instance.isLevelCleared = anyChild;
-        if (!anyChild)
+        bool boardEmpty = !anyChild && EnemyViews.Count == 0;
+        if (boardEmpty && gameStart)
         {
-            EnemyTurnGA enemyTurnGA = new();
-            ActionSystem.Instance.Perform(enemyTurnGA); 
+            gameStart = false;
+            StartCoroutine(EndCombatWhenIdle());
         }
+    }
+
+    private IEnumerator EndCombatWhenIdle()
+    {
+        while (ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming)
+            yield return null;
+
+        if (CardSystem.Instance != null)
+            CardSystem.Instance.EndCombat();
     }
 }

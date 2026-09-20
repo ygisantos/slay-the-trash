@@ -22,9 +22,17 @@ public class MatchSetupSystem : MonoBehaviour
     public void StartGame()
     {
         EnemyWaves();
-        CardSystem.Instance.Setup(CardManager.Instance.GetCardDataList(5));
+        CardSystem.Instance.BeginCombat(CardManager.Instance.GetCardDataList(10));
         DrawCardsGA drawCardsGA = new(5);
         ActionSystem.Instance.Perform(drawCardsGA);
+    }
+
+    public void EndCombat()
+    {
+        if (enemy != null)
+            enemy.gameStart = false;
+        if (CardSystem.Instance != null)
+            CardSystem.Instance.EndCombat();
     }
     public void EnemyWaves()
     {

@@ -7,9 +7,10 @@ public class ActionSystem : Singleton<ActionSystem>
 {
     private List<GameAction> reactions = null;
     public bool IsPerforming { get; private set; } = false;
-    private static Dictionary<Type, List<Action<GameAction>>> preSubs = new();
-    private static Dictionary<Type, List<Action<GameAction>>> postSubs = new();
+    private static Dictionary<Type, List<(Delegate source, Action<GameAction> wrapped)>> preSubs = new();
+    private static Dictionary<Type, List<(Delegate source, Action<GameAction> wrapped)>> postSubs = new();
     private static Dictionary<Type, Func<GameAction, IEnumerator>> performers = new();
+
     public void Perform(GameAction action, System.Action OnPerformFinished = null)
     {
         if (IsPerforming) return;
@@ -51,21 +52,23 @@ public class ActionSystem : Singleton<ActionSystem>
         }
     }
 
-    private void PerformSubscribers(GameAction action, Dictionary<Type, List<Action<GameAction>>> subs)
+    private void PerformSubscribers(GameAction action, Dictionary<Type, List<(Delegate source, Action<GameAction> wrapped)>> subs)
     {
         Type type = action.GetType();
         if (subs.ContainsKey(type))
         {
-            foreach (var sub in subs[type])
+            foreach (var sub in subs[type].ToArray())
             {
-                sub(action);
+                sub.wrapped(action);
             }
         }
     }
 
     private IEnumerator PerformReactions()
     {
-        foreach (var reaction in reactions)
+        if (reactions == null) yield break;
+        var pending = new List<GameAction>(reactions);
+        foreach (var reaction in pending)
         {
             yield return Flow(reaction);
         }
@@ -87,25 +90,27 @@ public class ActionSystem : Singleton<ActionSystem>
 
     public static void SubscribeReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction
     {
-        Dictionary<Type, List<Action<GameAction>>> subs = timing == ReactionTiming.PRE ? preSubs : postSubs;
+        Dictionary<Type, List<(Delegate source, Action<GameAction> wrapped)>> subs =
+            timing == ReactionTiming.PRE ? preSubs : postSubs;
+        Type type = typeof(T);
+        if (!subs.ContainsKey(type))
+            subs.Add(type, new());
+
+        foreach (var item in subs[type])
+        {
+            if (item.source.Equals(reaction))
+                return;
+        }
+
         void wrappedReaction(GameAction action) => reaction((T)action);
-        if (subs.ContainsKey(typeof(T)))
-        {
-            subs[typeof(T)].Add(wrappedReaction);
-        }
-        else
-        {
-            subs.Add(typeof(T), new());
-            subs[typeof(T)].Add(wrappedReaction);
-        }
+        subs[type].Add((reaction, wrappedReaction));
     }
     public static void UnSubscribeReaction<T>(Action<T> reaction,  ReactionTiming timing) where T : GameAction
     {
-        Dictionary<Type, List<Action<GameAction>>> subs = timing == ReactionTiming.PRE ? preSubs : postSubs;
-        if (subs.ContainsKey(typeof(T)))
-        {
-            void wrappedReaction(GameAction action) => reaction((T)action);
-            subs[typeof(T)].Remove(wrappedReaction);
-        }
+        Dictionary<Type, List<(Delegate source, Action<GameAction> wrapped)>> subs =
+            timing == ReactionTiming.PRE ? preSubs : postSubs;
+        Type type = typeof(T);
+        if (!subs.ContainsKey(type)) return;
+        subs[type].RemoveAll(item => item.source.Equals(reaction));
     }
 }

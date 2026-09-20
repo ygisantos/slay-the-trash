@@ -27,6 +27,16 @@ public class HandView : MonoBehaviour
         return cardView;
     }
 
+    public void Clear()
+    {
+        for (int i = cards.Count - 1; i >= 0; i--)
+        {
+            if (cards[i] != null)
+                Destroy(cards[i].gameObject);
+        }
+        cards.Clear();
+    }
+
     private CardView GetCardView(Card card)
     {
         return cards.Where(cardView => cardView.Card == card).FirstOrDefault();

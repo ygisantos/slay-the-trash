@@ -7,6 +7,8 @@ public class TestSystem : MonoBehaviour
 
     private void Start()
     {
-        CardSystem.Instance.Setup(deckData);
+        if (CardSystem.Instance == null) return;
+        CardSystem.Instance.BeginCombat(deckData);
+        ActionSystem.Instance.Perform(new DrawCardsGA(5));
     }
 }

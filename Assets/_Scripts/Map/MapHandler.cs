@@ -148,14 +148,7 @@ public class MapHandler : MonoBehaviour
         switch(mapView.mapName)
         {
             case "Enemy":
-                if (MapManager.Instance.level == 1)
-                {
-                    matchSetupSystem.StartGame();
-                }
-                else
-                {
-                    matchSetupSystem.EnemyWaves();
-                }
+                matchSetupSystem.StartGame();
                 break;
             case "Event":
                 QuestionManager.Instance.QuestionActivate();
@@ -165,8 +158,8 @@ public class MapHandler : MonoBehaviour
                 SpawnHealthAtPlayer();
                 break;
             case "Boss":
-                matchSetupSystem.EnemyWaves();
                 MapManager.Instance.isBossLevel = true;
+                matchSetupSystem.StartGame();
                 break;
             default:
                 Debug.Log(mapView.mapName);
