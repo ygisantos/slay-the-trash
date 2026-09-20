@@ -428,7 +428,8 @@ public class FBDailyQuest : MonoBehaviour
                 { "title", quest.title },
                 { "minAmount", quest.minAmount },
                 { "maxAmount", quest.maxAmount },
-                { "amount", quest.targetAmount }
+                { "amount", quest.targetAmount },
+                { "wasteType", quest.wasteType ?? "" }
             };
         }
 

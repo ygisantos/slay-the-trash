@@ -150,4 +150,10 @@ public class DialogueManager : MonoBehaviour
         if (negativeButton != null)
             negativeButton.gameObject.SetActive(false);
     }
+
+    // Single-string adapter so CameraHandler.OnScanResultMessage can bind to this directly in the Inspector.
+    public void ShowScanResult(string message)
+    {
+        ShowSuccessDialog(message);
+    }
 }

@@ -6,6 +6,15 @@ using Unity.Barracuda;
 
 public class CameraHandler : MonoBehaviour
 {
+    // How the scanner should react once a prediction is made.
+    // Collection: legacy flow, transitions to ThrowingInstructionsScene (add new collection).
+    // DailyQuest: stays in this modal and reports the result directly instead of changing scenes.
+    public enum ScanMode
+    {
+        Collection,
+        DailyQuest
+    }
+
     [Header("UI")]
     public RawImage cameraFeedDisplay;
     public Text predictionText;
@@ -16,6 +25,9 @@ public class CameraHandler : MonoBehaviour
 
     [Header("Scene")]
     public AIScannerSceneHandlerScript sceneHandler;
+
+    [Header("Scan Mode")]
+    public ScanMode scanMode = ScanMode.Collection;
 
     private WebCamTexture webCamTexture;
     private bool isCameraReady = false;
@@ -73,10 +85,38 @@ public class CameraHandler : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(InitializeCameraAndAI());
+        StartCoroutine(InitializeAI());
+        StartCamera();
     }
 
-    IEnumerator InitializeCameraAndAI()
+    // Restarts the camera whenever this prefab is re-enabled (e.g. modal reopened).
+    void OnEnable()
+    {
+        if (isAiInitialized)
+        {
+            StartCamera();
+        }
+    }
+
+    private bool isAiInitialized = false;
+
+    // ================================================================
+    // START/RESTART CAMERA (safe to call again, e.g. when a modal reopens)
+    // ================================================================
+
+    private Coroutine cameraRoutine;
+
+    public void StartCamera()
+    {
+        if (cameraRoutine != null)
+        {
+            StopCoroutine(cameraRoutine);
+        }
+
+        cameraRoutine = StartCoroutine(InitializeCamera());
+    }
+
+    IEnumerator InitializeCamera()
     {
         // ============================================================
         // CAMERA PERMISSION
@@ -103,29 +143,31 @@ public class CameraHandler : MonoBehaviour
         }
 
         // ============================================================
-        // SELECT CAMERA
+        // START CAMERA (reuse the existing device if already created)
         // ============================================================
 
-        WebCamDevice device = WebCamTexture.devices[0];
-
-        foreach (var camDevice in WebCamTexture.devices)
+        if (webCamTexture == null)
         {
-            if (!camDevice.isFrontFacing)
+            WebCamDevice device = WebCamTexture.devices[0];
+
+            foreach (var camDevice in WebCamTexture.devices)
             {
-                device = camDevice;
-                break;
+                if (!camDevice.isFrontFacing)
+                {
+                    device = camDevice;
+                    break;
+                }
             }
+
+            webCamTexture = new WebCamTexture(device.name);
+
+            cameraFeedDisplay.texture = webCamTexture;
         }
 
-        // ============================================================
-        // START CAMERA
-        // ============================================================
-
-        webCamTexture = new WebCamTexture(device.name);
-
-        cameraFeedDisplay.texture = webCamTexture;
-
-        webCamTexture.Play();
+        if (!webCamTexture.isPlaying)
+        {
+            webCamTexture.Play();
+        }
 
         // Wait for camera initialization
         while (webCamTexture.width <= 16 ||
@@ -142,7 +184,14 @@ public class CameraHandler : MonoBehaviour
         isCameraReady = true;
 
         ApplyCameraFeedDisplaySettings();
+    }
 
+    // ================================================================
+    // LOAD AI MODEL (runs once)
+    // ================================================================
+
+    IEnumerator InitializeAI()
+    {
         // ============================================================
         // CHECK BARRACUDA MODEL
         // ============================================================
@@ -218,6 +267,8 @@ public class CameraHandler : MonoBehaviour
             TextureFormat.RGB24,
             false
         );
+
+        isAiInitialized = true;
     }
 
     // ================================================================
@@ -248,8 +299,8 @@ public class CameraHandler : MonoBehaviour
             ) * cameraSizeMult;
 
         // Rotate 180° CCW and mirror horizontally
-        cameraFeedDisplay.rectTransform.localEulerAngles =
-            new Vector3(0, 180, 180);
+        // cameraFeedDisplay.rectTransform.localEulerAngles =
+        //     new Vector3(0, 180, 180);
     }
 
     // ================================================================
@@ -648,10 +699,22 @@ public class CameraHandler : MonoBehaviour
         }
 
         // ============================================================
-        // LOAD THROWING INSTRUCTIONS
+        // CONTINUE BASED ON SCAN MODE
         // ============================================================
 
-        sceneHandler?.LoadThrowingInstructionsScene();
+        if (scanMode == ScanMode.DailyQuest)
+        {
+            // Stay in the modal; update quest progress and show the result directly.
+            DailyQuestManager questManager = FindFirstObjectByType<DailyQuestManager>();
+            questManager?.AddProgressForScan(rawLabel, category, label, confidencePercent);
+
+            DialogueManager.Instance?.ShowScanResult($"You scanned: {label}!");
+        }
+        else
+        {
+            // Legacy "add new collection" flow, unchanged.
+            sceneHandler?.LoadThrowingInstructionsScene();
+        }
     }
 
     // ================================================================
@@ -680,16 +743,7 @@ public class CameraHandler : MonoBehaviour
 
     void OnDisable()
     {
-        if (webCamTexture != null &&
-            webCamTexture.isPlaying)
-        {
-            webCamTexture.Stop();
-
-            isCameraReady = false;
-        }
-
-        worker?.Dispose();
-        worker = null;
+        StopCamera();
     }
 
     // ================================================================
@@ -765,6 +819,8 @@ public class CameraHandler : MonoBehaviour
             Destroy(reusableTexture);
             reusableTexture = null;
         }
+
+        StopCamera();
     }
 
     // ================================================================

@@ -256,6 +256,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1683354338 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6774779066269542801, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
+  m_PrefabInstance: {fileID: 135106824098863842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32359f17686260c49ade63c8295ca4f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1683354343 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
@@ -344,6 +355,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3206046775301631623, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1683354338}
+    - target: {fileID: 3206046775301631623, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadScene
+      objectReference: {fileID: 0}
     - target: {fileID: 3273889324804996761, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_Name
       value: UI

@@ -8,9 +8,14 @@ using UnityEngine.UI;
 [Serializable]
 public class QuestDefinition
 {
+    // Use {0} as a placeholder for the rolled target amount, e.g. "Scan {0} Plastic Items".
     public string title;
     public int minAmount;
     public int maxAmount;
+
+    // Matched (case-insensitive) against the scanner's rawLabel/category/displayLabel.
+    // Leave empty to accept any scanned item.
+    public string wasteType;
     [HideInInspector] public int targetAmount;
 }
 
@@ -20,7 +25,20 @@ public class DailyQuestManager : MonoBehaviour
     [SerializeField] private List<GameObject> questItems = new();
 
     [Header("Possible Quests")]
-    [SerializeField] private List<QuestDefinition> possibleQuests = new();
+    [SerializeField]
+    private List<QuestDefinition> possibleQuests = new()
+    {
+        new QuestDefinition { title = "Scan {0} Plastic Items", minAmount = 2, maxAmount = 4, wasteType = "plastic" },
+        new QuestDefinition { title = "Scan {0} Paper Items", minAmount = 2, maxAmount = 4, wasteType = "paper" },
+        new QuestDefinition { title = "Scan {0} Metal Items", minAmount = 1, maxAmount = 3, wasteType = "metal" },
+        new QuestDefinition { title = "Scan {0} Glass Items", minAmount = 1, maxAmount = 3, wasteType = "glass" },
+        new QuestDefinition { title = "Scan {0} Cardboard Items", minAmount = 1, maxAmount = 3, wasteType = "cardboard" },
+        new QuestDefinition { title = "Scan {0} Battery Items", minAmount = 1, maxAmount = 2, wasteType = "battery" },
+        new QuestDefinition { title = "Scan {0} Food Waste Items", minAmount = 2, maxAmount = 4, wasteType = "biological" },
+        new QuestDefinition { title = "Scan {0} Trash Items", minAmount = 2, maxAmount = 4, wasteType = "trash" },
+        new QuestDefinition { title = "Recycle {0} Items", minAmount = 3, maxAmount = 6, wasteType = "recyclable" },
+        new QuestDefinition { title = "Scan Any {0} Items", minAmount = 3, maxAmount = 6, wasteType = "" }
+    };
 
     [Header("Settings")]
     [SerializeField] private int seed = 12345;
@@ -37,6 +55,7 @@ public class DailyQuestManager : MonoBehaviour
     private readonly bool[] questCompleted = new bool[5];
     private readonly bool[] questRewarded = new bool[5];
     private readonly bool[] rewardInProgress = new bool[5];
+    private readonly string[] questWasteTypes = new string[5];
     private string currentDate;
     private string currentUsername;
 
@@ -108,9 +127,10 @@ public class DailyQuestManager : MonoBehaviour
             generatedQuests.Add(
                 new QuestDefinition
                 {
-                    title = selectedQuest.title,
+                    title = string.Format(selectedQuest.title, amount),
                     minAmount = selectedQuest.minAmount,
                     maxAmount = selectedQuest.maxAmount,
+                    wasteType = selectedQuest.wasteType,
                     targetAmount = amount
                 }
             );
@@ -155,6 +175,7 @@ public class DailyQuestManager : MonoBehaviour
                 continue;
 
             questTargets[index] = amount;
+            questWasteTypes[index] = FirebaseDataHelper.GetString(quest, "wasteType");
             SetQuestUI(
                 questItems[index],
                 title,
@@ -298,6 +319,31 @@ public class DailyQuestManager : MonoBehaviour
     public void UpdateQuestProgress(int questNumber, int amount = 1)
     {
         AddQuestProgress(questNumber, amount);
+    }
+
+    // Called from CameraHandler.OnScanCompleted. Adds progress to every active,
+    // incomplete quest whose wasteType matches the scanned item (empty wasteType = matches any item).
+    public void AddProgressForScan(
+        string rawLabel,
+        string category,
+        string displayLabel,
+        float confidencePercent)
+    {
+        for (int index = 0; index < 5; index++)
+        {
+            if (questCompleted[index])
+                continue;
+
+            string wasteType = questWasteTypes[index];
+            bool matches =
+                string.IsNullOrWhiteSpace(wasteType) ||
+                string.Equals(wasteType, rawLabel, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(wasteType, category, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(wasteType, displayLabel, StringComparison.OrdinalIgnoreCase);
+
+            if (matches)
+                AddQuestProgress(index + 1);
+        }
     }
 
     public void CompleteQuestForDebug(int questNumber)
