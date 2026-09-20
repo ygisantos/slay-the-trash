@@ -352,10 +352,18 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5092410709535159788, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
-      propertyPath: modelAsset
-      value: 
-      objectReference: {fileID: 5022602860645237092, guid: 0f0209b69ae70894a86b81d7f8309255, type: 3}
+    - target: {fileID: 4707128620131813108, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4707128620131813108, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4707128620131813108, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

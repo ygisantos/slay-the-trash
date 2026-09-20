@@ -486,8 +486,24 @@ MonoBehaviour:
   cameraFeedDisplay: {fileID: 594414659069755566}
   predictionText: {fileID: 9040099768141816681}
   captureButton: {fileID: 8926727268880837457}
-  modelAsset: {fileID: 5022602860645237092, guid: 1bf307b149da7394e900b3c6b2446ed2, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: ef2b3eca2808c954eb3591395db5346e, type: 3}
   sceneHandler: {fileID: 6774779066269542801}
+  categoryLabels:
+  - non-bio
+  - non-bio
+  - biological
+  - non-bio
+  - recyclable
+  - recyclable
+  - recyclable
+  displayLabels:
+  - metal
+  - glass
+  - food waste
+  - trash
+  - paper
+  - plastic
+  - plastic
 --- !u!114 &6774779066269542801
 MonoBehaviour:
   m_ObjectHideFlags: 0

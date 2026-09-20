@@ -37,8 +37,10 @@ public class CameraHandler : MonoBehaviour
         "trash"
     };
 
-    // Maps each raw model class to one of the 3 bin categories
-    private readonly string[] categoryLabels =
+    // Maps each raw model class (by index) to one of the 3 bin categories
+    [Header("Label Mapping (edit when swapping models)")]
+    [SerializeField]
+    private string[] categoryLabels =
     {
         "non-bio",     // battery
         "biological",  // biological
@@ -50,8 +52,9 @@ public class CameraHandler : MonoBehaviour
         "non-bio"      // trash
     };
 
-    // Maps each raw model class to one of the 5 display categories
-    private readonly string[] displayLabels =
+    // Maps each raw model class (by index) to one of the 5 display categories
+    [SerializeField]
+    private string[] displayLabels =
     {
         "trash",       // battery
         "food waste",  // biological
