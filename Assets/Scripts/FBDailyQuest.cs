@@ -31,6 +31,11 @@ public class FBDailyQuest : MonoBehaviour
 
     public const string COLLECTION = "daily_quest";
 
+    // Bump this whenever CreateQuestDocument's shape changes (e.g. adding wasteType),
+    // so existing documents created before the change get regenerated instead of
+    // silently missing the new fields.
+    private const int CURRENT_SCHEMA_VERSION = 2;
+
     [Header("Inspector Debug")]
     [SerializeField] private int debugQuestNumber = 1;
     [SerializeField] private int debugProgress = 1;
@@ -259,8 +264,14 @@ public class FBDailyQuest : MonoBehaviour
 
                     if (task.Result.Exists)
                     {
-                        onSuccess?.Invoke(task.Result.ToDictionary());
-                        return;
+                        Dictionary<string, object> existingData = task.Result.ToDictionary();
+                        int existingVersion = GetSchemaVersion(existingData);
+
+                        if (existingVersion >= CURRENT_SCHEMA_VERSION)
+                        {
+                            onSuccess?.Invoke(existingData);
+                            return;
+                        }
                     }
 
                     Dictionary<string, object> data =
@@ -417,7 +428,8 @@ public class FBDailyQuest : MonoBehaviour
         Dictionary<string, object> data =
             new Dictionary<string, object>
             {
-                { "date", date }
+                { "date", date },
+                { "schemaVersion", CURRENT_SCHEMA_VERSION }
             };
 
         for (int index = 0; index < 5; index++)
@@ -434,6 +446,19 @@ public class FBDailyQuest : MonoBehaviour
         }
 
         return data;
+    }
+
+    private static int GetSchemaVersion(Dictionary<string, object> data)
+    {
+        if (data == null || !data.TryGetValue("schemaVersion", out object value))
+            return 0;
+
+        return value switch
+        {
+            long longValue => (int)longValue,
+            int intValue => intValue,
+            _ => 0
+        };
     }
 
     private DocumentReference UserDocument(string date, string username)

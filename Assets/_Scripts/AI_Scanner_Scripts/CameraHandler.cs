@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Unity.Barracuda;
 
@@ -36,46 +37,41 @@ public class CameraHandler : MonoBehaviour
     private Model runtimeModel;
     private IWorker worker;
 
-    // Model output order: SriramRokkam/wastewise-garbage-cls
+    // Model output order (updated model)
     private readonly string[] classLabels =
     {
-        "battery",
-        "biological",
-        "cardboard",
+        "can",
         "glass",
-        "metal",
+        "organic",
+        "other",
         "paper",
-        "plastic",
-        "trash"
+        "plastic_bottle",
+        "plastic_other"
     };
 
     // Maps each raw model class (by index) to one of the 3 bin categories
     [Header("Label Mapping (edit when swapping models)")]
-    [SerializeField]
     private string[] categoryLabels =
     {
-        "non-bio",     // battery
-        "biological",  // biological
-        "recyclable",  // cardboard
+        "recyclable",  // can
         "recyclable",  // glass
-        "recyclable",  // metal
+        "biological",  // organic
+        "non-bio",     // other
         "recyclable",  // paper
-        "recyclable",  // plastic
-        "non-bio"      // trash
+        "recyclable",  // plastic_bottle
+        "recyclable"   // plastic_other
     };
 
     // Maps each raw model class (by index) to one of the 5 display categories
-    [SerializeField]
     private string[] displayLabels =
     {
-        "trash",       // battery
-        "food waste",  // biological
-        "paper",       // cardboard
-        "trash",       // glass
-        "metal",       // metal
+        "metal",       // can
+        "glass",       // glass
+        "food waste",  // organic
+        "trash",       // other
         "paper",       // paper
-        "plastic",     // plastic
-        "trash"        // trash
+        "plastic",     // plastic_bottle
+        "plastic"      // plastic_other
     };
 
     private Texture2D reusableTexture;
@@ -317,6 +313,10 @@ public class CameraHandler : MonoBehaviour
             return;
         }
 
+        // Set immediately (not inside the coroutine) so a second tap during the
+        // 0.5s delay below can't start a second overlapping prediction.
+        isProcessing = true;
+
         StartCoroutine(RunAIPrediction());
 
         SoundManager.PlaySound(SoundType.CAMERA);
@@ -329,8 +329,6 @@ public class CameraHandler : MonoBehaviour
     IEnumerator RunAIPrediction()
     {
         yield return new WaitForSeconds(.5f);
-
-        isProcessing = true;
 
         DisplayPrediction(
             "Processing...",
@@ -699,6 +697,22 @@ public class CameraHandler : MonoBehaviour
         }
 
         // ============================================================
+        // RECORD FIREBASE STATS (total/non-bio/bio/recyclable counts)
+        // Applies to every scan regardless of Collection vs DailyQuest mode.
+        // ============================================================
+
+        string statsUsername = GetCurrentUsername();
+        if (!string.IsNullOrWhiteSpace(statsUsername))
+        {
+            FBLeaderboard.Instance?.AddScanStats(
+                statsUsername,
+                category,
+                null,
+                error => Debug.LogError($"Failed to record scan stats: {error}")
+            );
+        }
+
+        // ============================================================
         // CONTINUE BASED ON SCAN MODE
         // ============================================================
 
@@ -715,6 +729,23 @@ public class CameraHandler : MonoBehaviour
             // Legacy "add new collection" flow, unchanged.
             sceneHandler?.LoadThrowingInstructionsScene();
         }
+    }
+
+    // ================================================================
+    // CURRENT USERNAME (for Firebase stats)
+    // ================================================================
+
+    private string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
     }
 
     // ================================================================

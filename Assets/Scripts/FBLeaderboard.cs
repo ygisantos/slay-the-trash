@@ -150,6 +150,38 @@ public class FBLeaderboard : MonoBehaviour
         );
     }
 
+    // Called on every scan (collection or daily quest) to atomically bump total + category counts.
+    public void AddScanStats(
+        string username,
+        string category,
+        Action onSuccess = null,
+        Action<string> onError = null)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            onError?.Invoke("Username is required to record scan stats.");
+            return;
+        }
+
+        Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { "total_trash", FieldValue.Increment(1) }
+        };
+
+        string categoryField = category?.Trim().ToLowerInvariant() switch
+        {
+            "non-bio" => "non_bio_trash",
+            "biological" => "bio_trash",
+            "recyclable" => "recicled_trash",
+            _ => null
+        };
+
+        if (categoryField != null)
+            updates[categoryField] = FieldValue.Increment(1);
+
+        UpdatePoints(username, updates, onSuccess, onError);
+    }
+
     public void ReadLeaderboard(
         string sortField,
         int page,
