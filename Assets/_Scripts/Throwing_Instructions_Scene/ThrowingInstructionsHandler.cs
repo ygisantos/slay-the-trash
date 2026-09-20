@@ -29,10 +29,7 @@ public class ThrowingInstructionsHandler: MonoBehaviour
         {
             prediction = System.IO.File.ReadAllText(predictionPath).Trim().ToLower();
             trashTypeText.text = prediction;
-            //START ADDING SHIT HERE, THE REST BELOW BAKA DAI NA PAGHALION/PAGBAGUHON
-            //StartCollection();
             StartRandomCard();
-
         }
         else
         {
@@ -99,22 +96,42 @@ public class ThrowingInstructionsHandler: MonoBehaviour
 
     public void StartCollection()
     {
-        string cardCollectionPath = System.IO.Path.Combine(Application.persistentDataPath, "Card_Collection", "card_collection.txt");
-        string cardsCollection;
-        if (System.IO.File.Exists(cardCollectionPath) && cardToGet != "Unknown")
-        {
-            cardsCollection = System.IO.File.ReadAllText(cardCollectionPath);
-            cardsCollection += $"{prediction}:{cardToGet}:{cardRarity}\n";
-            System.IO.File.WriteAllText(cardCollectionPath, cardsCollection);
+        if (cardToGet == "Unknown")
+            return;
 
-            DeckManager myDeckLong = FindAnyObjectByType<DeckManager>(); // wink wink
-            if (myDeckLong != null)
-                myDeckLong.UpdateCardsList();
-        }
-        else
+        string username = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(username))
         {
-            Debug.LogWarning($"Card Type not found or Card Collection not found in {cardCollectionPath}");
+            Debug.LogWarning("Cannot save card to collection without a logged-in username.");
+            return;
         }
+
+        FBCardCollection.Instance.AddCard(
+            username,
+            prediction,
+            cardToGet,
+            cardRarity,
+            () =>
+            {
+                DeckManager myDeckLong = FindAnyObjectByType<DeckManager>();
+                if (myDeckLong != null)
+                    myDeckLong.UpdateCardsList();
+            },
+            error => Debug.LogError($"Failed to save card to collection: {error}")
+        );
+    }
+
+    private string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
     }
 
     private void StartRandomCard()
@@ -184,5 +201,7 @@ public class ThrowingInstructionsHandler: MonoBehaviour
         {
             decker.UpdateCardsList();
         }
+
+        StartCollection();
     }
 }

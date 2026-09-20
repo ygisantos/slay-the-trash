@@ -3,12 +3,10 @@ using DG.Tweening.Plugins.Core.PathCore;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.GPUSort;
-using Path = System.IO.Path;
 
 public class DeckManager : MonoBehaviour
 {
@@ -16,8 +14,7 @@ public class DeckManager : MonoBehaviour
     [SerializeField] private List<CardData> cardTypes;
 
     [SerializeField] private List<RarityTypes> cardRarity;
-    private List<string> cardAsString;
-    private string filePath;
+    private List<(string trashType, string cardName, int rarity)> cardEntries = new();
     public static DeckManager instance { get; private set; }
     public List<string> cardNames;
 
@@ -43,20 +40,7 @@ public class DeckManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
-        string folderPath = Path.Combine(Application.persistentDataPath, "Card_Collection");
-        filePath = Path.Combine(folderPath, "card_collection.txt");
-
-        if (!File.Exists(filePath))
-        {
-            //string content = File.ReadAllText(filePath);
-            //Cards.text = string.IsNullOrWhiteSpace(content) ? "No cards collected yet." : content;
-            Debug.LogWarning("Card collection file not found at: " + filePath + ". Creating a new .txt file...");
-            Directory.CreateDirectory(folderPath);
-            File.WriteAllText(filePath, "");
-        }
-
-        //InitializeDeck();
-        UpdateCardsList();    
+        UpdateCardsList();
     }
 
 
@@ -69,37 +53,42 @@ public class DeckManager : MonoBehaviour
 
     public void UpdateCardsList()
     {
-        // CONVERT TXT FILE TO STRING LIST
-        try
+        string username = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(username))
         {
-            cardAsString = File.ReadLines(filePath).ToList();
-            //StartCoroutine(ConvertToPrefabs());
+            Debug.LogWarning("Cannot load card collection without a logged-in username.");
+            return;
         }
-        catch (FileNotFoundException)
-        {
-            Debug.LogWarning($"Card collection file not found at: {filePath}");
-        }
-        
-        UpdateDeck();
-        UpdateCardNames();
+
+        FBCardCollection.Instance.GetCards(
+            username,
+            cards =>
+            {
+                cardEntries = cards;
+                UpdateDeck();
+                UpdateCardNames();
+            },
+            error => Debug.LogError($"Failed to load card collection: {error}")
+        );
     }
 
     void UpdateDeck()
     {
-        heroData.Deck.Clear(); //Clear Deck to give room to actual cards in txt file
-        foreach (var card in cardAsString)
+        heroData.Deck.Clear(); //Clear Deck to give room to actual cards from Firestore
+        cardRarity.Clear();
+
+        foreach (var entry in cardEntries)
         {
-            string[] cardAndRar = card.Split(':');
             for (int i = 0; i < cardTypes.Count; i++)
             {
-                if (cardTypes[i].name == cardAndRar[0])
+                if (cardTypes[i].name == entry.cardName)
                 {
                     heroData.Deck.Add(cardTypes[i]);
-                    RarityTypes rar = cardAndRar[1] switch
+                    RarityTypes rar = entry.rarity switch
                     {
-                        "0" => RarityTypes.Bronze,
-                        "1" => RarityTypes.Silver,
-                        "2" => RarityTypes.Gold,
+                        0 => RarityTypes.Bronze,
+                        1 => RarityTypes.Silver,
+                        2 => RarityTypes.Gold,
                         _ => RarityTypes.IDK
                     };
                     cardRarity.Add(rar);
@@ -111,20 +100,40 @@ public class DeckManager : MonoBehaviour
     public void UpdateCardNames()
     {
         cardNames.Clear();
-        foreach (string s in cardAsString)
+        foreach (var entry in cardEntries)
         {
-            string[] parts = s.Split(':');
-            if (parts.Length >= 3)
-                cardNames.Add(parts[1]);
+            cardNames.Add(entry.cardName);
         }
     }
 
 
     public void InitializeDeck()
     {
-        File.WriteAllText(filePath, "");
-        cardRarity.Clear();
-        UpdateCardsList();
+        string username = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            Debug.LogWarning("Cannot reset card collection without a logged-in username.");
+            return;
+        }
+
+        FBCardCollection.Instance.ClearCards(
+            username,
+            UpdateCardsList,
+            error => Debug.LogError($"Failed to reset card collection: {error}")
+        );
+    }
+
+    private string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
     }
 
     //NOT NECESSARY/REDUNDANT PERO MAYBE NEED SA FUTURE, YOU NEVER KNOW

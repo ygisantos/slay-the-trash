@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
@@ -20,35 +19,39 @@ public class CardCollectionSceneScript : MonoBehaviour
 
     void Start()
     {
-        string folderPath = Path.Combine(Application.persistentDataPath, "Card_Collection");
-        string filePath = Path.Combine(folderPath, "card_collection.txt");
-
-        if (File.Exists(filePath))
+        string username = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(username))
         {
-            //string content = File.ReadAllText(filePath);
-            //Cards.text = string.IsNullOrWhiteSpace(content) ? "No cards collected yet." : content;
+            Debug.LogWarning("Cannot load card collection without a logged-in username.");
+            return;
+        }
 
-            ConvertToList(filePath);
-        }
-        else
-        {
-            //Cards.text = "No cards collected yet.";
-            Debug.LogWarning("Card collection file not found at: " + filePath);
-        }
+        FBCardCollection.Instance.GetCards(
+            username,
+            entries =>
+            {
+                // Keep the "trashType:cardName:rarity" shape ConvertToPrefabs already expects.
+                cards = entries
+                    .Select(entry => $"{entry.trashType}:{entry.cardName}:{entry.rarity}")
+                    .ToList();
+
+                StartCoroutine(ConvertToPrefabs());
+            },
+            error => Debug.LogError($"Failed to load card collection: {error}")
+        );
     }
 
-    void ConvertToList(string textLocation)
+    private string GetCurrentUsername()
     {
-        // CONVERT TXT FILE TO STRING LIST
-        try
-        {
-            cards = File.ReadLines(textLocation).ToList();
-            StartCoroutine(ConvertToPrefabs());
-        }
-        catch (FileNotFoundException)
-        {
-            Debug.LogWarning($"Card collection file not found at: {textLocation}");
-        }
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
     }
 
     private IEnumerator ConvertToPrefabs()

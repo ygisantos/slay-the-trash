@@ -18,6 +18,7 @@ public class BinResultHandler : MonoBehaviour
     public TextAsset trashRulesFile; // Drag trashrules.txt here
 
     private string displayedImageName = null;
+    private string predictedClass = null;
 
     private void Start()
     {
@@ -40,6 +41,7 @@ public class BinResultHandler : MonoBehaviour
         string predictedClass = File.ReadAllText(predictionPath).Trim().ToLower();
         string ocrResult = File.ReadAllText(ocrPath).Trim().ToLower();
 
+        this.predictedClass = predictedClass;
         BinType.text = ocrResult;
 
         Dictionary<string, List<string>> trashRules = LoadTrashRulesFromTextAsset(trashRulesFile);
@@ -134,21 +136,34 @@ public class BinResultHandler : MonoBehaviour
             return;
         }
 
-        string folderPath = Path.Combine(Application.persistentDataPath, "Card_Collection");
-        if (!Directory.Exists(folderPath))
-            Directory.CreateDirectory(folderPath);
-
-        string filePath = Path.Combine(folderPath, "card_collection.txt");
-
-        try
+        string username = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(username))
         {
-            File.AppendAllText(filePath, displayedImageName + "\n");
-            Debug.Log($"Saved displayed image name '{displayedImageName}' to {filePath}");
+            Debug.LogWarning("Cannot save card to collection without a logged-in username.");
+            return;
         }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Failed to save card collection: " + e.Message);
-        }
+
+        FBCardCollection.Instance.AddCard(
+            username,
+            predictedClass,
+            displayedImageName,
+            0,
+            () => Debug.Log($"Saved displayed image name '{displayedImageName}' to collection."),
+            error => Debug.LogError("Failed to save card collection: " + error)
+        );
+    }
+
+    private string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
     }
 
     Dictionary<string, List<string>> LoadTrashRulesFromTextAsset(TextAsset textAsset)

@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.IO;
 using UnityEngine.UI;
 using System.Linq;
 using System.Collections.Generic;
@@ -9,24 +8,45 @@ public class DungeonsHandler : MonoBehaviour
     [HideInInspector] public int plasticCards = 0;
     [HideInInspector] public int paperCards = 0;
     [HideInInspector] public int foodwasteCards = 0;
-    
-    private string filePath;
+
     private List<string> cards;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        string folderPath = Path.Combine(Application.persistentDataPath, "Card_Collection");
-        filePath = Path.Combine(folderPath, "card_collection.txt");
-        if (File.Exists(filePath))
+        string username = GetCurrentUsername();
+        if (string.IsNullOrWhiteSpace(username))
         {
-            CheckDeck();
+            Debug.LogWarning("Cannot load card collection without a logged-in username.");
+            return;
         }
-        else
-        {
-            Debug.LogWarning("Card collection file not found at: " + filePath + ". Creating a new .txt file...");
-            File.WriteAllText(filePath, "");
-        }    
+
+        FBCardCollection.Instance.GetCards(
+            username,
+            entries =>
+            {
+                // Keep the "trashType:cardName:rarity" shape CheckDeck already expects.
+                cards = entries
+                    .Select(entry => $"{entry.trashType}:{entry.cardName}:{entry.rarity}")
+                    .ToList();
+
+                CheckDeck();
+            },
+            error => Debug.LogError($"Failed to load card collection: {error}")
+        );
+    }
+
+    private string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
     }
 
     // Update is called once per frame
@@ -37,7 +57,6 @@ public class DungeonsHandler : MonoBehaviour
 
     void CheckDeck()
     {
-        cards = File.ReadLines(filePath).ToList();
         foreach (string card in cards)
         {
             string[] cardSplit = card.Split(':');
@@ -52,3 +71,4 @@ public class DungeonsHandler : MonoBehaviour
         }
     }
 }
+

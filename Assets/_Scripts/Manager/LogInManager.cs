@@ -12,7 +12,19 @@ public class LogInManager : MonoBehaviour
     private List<string> usernames = new List<string>();
     private List<string> hashedPasswords = new List<string>();
 
-    public string CurrentUsername;
+    // Backed by DataManager's cached profile instead of its own storage.
+    public string CurrentUsername
+    {
+        get => FirebaseDataHelper.GetString(DataManager.Instance?.GetProfile(), "username");
+        set
+        {
+            Dictionary<string, object> profile =
+                DataManager.Instance?.GetProfile() ?? new Dictionary<string, object>();
+
+            profile["username"] = value;
+            DataManager.Instance?.SetProfile(profile);
+        }
+    }
 
     private void Awake()
     {
@@ -21,6 +33,11 @@ public class LogInManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             LoadData();
+
+            if (!string.IsNullOrEmpty(CurrentUsername))
+            {
+                Transitioner.Instance.TransitionToScene("MainMenuScene");
+            }
         }
         else
         {
@@ -116,8 +133,6 @@ public class LogInManager : MonoBehaviour
             PlayerPrefs.SetString("PassHash" + i, hashedPasswords[i]);
         }
 
-        PlayerPrefs.SetString("CurrentUsername", CurrentUsername);
-
         PlayerPrefs.Save();
     }
 
@@ -133,7 +148,5 @@ public class LogInManager : MonoBehaviour
             usernames.Add(PlayerPrefs.GetString("User" + i, ""));
             hashedPasswords.Add(PlayerPrefs.GetString("PassHash" + i, ""));
         }
-
-        CurrentUsername = PlayerPrefs.GetString("CurrentUsername", "");
     }
 }
