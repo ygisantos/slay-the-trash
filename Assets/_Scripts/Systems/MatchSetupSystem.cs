@@ -21,6 +21,9 @@ public class MatchSetupSystem : MonoBehaviour
 
     public void StartGame()
     {
+        if (ManaSystem.Instance != null)
+            ManaSystem.Instance.ResetMana();
+
         EnemyWaves();
         CardSystem.Instance.BeginCombat(CardManager.Instance.GetCardDataList(10));
         DrawCardsGA drawCardsGA = new(5);

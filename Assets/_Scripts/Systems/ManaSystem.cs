@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 
@@ -6,9 +6,17 @@ public class ManaSystem : Singleton<ManaSystem>
 {
     [SerializeField] private ManaUI manaUI;
 
-    private const int MAX_MANA = 5;
+    public const int MAX_MANA = 5;
+
+    public int CurrentMana => currentMana;
+    public int MaxMana => MAX_MANA;
 
     private int currentMana = MAX_MANA;
+
+    private void Start()
+    {
+        ResetMana();
+    }
 
     void OnEnable()
     {
@@ -24,6 +32,12 @@ public class ManaSystem : Singleton<ManaSystem>
         ActionSystem.UnSubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
     }
 
+    public void ResetMana()
+    {
+        currentMana = MAX_MANA;
+        if (manaUI != null)
+            manaUI.UpdateManaText(currentMana);
+    }
 
     public bool HasEnoughMana(int mana)
     {
@@ -33,15 +47,14 @@ public class ManaSystem : Singleton<ManaSystem>
     private IEnumerator SpendManaPerformer(SpendManaGA spendManaGA)
     {
         currentMana -= spendManaGA.Amount;
-        manaUI.UpdateManaText(currentMana);
+        if (manaUI != null)
+            manaUI.UpdateManaText(currentMana);
         yield return null;
     }
 
-
     private IEnumerator RefillManaPerformer(RefillManaGA refillManaGA)
     {
-        currentMana = MAX_MANA;
-        manaUI.UpdateManaText(currentMana);
+        ResetMana();
         yield return null;
     }
 

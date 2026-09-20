@@ -57,6 +57,8 @@ public class CardSystem : Singleton<CardSystem>
         ClearAllCardsImmediate();
         IsCombatActive = false;
         SetDeckVisualsActive(false);
+        if (ManaSystem.Instance != null)
+            ManaSystem.Instance.ResetMana();
     }
 
     private IEnumerator DrawCardsPerformer(DrawCardsGA drawCardsGA)

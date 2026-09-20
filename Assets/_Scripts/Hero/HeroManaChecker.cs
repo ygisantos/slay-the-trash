@@ -48,10 +48,6 @@ public class HeroManaChecker : MonoBehaviour
     public int GetHeroCurrentMana()
     {
         if (manaSystem == null) return 0;
-
-        // Accessing private currentMana using reflection
-        return typeof(ManaSystem)
-            .GetField("currentMana", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            .GetValue(manaSystem) is int mana ? mana : 0;
+        return manaSystem.CurrentMana;
     }
 }
