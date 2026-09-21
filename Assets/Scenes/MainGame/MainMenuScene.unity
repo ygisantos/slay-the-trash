@@ -18923,7 +18923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0253f5d972f9f9949bea12f511d6c839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LogController
-  enableLogging: 1
+  enableLogging: 0
 --- !u!4 &1162215292
 Transform:
   m_ObjectHideFlags: 0
