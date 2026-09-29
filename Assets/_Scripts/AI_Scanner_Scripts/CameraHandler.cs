@@ -40,38 +40,62 @@ public class CameraHandler : MonoBehaviour
     // Model output order (updated model)
     private readonly string[] classLabels =
     {
-        "can",
-        "glass",
-        "organic",
-        "other",
+        // == IANY ==
+        // "can",
+        // "glass",
+        // "organic",
+        // "other",
+        // "paper",
+        // "plastic_bottle",
+        // "plastic_other"
+
+        // == ALJ ==
+        "e-waste",
+        "food-waste",
+        "metal",
         "paper",
-        "plastic_bottle",
-        "plastic_other"
+        "plastic"
     };
 
     // Maps each raw model class (by index) to one of the 3 bin categories
     [Header("Label Mapping (edit when swapping models)")]
     private string[] categoryLabels =
     {
-        "recyclable",  // can
-        "recyclable",  // glass
-        "biological",  // organic
-        "non-bio",     // other
+        // == IANY ==
+        // "recyclable",  // can
+        // "recyclable",  // glass
+        // "biological",  // organic
+        // "non-bio",     // other
+        // "recyclable",  // paper
+        // "recyclable",  // plastic_bottle
+        // "recyclable"   // plastic_other
+
+        // == ALJ ==
+        "non-bio",      // e_waste
+        "biological",  // food_waste
+        "recyclable",   // metal
         "recyclable",  // paper
-        "recyclable",  // plastic_bottle
-        "recyclable"   // plastic_other
+        "recyclable",  // plastic
     };
 
     // Maps each raw model class (by index) to one of the 5 display categories
     private string[] displayLabels =
     {
-        "metal",       // can
-        "glass",       // glass
-        "food waste",  // organic
-        "trash",       // other
+        //  == IANY ==
+        // "metal",       // can
+        // "glass",       // glass
+        // "food waste",  // organic
+        // "trash",       // other
+        // "paper",       // paper
+        // "plastic",     // plastic_bottle
+        // "plastic"      // plastic_other
+
+        // == ALJ ==
+        "e-waste",     // e_waste
+        "food waste",  // food_waste
+        "metal",        // metal
         "paper",       // paper
-        "plastic",     // plastic_bottle
-        "plastic"      // plastic_other
+        "plastic",     // plastic
     };
 
     private Texture2D reusableTexture;
@@ -92,6 +116,35 @@ public class CameraHandler : MonoBehaviour
         {
             StartCamera();
         }
+    }
+
+    private float[] Softmax(float[] logits)
+    {
+        float maxLogit = float.MinValue;
+
+        for (int i = 0; i < logits.Length; i++)
+        {
+            if (logits[i] > maxLogit)
+                maxLogit = logits[i];
+        }
+
+        float sum = 0f;
+        float[] probabilities = new float[logits.Length];
+
+        for (int i = 0; i < logits.Length; i++)
+        {
+            probabilities[i] =
+                Mathf.Exp(logits[i] - maxLogit);
+
+            sum += probabilities[i];
+        }
+
+        for (int i = 0; i < probabilities.Length; i++)
+        {
+            probabilities[i] /= sum;
+        }
+
+        return probabilities;
     }
 
     private bool isAiInitialized = false;
