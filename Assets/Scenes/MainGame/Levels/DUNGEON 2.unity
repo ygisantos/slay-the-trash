@@ -568,8 +568,8 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 7
+  m_SortingLayerID: 234911835
+  m_SortingOrder: 600
   m_TargetDisplay: 0
 --- !u!1 &37445640
 GameObject:
@@ -18905,8 +18905,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heroView: {fileID: 716241284}
-  losePanel: {fileID: 316990625}
   scorePanel: {fileID: 33711956}
+  resultTitle: {fileID: 2038591675}
   healthSlider: {fileID: 310675547}
   sliderSmoothSpeed: 5
   currentHealth: 100

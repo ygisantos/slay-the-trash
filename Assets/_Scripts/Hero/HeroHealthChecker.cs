@@ -8,8 +8,8 @@ public class HeroHealthChecker : MonoBehaviour
     [SerializeField] private HeroView heroView;
 
     [Header("UI Panel")]
-    [SerializeField] private GameObject losePanel;
     [SerializeField] private GameObject scorePanel;
+    [SerializeField] private TextMeshProUGUI resultTitle;
 
     [Header("Health Bar UI")]
     [SerializeField] private Slider healthSlider;
@@ -35,6 +35,7 @@ public class HeroHealthChecker : MonoBehaviour
 
     private void Start()
     {
+        resultTitle.SetText("Dungeon Cleared!");
         if (heroView != null)
         {
             maxHealth = heroView.MaxHealth;
@@ -53,7 +54,7 @@ public class HeroHealthChecker : MonoBehaviour
 
     private void Update()
     {
-        if ((gameStart))
+        if (gameStart)
         {
             if (heroView != null)
             {
@@ -117,16 +118,7 @@ public class HeroHealthChecker : MonoBehaviour
     private void OnHeroDead()
     {
         hasLost = true;
-        Debug.Log("Hero has died!");
-
-        if (losePanel != null)
-        {
-            losePanel.SetActive(true);
-            scorePanel.SetActive(true);
-        }
-        else
-        {
-            Debug.LogWarning("Lose Panel is not assigned in the Inspector!");
-        }
+        scorePanel.SetActive(true);
+        if (resultTitle != null) resultTitle.text = "You Lost!";
     }
 }

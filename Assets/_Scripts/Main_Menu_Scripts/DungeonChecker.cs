@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class DungeonChecker : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class DungeonChecker : MonoBehaviour
         };
 
         // Update UI text
-        requirementsText.text = $"{currentCards}/{requiredAmount} {requiredType} Cards To Enter";
+        requirementsText.text = $"{Math.Min(currentCards, requiredAmount)}/{requiredAmount} {requiredType} Cards To Enter";
 
         // Apply transparency
         UpdateTransparency();
