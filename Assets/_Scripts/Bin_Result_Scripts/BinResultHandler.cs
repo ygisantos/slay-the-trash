@@ -143,12 +143,24 @@ public class BinResultHandler : MonoBehaviour
             return;
         }
 
-        FBCardCollection.Instance.AddCard(
+        FBCardCollection.Instance.AddCardWithStatus(
             username,
             predictedClass,
             displayedImageName,
             0,
-            () => Debug.Log($"Saved displayed image name '{displayedImageName}' to collection."),
+            isDuplicate =>
+            {
+                if (isDuplicate)
+                {
+                    DynamicPopupToast.Instance?.ShowToast(
+                        $"Duplicate card: {displayedImageName}. Scan counted toward dungeon progress."
+                    );
+                }
+                else
+                {
+                    Debug.Log($"Saved displayed image name '{displayedImageName}' to collection.");
+                }
+            },
             error => Debug.LogError("Failed to save card collection: " + error)
         );
     }

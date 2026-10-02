@@ -1,5 +1,8 @@
+e-waste:non-biodegradable
 food waste:biodegradable
-plastic bottle:recyclable
-plastic bottle:plastic
-paper:biodegradable
+metal:recyclable
+metal:metal
+paper:recyclable
 paper:paper
+plastic:recyclable
+plastic:plastic

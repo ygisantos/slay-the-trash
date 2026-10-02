@@ -24,19 +24,29 @@ public class DailyQuestManager : MonoBehaviour
     [Header("Quest UI Items")]
     [SerializeField] private List<GameObject> questItems = new();
 
-    [Header("Possible Quests")]
-    [SerializeField]
     private List<QuestDefinition> possibleQuests = new()
     {
+        // -- IANY
+        // new QuestDefinition { title = "Scan {0} Plastic Items", minAmount = 2, maxAmount = 4, wasteType = "plastic" },
+        // new QuestDefinition { title = "Scan {0} Paper Items", minAmount = 2, maxAmount = 4, wasteType = "paper" },
+        // new QuestDefinition { title = "Scan {0} Metal Items", minAmount = 1, maxAmount = 3, wasteType = "metal" },
+        // new QuestDefinition { title = "Scan {0} Glass Items", minAmount = 1, maxAmount = 3, wasteType = "glass" },
+        // new QuestDefinition { title = "Scan {0} Cardboard Items", minAmount = 1, maxAmount = 3, wasteType = "cardboard" },
+        // new QuestDefinition { title = "Scan {0} Battery Items", minAmount = 1, maxAmount = 2, wasteType = "battery" },
+        // new QuestDefinition { title = "Scan {0} Food Waste Items", minAmount = 2, maxAmount = 4, wasteType = "biological" },
+        // new QuestDefinition { title = "Scan {0} Trash Items", minAmount = 2, maxAmount = 4, wasteType = "trash" },
+        // new QuestDefinition { title = "Recycle {0} Items", minAmount = 3, maxAmount = 6, wasteType = "recyclable" },
+        // new QuestDefinition { title = "Scan Any {0} Items", minAmount = 3, maxAmount = 6, wasteType = "" }
+        
+        // -- ALJ
         new QuestDefinition { title = "Scan {0} Plastic Items", minAmount = 2, maxAmount = 4, wasteType = "plastic" },
         new QuestDefinition { title = "Scan {0} Paper Items", minAmount = 2, maxAmount = 4, wasteType = "paper" },
         new QuestDefinition { title = "Scan {0} Metal Items", minAmount = 1, maxAmount = 3, wasteType = "metal" },
-        new QuestDefinition { title = "Scan {0} Glass Items", minAmount = 1, maxAmount = 3, wasteType = "glass" },
-        new QuestDefinition { title = "Scan {0} Cardboard Items", minAmount = 1, maxAmount = 3, wasteType = "cardboard" },
-        new QuestDefinition { title = "Scan {0} Battery Items", minAmount = 1, maxAmount = 2, wasteType = "battery" },
-        new QuestDefinition { title = "Scan {0} Food Waste Items", minAmount = 2, maxAmount = 4, wasteType = "biological" },
-        new QuestDefinition { title = "Scan {0} Trash Items", minAmount = 2, maxAmount = 4, wasteType = "trash" },
+        new QuestDefinition { title = "Scan {0} E-Waste Items", minAmount = 1, maxAmount = 2, wasteType = "e-waste" },
+        new QuestDefinition { title = "Scan {0} Food Waste Items", minAmount = 2, maxAmount = 4, wasteType = "food waste" },
         new QuestDefinition { title = "Recycle {0} Items", minAmount = 3, maxAmount = 6, wasteType = "recyclable" },
+        new QuestDefinition { title = "Scan {0} Biodegradable Items", minAmount = 2, maxAmount = 4, wasteType = "biological" },
+        new QuestDefinition { title = "Scan {0} Non-Biodegradable Items", minAmount = 1, maxAmount = 2, wasteType = "non-bio" },
         new QuestDefinition { title = "Scan Any {0} Items", minAmount = 3, maxAmount = 6, wasteType = "" }
     };
 

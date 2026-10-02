@@ -55,6 +55,9 @@ public class DynamicPopupToast : MonoBehaviour
 
     private readonly Queue<string> messages = new Queue<string>();
     private Coroutine queueRoutine;
+    private Coroutine liveToastRoutine;
+    private string activeMessage;
+    private bool isLiveToastActive;
     private Vector2 hiddenPosition;
     private Vector2 visiblePosition;
 
@@ -97,14 +100,53 @@ public class DynamicPopupToast : MonoBehaviour
         toastTransform.localScale = Vector3.one;
     }
 
-    public void ShowToast(string message)
+    public void ShowToast(string message, int duration = 2)
     {
+        visibleDuration = Mathf.Max(1, duration); // Ensure duration is at least 1 second
         if (string.IsNullOrWhiteSpace(message))
             return;
 
         messages.Enqueue(message);
-        if (queueRoutine == null)
+        if (queueRoutine == null && liveToastRoutine == null)
             queueRoutine = StartCoroutine(ProcessQueue());
+    }
+
+    public void ShowLiveToast(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message) || messageText == null)
+            return;
+
+        if (isLiveToastActive)
+        {
+            messageText.text = message;
+            return;
+        }
+
+        if (queueRoutine != null)
+        {
+            StopCoroutine(queueRoutine);
+            queueRoutine = null;
+
+            if (!string.IsNullOrEmpty(activeMessage))
+            {
+                string[] pendingMessages = messages.ToArray();
+                messages.Clear();
+                messages.Enqueue(activeMessage);
+                foreach (string pendingMessage in pendingMessages)
+                    messages.Enqueue(pendingMessage);
+            }
+
+            activeMessage = null;
+        }
+
+        messageText.text = message;
+        isLiveToastActive = true;
+        liveToastRoutine = StartCoroutine(ShowLiveMessage());
+    }
+
+    public void HideLiveToast()
+    {
+        isLiveToastActive = false;
     }
 
     [Button("Debug Show Popup")]
@@ -125,11 +167,40 @@ public class DynamicPopupToast : MonoBehaviour
     {
         while (messages.Count > 0)
         {
-            string message = messages.Dequeue();
-            yield return StartCoroutine(ShowMessage(message));
+            activeMessage = messages.Dequeue();
+            yield return StartCoroutine(ShowMessage(activeMessage));
+            activeMessage = null;
         }
 
         queueRoutine = null;
+    }
+
+    private IEnumerator ShowLiveMessage()
+    {
+        yield return StartCoroutine(
+            Animate(
+                0f,
+                1f,
+                hiddenPosition,
+                visiblePosition
+            )
+        );
+
+        while (isLiveToastActive)
+            yield return null;
+
+        yield return StartCoroutine(
+            Animate(
+                1f,
+                0f,
+                visiblePosition,
+                visiblePosition + Vector2.up * slideDistance
+            )
+        );
+
+        liveToastRoutine = null;
+        if (messages.Count > 0 && queueRoutine == null)
+            queueRoutine = StartCoroutine(ProcessQueue());
     }
 
     private IEnumerator ShowMessage(string message)

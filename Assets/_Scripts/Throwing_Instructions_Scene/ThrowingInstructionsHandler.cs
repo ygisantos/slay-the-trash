@@ -106,16 +106,23 @@ public class ThrowingInstructionsHandler: MonoBehaviour
             return;
         }
 
-        FBCardCollection.Instance.AddCard(
+        FBCardCollection.Instance.AddCardWithStatus(
             username,
             prediction,
             cardToGet,
             cardRarity,
-            () =>
+            isDuplicate =>
             {
                 DeckManager myDeckLong = FindAnyObjectByType<DeckManager>();
                 if (myDeckLong != null)
                     myDeckLong.UpdateCardsList();
+
+                if (isDuplicate)
+                {
+                    DynamicPopupToast.Instance?.ShowToast(
+                        $"Duplicate card: {cardToGet}. Scan counted toward dungeon progress.", 6
+                    );
+                }
             },
             error => Debug.LogError($"Failed to save card to collection: {error}")
         );
@@ -152,6 +159,7 @@ public class ThrowingInstructionsHandler: MonoBehaviour
                     cardToGet = "Shredstorm Hurricane";
                 break;
             case "plastic bottle":
+            case "plastic":
                 if (rand >= 1 && rand <= 50)
                     cardToGet = Random.Range(0, 2) == 0 ? "Bottle Cap Barrage" : "Eco-Edge Sword";
                 if (rand > 51 && rand <= 75)

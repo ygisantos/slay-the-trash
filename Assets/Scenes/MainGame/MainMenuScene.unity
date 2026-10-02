@@ -6781,35 +6781,30 @@ MonoBehaviour:
     maxAmount: 3
     wasteType: metal
     targetAmount: 0
-  - title: Scan {0} Glass Items
-    minAmount: 1
-    maxAmount: 3
-    wasteType: glass
-    targetAmount: 0
-  - title: Scan {0} Cardboard Items
-    minAmount: 1
-    maxAmount: 3
-    wasteType: cardboard
-    targetAmount: 0
-  - title: Scan {0} Battery Items
+  - title: Scan {0} E-Waste Items
     minAmount: 1
     maxAmount: 2
-    wasteType: battery
+    wasteType: e-waste
     targetAmount: 0
   - title: Scan {0} Food Waste Items
     minAmount: 2
     maxAmount: 4
-    wasteType: biological
-    targetAmount: 0
-  - title: Scan {0} Trash Items
-    minAmount: 2
-    maxAmount: 4
-    wasteType: trash
+    wasteType: food waste
     targetAmount: 0
   - title: Recycle {0} Items
     minAmount: 3
     maxAmount: 6
     wasteType: recyclable
+    targetAmount: 0
+  - title: Scan {0} Biodegradable Items
+    minAmount: 2
+    maxAmount: 4
+    wasteType: biological
+    targetAmount: 0
+  - title: Scan {0} Non-Biodegradable Items
+    minAmount: 1
+    maxAmount: 2
+    wasteType: non-bio
     targetAmount: 0
   - title: Scan Any {0} Items
     minAmount: 3
@@ -6817,9 +6812,9 @@ MonoBehaviour:
     wasteType: 
     targetAmount: 0
   seed: 12345
-  countdownText: {fileID: 2025518299}
-  incompleteQuestColor: {r: 0.31764707, g: 0.31764707, b: 0.31764707, a: 1}
-  completedQuestColor: {r: 0.1296048, g: 0.4113207, b: 0.1296048, a: 1}
+  countdownText: {fileID: 0}
+  incompleteQuestColor: {r: 0.7207546, g: 0.7207546, b: 0.7207546, a: 1}
+  completedQuestColor: {r: 0.31097898, g: 0.79622644, b: 0.31097898, a: 1}
 --- !u!114 &364080248
 MonoBehaviour:
   m_ObjectHideFlags: 0

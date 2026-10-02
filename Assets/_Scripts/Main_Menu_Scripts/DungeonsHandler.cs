@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 using System.Collections.Generic;
 
 public class DungeonsHandler : MonoBehaviour
@@ -8,8 +7,6 @@ public class DungeonsHandler : MonoBehaviour
     [HideInInspector] public int plasticCards = 0;
     [HideInInspector] public int paperCards = 0;
     [HideInInspector] public int foodwasteCards = 0;
-
-    private List<string> cards;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,18 +18,15 @@ public class DungeonsHandler : MonoBehaviour
             return;
         }
 
-        FBCardCollection.Instance.GetCards(
+        FBCardCollection.Instance.GetDungeonCounters(
             username,
-            entries =>
+            (plasticCount, paperCount, foodWasteCount) =>
             {
-                // Keep the "trashType:cardName:rarity" shape CheckDeck already expects.
-                cards = entries
-                    .Select(entry => $"{entry.trashType}:{entry.cardName}:{entry.rarity}")
-                    .ToList();
-
-                CheckDeck();
+                plasticCards = plasticCount;
+                paperCards = paperCount;
+                foodwasteCards = foodWasteCount;
             },
-            error => Debug.LogError($"Failed to load card collection: {error}")
+            error => Debug.LogError($"Failed to load dungeon counters: {error}")
         );
     }
 
@@ -55,20 +49,5 @@ public class DungeonsHandler : MonoBehaviour
 
     }
 
-    void CheckDeck()
-    {
-        foreach (string card in cards)
-        {
-            string[] cardSplit = card.Split(':');
-            if (cardSplit[0] == "plastic bottle")
-                plasticCards++;
-            else if (cardSplit[0] == "paper")
-                paperCards++;
-            else if (cardSplit[0] == "food waste")
-                foodwasteCards++;
-            else
-                Debug.LogWarning($"Card type of {cardSplit[1]} Not Found. Skipping Card...");
-        }
-    }
 }
 

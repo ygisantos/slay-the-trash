@@ -6,30 +6,15 @@ using System.Collections;
 
 public class PauseManager : MonoBehaviour
 {
-    [Header("REFERENCES")]
-    public GameObject dimPanel;       // Dim background panel
-    public GameObject pausePanel;     // Pause menu panel
-    public TMP_Text countdownText;    // Countdown TMP text
-
+    public Modal pauseModal;
     [Header("SETTINGS")]
     public float countdownTime = 3f;  // Countdown duration
     private bool isCountingDown = false;
     private bool isPaused = false;
     private PlayerInput playerInput;
     private Coroutine countdownCoroutine;
+    private DynamicPopupToast toast;
 
-    private void Awake()
-    {
-        dimPanel.SetActive(false);
-        pausePanel.SetActive(false);
-        countdownText.text = "";
-    }
-
-    private void Update()
-    {
-        // No keyboard or mouse pause logic.
-        // Pause/Resume is controlled only by UI buttons.
-    }
 
     // ==========================
     //      UI BUTTON CALLS
@@ -37,32 +22,21 @@ public class PauseManager : MonoBehaviour
 
     public void PauseGame()
     {
+        toast = DynamicPopupToast.Instance;
         SoundManager.PlaySound(SoundType.CLICK);
         if (isPaused) return;
 
+        pauseModal.Open();
         isPaused = true;
         Time.timeScale = 0f;
-
-        // Enable pause UI
-        dimPanel.SetActive(true);
-        pausePanel.SetActive(true);
-
-        // Block gameplay clicks
-        var img = dimPanel.GetComponent<UnityEngine.UI.Image>();
-        if (img) img.raycastTarget = true;
-
-
     }
 
     public void ResumeGame()
     {
         SoundManager.PlaySound(SoundType.CLICK);
+        toast = DynamicPopupToast.Instance;
         if (!isPaused || isCountingDown) return;
-
-        // Hide pause panel, keep dim panel for countdown
-        pausePanel.SetActive(false);
-        dimPanel.SetActive(true);
-        countdownText.gameObject.SetActive(true);
+ 
 
         // Start countdown
         if (countdownCoroutine != null)
@@ -76,26 +50,16 @@ public class PauseManager : MonoBehaviour
         isCountingDown = true;
 
         float timeLeft = countdownTime;
+        toast = DynamicPopupToast.Instance;
 
-        // Block UI clicks during countdown
-        var img = dimPanel.GetComponent<UnityEngine.UI.Image>();
-        if (img) img.raycastTarget = true;
-
-        // Use unscaled time
         while (timeLeft > 0)
         {
-            countdownText.text = Mathf.CeilToInt(timeLeft).ToString();
+            toast?.ShowLiveToast($"Resuming in {Mathf.CeilToInt(timeLeft)}...");
             yield return new WaitForSecondsRealtime(1f);
             timeLeft--;
         }
 
-        // Countdown done
-        countdownText.text = "";
-        countdownText.gameObject.SetActive(false);
-        dimPanel.SetActive(false);
-
-        // Allow gameplay clicks
-        if (img) img.raycastTarget = false;
+        toast?.HideLiveToast();
 
         // Re-enable player input
         if (playerInput) playerInput.enabled = true;
@@ -103,6 +67,7 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
         isCountingDown = false;
         isPaused = false;
+        pauseModal.Close();
     }
 
     public void RestartGame()
