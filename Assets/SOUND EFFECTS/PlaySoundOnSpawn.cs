@@ -17,11 +17,11 @@ public class PlaySoundOnSpawn : MonoBehaviour
     {
         if (useCustomPitch)
         {
-            SoundManager.PlaySoundWithCustomPitch(sound, pitch, volume);
+            SoundManager.Instance.PlaySoundWithCustomPitch(sound, pitch, volume);
         }
         else
         {
-            SoundManager.PlaySound(sound, volume);
+            SoundManager.Instance.PlaySound(sound, volume);
         }
     }
 }

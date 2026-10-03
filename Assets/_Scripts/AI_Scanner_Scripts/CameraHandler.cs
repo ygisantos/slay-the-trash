@@ -372,7 +372,7 @@ public class CameraHandler : MonoBehaviour
 
         StartCoroutine(RunAIPrediction());
 
-        SoundManager.PlaySound(SoundType.CAMERA);
+        SoundManager.Instance.PlaySound(SoundType.CAMERA);
     }
 
     // ================================================================

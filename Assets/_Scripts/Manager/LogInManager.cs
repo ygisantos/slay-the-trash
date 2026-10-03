@@ -45,6 +45,11 @@ public class LogInManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        SoundManager.Instance.PlayMusic(SoundType.MENUMUSIC);
+    }
+
     // -----------------------------------------------------------------------------
     // PUBLIC FUNCTIONS
     // -----------------------------------------------------------------------------

@@ -42,7 +42,7 @@ public class CombatantView : MonoBehaviour
     {
         int remainingDamage = damageAmount;
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
-        SoundManager.PlaySound(hurtSound);
+        SoundManager.Instance.PlaySound(hurtSound);
         if (transform != null)
         {
             transform.DOShakePosition(0.2f, 0.5f);
@@ -52,7 +52,7 @@ public class CombatantView : MonoBehaviour
         {
             if (currentArmor >= damageAmount)
             {
-                SoundManager.PlaySound(SoundType.ARMORHIT);
+                SoundManager.Instance.PlaySound(SoundType.ARMORHIT);
                 RemoveStatusEffect(StatusEffectType.ARMOR, remainingDamage);
                 remainingDamage = 0;
             }

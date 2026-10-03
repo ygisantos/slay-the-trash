@@ -61,7 +61,7 @@ public class ScoreCanvas : MonoBehaviour
     public void HideCanva()
     {
         // gameObject.SetActive(false);
-        SoundManager.PlaySound(SoundType.CLICK);
+        SoundManager.Instance.PlaySound(SoundType.CLICK);
         Transitioner.Instance.TransitionToScene("MainMenuScene"); 
     }
 }

@@ -28,19 +28,19 @@ public class settingsPanel : MonoBehaviour
         }
 
         // Apply initial values
-        SoundManager.SetMusicVolume(musicVolume);
-        SoundManager.SetSFXVolume(sfxVolume);
+        SoundManager.Instance.SetMusicVolume(musicVolume);
+        SoundManager.Instance.SetSFXVolume(sfxVolume);
     }
 
     private void OnMusicSliderChanged(float value)
     {
-        SoundManager.SetMusicVolume(value);
+        SoundManager.Instance.SetMusicVolume(value);
         PlayerPrefs.SetFloat(MusicVolumeKey, value);
     }
 
     private void OnSFXSliderChanged(float value)
     {
-        SoundManager.SetSFXVolume(value);
+        SoundManager.Instance.SetSFXVolume(value);
         PlayerPrefs.SetFloat(SFXVolumeKey, value);
     }
 }

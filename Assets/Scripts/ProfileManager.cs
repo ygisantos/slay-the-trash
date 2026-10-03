@@ -26,6 +26,7 @@ public class ProfileManager : MonoBehaviour
     
     private void Start()
     {
+        SoundManager.Instance.PlayMusic(SoundType.MENUMUSIC);
         SetupProfile();
     }
 

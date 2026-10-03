@@ -23,7 +23,7 @@ public class PauseManager : MonoBehaviour
     public void PauseGame()
     {
         toast = DynamicPopupToast.Instance;
-        SoundManager.PlaySound(SoundType.CLICK);
+        SoundManager.Instance.PlaySound(SoundType.CLICK);
         if (isPaused) return;
 
         pauseModal.Open();
@@ -33,7 +33,7 @@ public class PauseManager : MonoBehaviour
 
     public void ResumeGame()
     {
-        SoundManager.PlaySound(SoundType.CLICK);
+        SoundManager.Instance.PlaySound(SoundType.CLICK);
         toast = DynamicPopupToast.Instance;
         if (!isPaused || isCountingDown) return;
  
@@ -79,7 +79,7 @@ public class PauseManager : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1f;
-        SoundManager.PlaySound(SoundType.CLICK);
+        SoundManager.Instance.PlaySound(SoundType.CLICK);
         Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 }

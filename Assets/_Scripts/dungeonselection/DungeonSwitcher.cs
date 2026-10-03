@@ -90,7 +90,7 @@ public class DungeonSwitcher : MonoBehaviour
         {
             currentIndex++;
             SaveSelectedDungeon();
-            SoundManager.PlaySound(SoundType.CLICK);
+            SoundManager.Instance.PlaySound(SoundType.CLICK);
             ShowDungeon(currentIndex, true);
         }
     }
@@ -104,7 +104,7 @@ public class DungeonSwitcher : MonoBehaviour
         {
             currentIndex--;
             SaveSelectedDungeon();
-            SoundManager.PlaySound(SoundType.CLICK);
+            SoundManager.Instance.PlaySound(SoundType.CLICK);
             ShowDungeon(currentIndex, true);
         }
     }

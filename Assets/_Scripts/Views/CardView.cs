@@ -102,7 +102,7 @@ public class CardView : MonoBehaviour
         );
 
 
-        SoundManager.PlaySound(SoundType.CARDPRESS);
+        SoundManager.Instance.PlaySound(SoundType.CARDPRESS);
 
 
         // Prevent other cards from being interacted with

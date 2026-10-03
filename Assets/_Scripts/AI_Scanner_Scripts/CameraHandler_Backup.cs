@@ -234,7 +234,7 @@ public class CameraHandler_Backup : MonoBehaviour
 
         StartCoroutine(RunAIPrediction());
 
-        SoundManager.PlaySound(SoundType.CAMERA);
+        SoundManager.Instance.PlaySound(SoundType.CAMERA);
     }
 
     // ================================================================

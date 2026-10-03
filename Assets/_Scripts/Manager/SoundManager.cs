@@ -88,11 +88,41 @@ public class SoundManager : MonoBehaviour
 
     private static SoundManager instance;
 
+    public static SoundManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindFirstObjectByType<SoundManager>();
+
+                if (instance == null)
+                {
+                    GameObject singletonPrefab =
+                        Resources.Load<GameObject>("SoundManager");
+
+                    if (singletonPrefab == null)
+                    {
+                        Debug.LogError(
+                            "SoundManager prefab not found in Resources folder."
+                        );
+                        return null;
+                    }
+
+                    GameObject clone = Instantiate(singletonPrefab);
+                    instance = clone.GetComponent<SoundManager>();
+                }
+            }
+
+            return instance;
+        }
+    }
+
     private Dictionary<SoundType, AudioSource> loopingSounds = new Dictionary<SoundType, AudioSource>();
 
     // Master volume multipliers
-    private static float sfxVolumeMultiplier = 1f;
-    private static float musicVolumeMultiplier = 1f;
+    private  float sfxVolumeMultiplier = 1f;
+    private  float musicVolumeMultiplier = 1f;
 
     // Track active coroutines
     private Coroutine fadeOutCoroutine;
@@ -140,9 +170,9 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play one-shot sound effect
-    public static void PlaySound(SoundType sound, float volumeMultiplier = 1)
+    public  void PlaySound(SoundType sound, float volumeMultiplier = 1)
     {
-        if (instance == null)
+        if (Instance == null)
         {
             Debug.LogWarning("SoundManager instance is null!");
             return;
@@ -175,9 +205,9 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play looping sound
-    public static void PlayLoopingSound(SoundType sound, float volumeMultiplier = 1)
+    public  void PlayLoopingSound(SoundType sound, float volumeMultiplier = 1)
     {
-        if (instance == null) return;
+        if (Instance == null) return;
 
         StopLoopingSound(sound);
 
@@ -201,7 +231,7 @@ public class SoundManager : MonoBehaviour
         instance.loopingSounds[sound] = source;
     }
 
-    public static void StopLoopingSound(SoundType sound)
+    public  void StopLoopingSound(SoundType sound)
     {
         if (instance == null) return;
 
@@ -216,7 +246,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public static void StopAllLoopingSounds()
+    public  void StopAllLoopingSounds()
     {
         if (instance == null) return;
 
@@ -231,9 +261,15 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play music
-    public static void PlayMusic(SoundType music, float volumeMultiplier = 1f, bool loop = true)
+    public void PlayMusic(SoundType music, float volumeMultiplier = 1f, bool loop = true)
     {
-        if (instance == null || instance.musicSource == null) return;
+        if (Instance == null || instance.musicSource == null) return;
+
+        SoundList soundData = instance.GetSoundData(music);
+        if (soundData.clips == null || soundData.clips.Length == 0) return;
+
+        AudioClip clip = soundData.clips[0];
+        if (instance.musicSource.isPlaying && instance.musicSource.clip == clip) return;
 
         // Stop any active fade coroutines
         if (instance.fadeOutCoroutine != null)
@@ -247,11 +283,6 @@ public class SoundManager : MonoBehaviour
             instance.fadeInCoroutine = null;
         }
 
-        SoundList soundData = instance.GetSoundData(music);
-        if (soundData.clips == null || soundData.clips.Length == 0) return;
-
-        AudioClip clip = soundData.clips[0];
-
         instance.musicSource.clip = clip;
         instance.musicSource.volume = soundData.volume * volumeMultiplier * musicVolumeMultiplier;
         instance.musicSource.pitch = soundData.pitch;
@@ -259,7 +290,7 @@ public class SoundManager : MonoBehaviour
         instance.musicSource.Play();
     }
 
-    public static void StopMusic()
+    public void StopMusic()
     {
         if (instance != null && instance.musicSource != null)
         {
@@ -279,9 +310,9 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public static void FadeOutMusic(float duration = 1f)
+    public void FadeOutMusic(float duration = 1f)
     {
-        if (instance != null)
+        if (Instance != null)
         {
             instance.StartCoroutine(instance.FadeOutMusicCoroutine(duration));
         }
@@ -303,9 +334,9 @@ public class SoundManager : MonoBehaviour
         musicSource.volume = startVolume;
     }
 
-    public static void FadeInMusic(SoundType music, float targetVolumeMultiplier = 1f, float duration = 1f)
+    public void FadeInMusic(SoundType music, float targetVolumeMultiplier = 1f, float duration = 1f)
     {
-        if (instance != null)
+        if (Instance != null)
         {
             instance.StartCoroutine(instance.FadeInMusicCoroutine(music, targetVolumeMultiplier, duration));
         }
@@ -338,7 +369,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // Set master SFX volume (affects all sound effects)
-    public static void SetSFXVolume(float volume)
+    public void SetSFXVolume(float volume)
     {
         sfxVolumeMultiplier = Mathf.Clamp01(volume);
 
@@ -357,7 +388,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // Set master music volume
-    public static void SetMusicVolume(float volume)
+    public void SetMusicVolume(float volume)
     {
         musicVolumeMultiplier = Mathf.Clamp01(volume);
 
@@ -388,18 +419,18 @@ public class SoundManager : MonoBehaviour
     }
 
     // Get current SFX volume
-    public static float GetSFXVolume()
+    public float GetSFXVolume()
     {
         return sfxVolumeMultiplier;
     }
 
     // Get current music volume
-    public static float GetMusicVolume()
+    public float GetMusicVolume()
     {
         return musicVolumeMultiplier;
     }
 
-    public static void PauseMusic()
+    public void PauseMusic()
     {
         if (instance != null && instance.musicSource != null)
         {
@@ -407,7 +438,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public static void ResumeMusic()
+    public void ResumeMusic()
     {
         if (instance != null && instance.musicSource != null)
         {
@@ -415,13 +446,13 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public static bool IsMusicPlaying()
+    public bool IsMusicPlaying()
     {
         return instance != null && instance.musicSource != null && instance.musicSource.isPlaying;
     }
-    public static void TransitionMusic(SoundType newMusic, float fadeOutDuration = 1f, float fadeInDuration = 1f, float volumeMultiplier = 1f)
+    public void TransitionMusic(SoundType newMusic, float fadeOutDuration = 1f, float fadeInDuration = 1f, float volumeMultiplier = 1f)
     {
-        if (instance == null || instance.musicSource == null) return;
+        if (Instance == null || instance.musicSource == null) return;
 
         // Stop any current transition
         if (instance.fadeOutCoroutine != null) instance.StopCoroutine(instance.fadeOutCoroutine);
@@ -470,9 +501,9 @@ public class SoundManager : MonoBehaviour
 
         musicSource.volume = targetVolume;
     }
-    public static void PlaySoundAtPosition(SoundType sound, Vector3 position, float volumeMultiplier = 1f)
+    public void PlaySoundAtPosition(SoundType sound, Vector3 position, float volumeMultiplier = 1f)
     {
-        if (instance == null) return;
+        if (Instance == null) return;
 
         SoundList soundData = instance.GetSoundData(sound);
         if (soundData.clips == null || soundData.clips.Length == 0) return;
@@ -483,9 +514,9 @@ public class SoundManager : MonoBehaviour
         AudioSource.PlayClipAtPoint(randomClip, position, finalVolume);
     }
 
-    public static void PlaySoundWithCustomPitch(SoundType sound, float customPitch, float volumeMultiplier = 1f)
+    public void PlaySoundWithCustomPitch(SoundType sound, float customPitch, float volumeMultiplier = 1f)
     {
-        if (instance == null) return;
+        if (Instance == null) return;
 
         SoundList soundData = instance.GetSoundData(sound);
         if (soundData.clips == null || soundData.clips.Length == 0) return;

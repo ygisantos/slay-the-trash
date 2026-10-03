@@ -15,11 +15,11 @@ public class PlayMusicOnSpawn : MonoBehaviour
     {
         if (fadeIn)
         {
-            SoundManager.FadeInMusic(musicToPlay, volumeMultiplier, fadeInDuration);
+            SoundManager.Instance.FadeInMusic(musicToPlay, volumeMultiplier, fadeInDuration);
         }
         else
         {
-            SoundManager.PlayMusic(musicToPlay, volumeMultiplier, loop);
+            SoundManager.Instance.PlayMusic(musicToPlay, volumeMultiplier, loop);
         }
     }
 }

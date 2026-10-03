@@ -27,7 +27,7 @@ public class CharacterSelector : MonoBehaviour
         {
             currentIndex = index;
             waitingForConfirm = true;
-            SoundManager.PlaySound(SoundType.CLICK);
+            SoundManager.Instance.PlaySound(SoundType.CLICK);
 
             ShowCharacterImage(index);
             return;
@@ -35,7 +35,7 @@ public class CharacterSelector : MonoBehaviour
 
         // SECOND TAP — confirm
         waitingForConfirm = false;
-        SoundManager.PlaySound(SoundType.CLICK);
+        SoundManager.Instance.PlaySound(SoundType.CLICK);
 
         // Save selected character
         SelectedCharacter.index = index;
