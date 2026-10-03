@@ -42,6 +42,7 @@ public class CombatantView : MonoBehaviour
     {
         int remainingDamage = damageAmount;
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
+        Shake.Instance.ShakeCamera();
         SoundManager.Instance.PlaySound(hurtSound);
         if (transform != null)
         {
