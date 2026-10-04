@@ -1398,29 +1398,21 @@ MonoBehaviour:
   noCards: {fileID: 767170361}
   cardDistance: {x: 295, y: 406}
   bottomPad: 20
-  yOffset: 202
+  yOffset: 30
   canvasParent: {fileID: 660500549}
   cardNames: []
   actualCards: []
-  cardPrefabs:
-  - {fileID: 7228669966238381860, guid: 299baaec8b9a7e34dab3367cc73f9c8e, type: 3}
-  - {fileID: 7228669966238381860, guid: 465effb2164028f4b895d31a3c0f66fc, type: 3}
-  - {fileID: 7228669966238381860, guid: f55fc90f1b79535469ffb6ad15de288d, type: 3}
-  - {fileID: 7228669966238381860, guid: e79767942af0a2c4d829578dbe49d887, type: 3}
-  - {fileID: 7228669966238381860, guid: 3c50a9402171f7d4987940156bcc3642, type: 3}
-  - {fileID: 7228669966238381860, guid: 33b26964c47cfe042a78a5bd1d605571, type: 3}
-  - {fileID: 7228669966238381860, guid: e8960700397f49a4fb3136d5b92281e0, type: 3}
-  - {fileID: 7228669966238381860, guid: ed30f5bdb54dc344096e925b2be28aea, type: 3}
-  - {fileID: 7228669966238381860, guid: 0489e4187002b1f44ab3eb3ae5613312, type: 3}
-  - {fileID: 7228669966238381860, guid: cd86a1a4082aae54d90be29706f6a27c, type: 3}
-  - {fileID: 7228669966238381860, guid: 40bcc1ec2ae115f4d9584e7b7a8ed27d, type: 3}
-  - {fileID: 7228669966238381860, guid: 2ea2bc9d58e84cf4d8b0d9740343f44a, type: 3}
-  - {fileID: 7228669966238381860, guid: ce35e112aa7532e41bda4fe10e44a438, type: 3}
-  - {fileID: 7228669966238381860, guid: 7bc1f12d2574fd54b80604a8b4bcc8a6, type: 3}
-  - {fileID: 7228669966238381860, guid: 592b01c3ef7bf5045bd22d5633ef98d3, type: 3}
-  - {fileID: 7228669966238381860, guid: 9985f5715b2bd354b87d6a7dd21a27f1, type: 3}
-  - {fileID: 7228669966238381860, guid: 575dedf3c7608db4a8c8491d40e6e824, type: 3}
-  - {fileID: 7228669966238381860, guid: 0f87955a104595c459cc7f890041b6a3, type: 3}
+  cardTemplate: {fileID: 7228669966238381860, guid: 299baaec8b9a7e34dab3367cc73f9c8e, type: 3}
+  library: {fileID: 11400000, guid: dc3330b91c9e37845bb01574ca8916ac, type: 2}
+  paperFrame: {fileID: -3408859380460200181, guid: 4a78860b4c628644bba0baecac6cb0f8, type: 3}
+  plasticFrame: {fileID: -247543761466552167, guid: 99cb0d1d4cd118f42ad3d279f12794d8, type: 3}
+  bioFrame: {fileID: 6136552343478849868, guid: 1d7df298258f6304cae48dd669f8f88b, type: 3}
+  otherFrame: {fileID: 733519108555454443, guid: 930452f365b50e044999f307e246083b, type: 3}
+  bronzeBadge: {fileID: 21300000, guid: 3ed12d3e91e8ae843953d66443d2731e, type: 3}
+  silverBadge: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}
+  goldBadge: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
+  badgeSize: {x: 80, y: 80}
+  badgeOffset: {x: 110, y: -110}
 --- !u!4 &1352884071
 Transform:
   m_ObjectHideFlags: 0
@@ -2057,7 +2049,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -145.315, y: -28}
+  m_AnchoredPosition: {x: -145.31494, y: -28}
   m_SizeDelta: {x: 55.864, y: 51.181}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1983138806
