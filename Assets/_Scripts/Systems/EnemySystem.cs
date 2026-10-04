@@ -52,6 +52,9 @@ public class EnemySystem : Singleton<EnemySystem>
 
     {
         EnemyView attacker = attackHeroGA.Attacker;
+        if (attacker == null || attacker.CurrentHealth <= 0 || !enemyBoardView.EnemyViews.Contains(attacker))
+            yield break;
+
         Tween tween = attacker.transform.DOMoveX(attacker.transform.position.x - 1f, 0.15f);
         yield return tween.WaitForCompletion();
         attacker.transform.DOMoveX(attacker.transform.position.x + 1f, 0.25f);

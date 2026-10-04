@@ -19,6 +19,10 @@ public class BurnSystem : MonoBehaviour
         Instantiate(burnVFX,target.transform.position, Quaternion.identity);
         target.Damage(applyBurnGA.BurnDamage);
         target.RemoveStatusEffect(StatusEffectType.BURN,1);
+
+        if (target.CurrentHealth <= 0 && target is EnemyView enemyView)
+            ActionSystem.Instance.AddReaction(new KillEnemyGA(enemyView));
+
         yield return new WaitForSeconds(1f);
     }
 }
