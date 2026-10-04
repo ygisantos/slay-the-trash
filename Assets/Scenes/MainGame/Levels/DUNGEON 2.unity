@@ -23165,10 +23165,10 @@ MonoBehaviour:
   healthBaseScore: 5
   floorBaseScore: 200
   enemiesCount: 0
-  bossCount: 1
+  bossCount: 0
   eventCount: 0
   healthCount: 0
-  floorCount: 20
+  floorCount: 0
   multiplier: 1
 --- !u!1 &1119675564
 GameObject:

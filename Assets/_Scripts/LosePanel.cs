@@ -46,6 +46,7 @@ public class LosePanel : MonoBehaviour
     public void OnRetryClicked()
     {
         Debug.Log("Retry button clicked - Reloading scene...");
+        ScoreManager.Instance?.ResetScores();
 
         // Reload the current scene
         Transitioner.Instance.TransitionToScene(SceneManager.GetActiveScene().buildIndex);
@@ -55,6 +56,7 @@ public class LosePanel : MonoBehaviour
     public void OnMainMenuClicked()
     {
         Debug.Log("Main Menu button clicked - Loading main menu...");
+        ScoreManager.Instance?.ResetScores();
 
         // Load main menu scene
         Transitioner.Instance.TransitionToScene(mainMenuSceneName);

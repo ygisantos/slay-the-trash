@@ -94,6 +94,14 @@ public class EnemyBoardView : MonoBehaviour
         if (CardSystem.Instance != null)
             CardSystem.Instance.EndCombat();
 
+        if (ScoreManager.Instance != null)
+        {
+            if (MapManager.Instance.isBossLevel)
+                ScoreManager.Instance.AddBossKill();
+            else
+                ScoreManager.Instance.AddFloorClear();
+        }
+
         if (allClearedPanel != null)
             allClearedPanel.SetActive(true);
 

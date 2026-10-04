@@ -62,6 +62,7 @@ public class ScoreCanvas : MonoBehaviour
     {
         // gameObject.SetActive(false);
         SoundManager.Instance.PlaySound(SoundType.CLICK);
+        ScoreManager.Instance?.ResetScores();
         Transitioner.Instance.TransitionToScene("MainMenuScene"); 
     }
 }
