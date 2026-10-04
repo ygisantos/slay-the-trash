@@ -86,8 +86,6 @@ public class FBCardCollection : MonoBehaviour
             username,
             snapshot =>
             {
-                string counterField = GetDungeonCounterField(trashType);
-
                 if (snapshot.Exists)
                 {
                     Dictionary<string, object> data = snapshot.ToDictionary();
@@ -96,13 +94,6 @@ public class FBCardCollection : MonoBehaviour
                     {
                         { "cards", FieldValue.ArrayUnion(cardEntry) }
                     };
-
-                    if (counterField != null)
-                    {
-                        updates[counterField] = TryGetCounter(data, counterField, out int currentCount)
-                            ? FieldValue.Increment(1)
-                            : CountCardsByTrashType(data, trashType) + 1;
-                    }
 
                     FirebaseManager.Instance.UpdateDocument(
                         COLLECTION,
@@ -119,9 +110,6 @@ public class FBCardCollection : MonoBehaviour
                         { "username", username },
                         { "cards", new List<object> { cardEntry } }
                     };
-
-                    if (counterField != null)
-                        newDocument[counterField] = 1L;
 
                     FirebaseManager.Instance.CreateDocument(
                         COLLECTION,

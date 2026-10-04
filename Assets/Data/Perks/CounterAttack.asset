@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Image>k__BackingField: {fileID: 21300000, guid: 9f20891cfb82a6d42a0e25bd5820771f, type: 3}
   <PerkCondition>k__BackingField:
-    rid: 1877740618895327314
+    rid: -2
   <AutoTargetEffect>k__BackingField:
     rid: 1877740618895327315
   <UseAutoTarget>k__BackingField: 0
@@ -24,10 +24,6 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 1877740618895327314
-      type: {class: OnEnemyAttackCondition, ns: , asm: Assembly-CSharp}
-      data:
-        reactionTiming: 1
     - rid: 1877740618895327315
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:

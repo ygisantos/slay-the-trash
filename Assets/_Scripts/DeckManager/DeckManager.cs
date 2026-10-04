@@ -120,7 +120,10 @@ public class DeckManager : MonoBehaviour
 
         FBCardCollection.Instance.ClearCards(
             username,
-            UpdateCardsList,
+            () => {
+                UpdateCardsList();
+                DynamicPopupToast.Instance.ShowToast("Card collection has been reset.");
+            },
             error => Debug.LogError($"Failed to reset card collection: {error}")
         );
     }

@@ -155,7 +155,8 @@ public class FBLeaderboard : MonoBehaviour
         string username,
         string category,
         Action onSuccess = null,
-        Action<string> onError = null)
+        Action<string> onError = null,
+        string trashType = null)
     {
         if (string.IsNullOrWhiteSpace(username))
         {
@@ -178,6 +179,17 @@ public class FBLeaderboard : MonoBehaviour
 
         if (categoryField != null)
             updates[categoryField] = FieldValue.Increment(1);
+
+        string dungeonField = trashType?.Trim().ToLowerInvariant() switch
+        {
+            "plastic" or "plastic bottle" => "plastic_scan_count",
+            "paper" => "paper_scan_count",
+            "food waste" => "food_waste_scan_count",
+            _ => null
+        };
+
+        if (dungeonField != null)
+            updates[dungeonField] = FieldValue.Increment(1);
 
         UpdatePoints(username, updates, onSuccess, onError);
     }

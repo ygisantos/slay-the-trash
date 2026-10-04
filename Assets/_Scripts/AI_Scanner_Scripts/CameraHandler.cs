@@ -160,6 +160,7 @@ public class CameraHandler : MonoBehaviour
         if (cameraRoutine != null)
         {
             StopCoroutine(cameraRoutine);
+            cameraRoutine = null;
         }
 
         cameraRoutine = StartCoroutine(InitializeCamera());
@@ -772,7 +773,8 @@ public class CameraHandler : MonoBehaviour
                 statsUsername,
                 category,
                 null,
-                error => Debug.LogError($"Failed to record scan stats: {error}")
+                error => Debug.LogError($"Failed to record scan stats: {error}"),
+                label
             );
         }
 
@@ -995,14 +997,45 @@ public class CameraHandler : MonoBehaviour
     // STOP CAMERA
     // ================================================================
 
+    // public void StopCamera()
+    // {
+    //     if (webCamTexture != null &&
+    //         webCamTexture.isPlaying)
+    //     {
+    //         webCamTexture.Stop();
+
+    //         isCameraReady = false;
+    //     }
+    // }
     public void StopCamera()
     {
-        if (webCamTexture != null &&
-            webCamTexture.isPlaying)
+        // Cancel initialization if it is still running.
+        if (cameraRoutine != null)
         {
-            webCamTexture.Stop();
+            StopCoroutine(cameraRoutine);
+            cameraRoutine = null;
+        }
 
-            isCameraReady = false;
+        isCameraReady = false;
+        isProcessing = false;
+
+        // Release the webcam and its native resources.
+        if (webCamTexture != null)
+        {
+            if (webCamTexture.isPlaying)
+            {
+                webCamTexture.Stop();
+            }
+
+            // Detach it from the UI before destroying it.
+            if (cameraFeedDisplay != null &&
+                cameraFeedDisplay.texture == webCamTexture)
+            {
+                cameraFeedDisplay.texture = null;
+            }
+
+            Destroy(webCamTexture);
+            webCamTexture = null;
         }
     }
 }

@@ -24,7 +24,10 @@ public class DungeonChecker : MonoBehaviour
     public float normalAlpha = 1f;   // 100%
 
     private int currentCards;
+    private int ownedCards;
     private bool isActive = false;
+
+    private bool MeetsRequirement => currentCards >= requiredAmount && ownedCards > 0;
 
     public enum CardTypes
     {
@@ -37,17 +40,27 @@ public class DungeonChecker : MonoBehaviour
     {
         if (!isActive || requirementsText == null) return;
 
-        // Get card amount
+        DungeonsHandler handler = FindAnyObjectByType<DungeonsHandler>();
         currentCards = requiredType switch
         {
-            CardTypes.Paper => FindAnyObjectByType<DungeonsHandler>().paperCards,
-            CardTypes.Plastic => FindAnyObjectByType<DungeonsHandler>().plasticCards,
-            CardTypes.FoodWaste => FindAnyObjectByType<DungeonsHandler>().foodwasteCards,
+            CardTypes.Paper => handler.paperCards,
+            CardTypes.Plastic => handler.plasticCards,
+            CardTypes.FoodWaste => handler.foodwasteCards,
             _ => 0,
         };
 
-        // Update UI text
+        // A reset collection must block entry even if scan stats are enough.
+        ownedCards = requiredType switch
+        {
+            CardTypes.Paper => handler.ownedPaper,
+            CardTypes.Plastic => handler.ownedPlastic,
+            CardTypes.FoodWaste => handler.ownedFoodWaste,
+            _ => 0,
+        };
+
         requirementsText.text = $"{Math.Min(currentCards, requiredAmount)}/{requiredAmount} {requiredType} Cards To Enter";
+        if (currentCards >= requiredAmount && ownedCards == 0)
+            requirementsText.text += $"\nCollect a {requiredType} card first";
 
         // Apply transparency
         UpdateTransparency();
@@ -57,7 +70,7 @@ public class DungeonChecker : MonoBehaviour
     {
         if (objectToFade == null) return;
 
-        float alpha = currentCards >= requiredAmount ? normalAlpha : fadedAlpha;
+        float alpha = MeetsRequirement ? normalAlpha : fadedAlpha;
 
         // Try UI Image first
         if (objectToFade.TryGetComponent<Image>(out var img))
@@ -94,26 +107,15 @@ public class DungeonChecker : MonoBehaviour
 
     public void RequirementCheck()
     {
-        if (currentCards >= requiredAmount)
+        if (MeetsRequirement)
         {
             SoundManager.Instance.PlayMusic(SoundType.GAMEMUSIC);
             Transitioner.Instance.TransitionToScene(sceneToLoad);
         }
         else
         {
-            StartCoroutine(NotEnoughCards());
+            DynamicPopupToast.Instance.ShowToast("Not enough cards to enter the dungeon!");
         }
     }
 
-    private IEnumerator NotEnoughCards()
-    {
-        if (notEnough != null)
-        {
-            notEnough.SetActive(true);
-            yield return new WaitForSeconds(1f);
-            notEnough.SetActive(false);
-        }
-        else
-            Debug.LogWarning("Missing Warning Game Object Reference!");
-    }
 }

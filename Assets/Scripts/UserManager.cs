@@ -153,9 +153,10 @@ public class UserManager : MonoBehaviour
                 username.text = "";
                 password.text = "";
                 passwordConfirm.text = "";
-                DialogueManager.Instance.ShowSuccessDialog(
-                    "Registration successful! You can now log in."
-                );
+                // DialogueManager.Instance.ShowSuccessDialog(
+                //     "Registration successful! You can now log in."
+                // );
+                DynamicPopupToast.Instance.ShowToast("Registration successful! You can now log in.");
             },
 
             error =>
@@ -323,10 +324,13 @@ public class UserManager : MonoBehaviour
                         $"Welcome {profile["username"]}"
                     );
 
-                    DialogueManager.Instance.ShowSuccessDialog(
-                        "Login successful!",
-                        () => Transitioner.Instance.TransitionToScene("MainMenuScene")
-                    );
+                    // DialogueManager.Instance.ShowSuccessDialog(
+                    //     "Login successful!",
+                    //     () => Transitioner.Instance.TransitionToScene("MainMenuScene")
+                    // );
+
+                    DynamicPopupToast.Instance.ShowToast("Login successful!");
+                    Invoke("DelayedTransition", 1f);
                 });
             },
 
@@ -340,6 +344,11 @@ public class UserManager : MonoBehaviour
                 });
             }
         );
+    }
+
+    void DelayedTransition()
+    {
+        Transitioner.Instance.TransitionToScene("MainMenuScene");
     }
 
 

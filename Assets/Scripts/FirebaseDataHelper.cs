@@ -15,6 +15,18 @@ public static class FirebaseDataHelper
         return value?.ToString();
     }
 
+    public static int GetInt(
+        Dictionary<string, object> data,
+        string key)
+    {
+        if (data == null || !data.TryGetValue(key, out object value))
+            return 0;
+
+        return value is long longValue
+            ? (int)longValue
+            : int.TryParse(value?.ToString(), out int result) ? result : 0;
+    }
+
     public static bool GetBool(
         Dictionary<string, object> data,
         string key)

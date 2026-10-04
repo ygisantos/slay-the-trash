@@ -48,6 +48,8 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private Modal modal;
 
+    public bool IsShowing => modal != null && (modal.IsOpen || modal.IsAnimating);
+
     public void ShowDialogue(string message, string positive, string negative, UnityAction onPositive, UnityAction onNegative)
     {
         UnityEvent positiveEvent = new UnityEvent();
