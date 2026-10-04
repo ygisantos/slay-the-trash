@@ -8349,6 +8349,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: ScanModal
       objectReference: {fileID: 0}
+    - target: {fileID: 9035847464053702238, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035847464053702238, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
+      propertyPath: m_Color.b
+      value: 0.22352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035847464053702238, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
+      propertyPath: m_Color.g
+      value: 0.22352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035847464053702238, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
+      propertyPath: m_Color.r
+      value: 0.22352943
+      objectReference: {fileID: 0}
     - target: {fileID: 9153376566906472305, guid: 9065e1e742911bc41b0755a67a9dd007, type: 3}
       propertyPath: OnOpen.m_PersistentCalls.m_Calls.Array.size
       value: 1

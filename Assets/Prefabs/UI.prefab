@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -743596457, guid: 6b0c2b296aa10184f9d530de3430d59d, type: 3}
+  m_Sprite: {fileID: -675088646513728498, guid: 5d39a93740fcec14e8ec325d5eaf45ce, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1840138343, guid: 6b0c2b296aa10184f9d530de3430d59d, type: 3}
+  m_Sprite: {fileID: 1491653776, guid: 5d39a93740fcec14e8ec325d5eaf45ce, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -310,7 +310,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 187606358, guid: 6b0c2b296aa10184f9d530de3430d59d, type: 3}
+  m_Sprite: {fileID: -372342983, guid: 5d39a93740fcec14e8ec325d5eaf45ce, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 0
@@ -518,6 +518,7 @@ MonoBehaviour:
   targetCamera: {fileID: 0}
   refreshOnSceneLoaded: 1
   planeDistance: 100
+  sortingLayerName: Default
 --- !u!1 &5484627399920827859
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,7 +667,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4566190091907096745, guid: 6b0c2b296aa10184f9d530de3430d59d, type: 3}
+  m_Sprite: {fileID: -1917436870, guid: 5d39a93740fcec14e8ec325d5eaf45ce, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
