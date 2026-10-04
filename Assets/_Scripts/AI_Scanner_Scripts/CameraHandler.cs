@@ -271,7 +271,7 @@ public class CameraHandler : MonoBehaviour
 
             // GPU backend
             worker = WorkerFactory.CreateWorker(
-                WorkerFactory.Type.ComputePrecompiled,
+                WorkerFactory.Type.CSharpBurst,
                 runtimeModel
             );
 
@@ -336,20 +336,31 @@ public class CameraHandler : MonoBehaviour
             $"{webCamTexture.width} {webCamTexture.height}"
         );
 
+        int rotation = webCamTexture.videoRotationAngle;
+        bool isQuarterTurn = rotation == 90 || rotation == 270;
+        float displayWidth = isQuarterTurn
+            ? webCamTexture.height
+            : webCamTexture.width;
+        float displayHeight = isQuarterTurn
+            ? webCamTexture.width
+            : webCamTexture.height;
+
         float cameraSizeMult =
-            1600f / webCamTexture.width;
+            1600f / displayWidth;
 
         Debug.Log(cameraSizeMult);
 
         cameraFeedDisplay.rectTransform.sizeDelta =
             new Vector2(
-                webCamTexture.width,
-                webCamTexture.height
+                displayWidth,
+                displayHeight
             ) * cameraSizeMult;
 
-        // Rotate 180° CCW and mirror horizontally
-        // cameraFeedDisplay.rectTransform.localEulerAngles =
-        //     new Vector3(0, 180, 180);
+        cameraFeedDisplay.rectTransform.localEulerAngles =
+            new Vector3(0f, 0f, -rotation);
+        cameraFeedDisplay.uvRect = webCamTexture.videoVerticallyMirrored
+            ? new Rect(0f, 1f, 1f, -1f)
+            : new Rect(0f, 0f, 1f, 1f);
     }
 
     // ================================================================

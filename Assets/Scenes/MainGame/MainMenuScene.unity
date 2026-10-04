@@ -6766,7 +6766,7 @@ MonoBehaviour:
   - {fileID: 661525474}
   - {fileID: 2096435038}
   seed: 12345
-  countdownText: {fileID: 0}
+  countdownText: {fileID: 2025518299}
   incompleteQuestColor: {r: 0.7207546, g: 0.7207546, b: 0.7207546, a: 1}
   completedQuestColor: {r: 0.31097898, g: 0.79622644, b: 0.31097898, a: 1}
 --- !u!114 &364080248
@@ -21552,6 +21552,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1162215292}
   - component: {fileID: 1162215291}
+  - component: {fileID: 1162215293}
   m_Layer: 0
   m_Name: LogController
   m_TagString: Untagged
@@ -21587,6 +21588,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1162215293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162215290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b65dea2597cf5c94d9a2c98c7ad4b021, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeRotationLock
 --- !u!1 &1163855833
 GameObject:
   m_ObjectHideFlags: 0
@@ -22850,7 +22863,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TOTAL DALIES
+  m_text: TOTAL DAILIES
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: af78ec8f754895945b2b86e62171f2c8, type: 2}
   m_sharedMaterial: {fileID: 2196026911491292788, guid: af78ec8f754895945b2b86e62171f2c8, type: 2}
@@ -24784,7 +24797,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_AnchorMin.x
@@ -24792,15 +24805,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 2119.6228
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 978.28735
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_LocalScale.x
@@ -24844,11 +24857,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 1059.8114
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -489.14368
       objectReference: {fileID: 0}
     - target: {fileID: 4622874415600996069, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -24868,7 +24881,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4707128620131813108, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 213.9856
       objectReference: {fileID: 0}
     - target: {fileID: 5092410709535159788, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: scanMode

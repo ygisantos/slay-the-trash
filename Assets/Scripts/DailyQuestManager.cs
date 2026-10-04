@@ -82,8 +82,8 @@ public class DailyQuestManager : MonoBehaviour
                 {
                     if (!success)
                     {
-                        Debug.LogError(
-                            "Daily Quest Manager could not synchronize server time."
+                        Debug.LogWarning(
+                            "Daily Quest Manager is using device UTC because server time is unavailable."
                         );
                     }
                 }
@@ -482,6 +482,7 @@ public class DailyQuestManager : MonoBehaviour
                 if (ServerTimeHelper.IsReady)
                     GenerateDailyQuests();
 
+                yield return new WaitForSecondsRealtime(1f);
                 continue;
             }
 

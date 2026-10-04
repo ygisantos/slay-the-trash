@@ -311,8 +311,8 @@ MonoBehaviour:
     sounds:
     - soundType: 16
       clips:
-      - {fileID: 8300000, guid: 011c0c283e88b0e4685f4db372fbb302, type: 3}
-      volume: 0.5
+      - {fileID: 8300000, guid: c8d1273cf82638144ad7ec51bb60543c, type: 3}
+      volume: 0.25
       pitch: 1
       randomizePitch: 0
       minPitch: 0.1
@@ -329,8 +329,8 @@ MonoBehaviour:
       is3D: 0
     - soundType: 18
       clips:
-      - {fileID: 8300000, guid: 56685cbb162f93c41b9e4a94aa1b00f3, type: 3}
-      volume: 1
+      - {fileID: 8300000, guid: 395ec8d28f6ef7140bd7bd2fd3f59950, type: 3}
+      volume: 0.25
       pitch: 1
       randomizePitch: 0
       minPitch: 1
