@@ -173,8 +173,8 @@ TextureImporter:
       name: camera_v2_2
       rect:
         serializedVersion: 2
-        x: 2670
-        y: 122
+        x: 2503
+        y: 133
         width: 2422
         height: 1142
       alignment: 0
@@ -200,7 +200,7 @@ TextureImporter:
         width: 200
         height: 200
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
