@@ -5,7 +5,7 @@ using UnityEngine;
 public class MatchSetupSystem : MonoBehaviour
 {
     [SerializeField] private HeroData heroData;
-    [SerializeField] private PerkData perkData;
+    // [SerializeField] private PerkData perkData;
 
     [SerializeField] private List<EnemyData> enemyDatas;
     public HeroHealthChecker hero;
@@ -15,8 +15,8 @@ public class MatchSetupSystem : MonoBehaviour
         heroData = PlayerManager.Instance.GetHeroData();
         HeroSystem.Instance.Setup(heroData);
         hero.GameStart();
-        perkData = PlayerManager.Instance.GetPerkData();
-        PerkSystem.Instance.AddPerk(new Perk(perkData));
+        // perkData = PlayerManager.Instance.GetPerkData();
+        // PerkSystem.Instance.AddPerk(new Perk(perkData));
     }
 
     public void StartGame()
