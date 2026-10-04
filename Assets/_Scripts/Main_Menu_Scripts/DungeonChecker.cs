@@ -36,6 +36,11 @@ public class DungeonChecker : MonoBehaviour
         FoodWaste
     }
 
+    void Start()
+    {
+        _ = DynamicPopupToast.Instance;
+    }
+    
     void Update()
     {
         if (!isActive || requirementsText == null) return;

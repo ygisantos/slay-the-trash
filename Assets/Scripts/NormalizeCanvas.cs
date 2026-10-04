@@ -7,6 +7,8 @@ public class NormalizeCanvas : MonoBehaviour
     [SerializeField] private Camera targetCamera;
     [SerializeField] private bool refreshOnSceneLoaded = true;
     [SerializeField] private float planeDistance = 100f;
+    [SerializeField] private string sortingLayerName = "Default";
+    // [SerializeField] private int sortingOrder = 0;
 
     private Canvas canvas;
     private Coroutine cameraRoutine;
@@ -53,6 +55,8 @@ public class NormalizeCanvas : MonoBehaviour
             return;
 
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.sortingLayerName = sortingLayerName;
+        // canvas.sortingOrder = sortingOrder;
 
         if (targetCamera == null || !targetCamera.isActiveAndEnabled)
             targetCamera = Camera.main;

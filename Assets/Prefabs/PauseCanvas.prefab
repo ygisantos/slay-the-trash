@@ -1197,6 +1197,7 @@ MonoBehaviour:
   targetCamera: {fileID: 0}
   refreshOnSceneLoaded: 1
   planeDistance: 100
+  sortingLayerName: Cards
 --- !u!1 &7989431353278300046
 GameObject:
   m_ObjectHideFlags: 0
