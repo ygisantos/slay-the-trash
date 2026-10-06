@@ -1,0 +1,157 @@
+{
+  "scoringSkills": [
+    {
+      "id": "waste_collector",
+      "skillName": "Waste Collector",
+      "description": "Defeating waste enemies rewards you with additional points.",
+      "effect": "+1 point per enemy defeated",
+      "cost": 3,
+      "layer": 1,
+      "requiredSkills": []
+    },
+    {
+      "id": "recycling_chain",
+      "skillName": "Recycling Chain",
+      "description": "Build your recycling streak by defeating waste enemies.",
+      "effect": "+0.5× multiplier per enemy defeated",
+      "cost": 3,
+      "layer": 2,
+      "requiredSkills": [
+        "waste_collector"
+      ]
+    },
+    {
+      "id": "clean_sweep",
+      "skillName": "Clean Sweep",
+      "description": "Clearing an entire floor increases your score multiplier.",
+      "effect": "+1× multiplier per floor cleared",
+      "cost": 3,
+      "layer": 3,
+      "requiredSkills": [
+        "recycling_chain"
+      ]
+    },
+    {
+      "id": "eco_champion",
+      "skillName": "Eco Champion",
+      "description": "Defeating a boss grants a powerful score bonus.",
+      "effect": "+15× boss clear",
+      "cost": 3,
+      "layer": 4,
+      "requiredSkills": [
+        "clean_sweep"
+      ]
+    },
+    {
+      "id": "green_progress",
+      "skillName": "Green Progress",
+      "description": "Earn additional points every time you clear a floor.",
+      "effect": "+10 points per floor cleared",
+      "cost": 3,
+      "layer": 5,
+      "requiredSkills": [
+        "clean_sweep"
+      ]
+    },
+    {
+      "id": "eco_wisdom",
+      "skillName": "Eco Wisdom",
+      "description": "Make the correct environmental choice to earn a powerful multiplier.",
+      "effect": "+15× multiplier per correct event choice",
+      "cost": 3,
+      "layer": 6,
+      "requiredSkills": [
+        "clean_sweep"
+      ]
+    },
+    {
+      "id": "healthy_planet",
+      "skillName": "Healthy Planet",
+      "description": "Preserve your health to earn a larger score bonus.",
+      "effect": "+10× multiplier based on remaining health",
+      "cost": 3,
+      "layer": 7,
+      "requiredSkills": [
+        "clean_sweep"
+      ]
+    }
+  ],
+
+  "gameplaySkills": [
+    {
+      "id": "green_vitality",
+      "skillName": "Green Vitality",
+      "description": "Harness the power of nature to increase your maximum Health.",
+      "effect": "+15 Health",
+      "cost": 3,
+      "layer": 1,
+      "requiredSkills": []
+    },
+    {
+      "id": "eco_barrier",
+      "skillName": "Eco Barrier",
+      "description": "Protect yourself with an environmental barrier at the start of battle.",
+      "effect": "Start with 15 Shield",
+      "cost": 3,
+      "layer": 2,
+      "requiredSkills": [
+        "green_vitality"
+      ]
+    },
+    {
+      "id": "circular_defense",
+      "skillName": "Circular Defense",
+      "description": "The cycle continues. Restore your protective barrier every battle.",
+      "effect": "Regenerate 5 Shield per battle",
+      "cost": 3,
+      "layer": 3,
+      "requiredSkills": [
+        "eco_barrier"
+      ]
+    },
+    {
+      "id": "natures_renewal",
+      "skillName": "Nature's Renewal",
+      "description": "Nature restores what has been lost.",
+      "effect": "Regenerate 5 Health per battle",
+      "cost": 3,
+      "layer": 4,
+      "requiredSkills": [
+        "circular_defense"
+      ]
+    },
+    {
+      "id": "energy_reserve",
+      "skillName": "Energy Reserve",
+      "description": "Expand your energy reserves and gain additional Mana capacity.",
+      "effect": "+1 Mana capacity",
+      "cost": 3,
+      "layer": 5,
+      "requiredSkills": [
+        "circular_defense"
+      ]
+    },
+    {
+      "id": "life_cycle",
+      "skillName": "Life Cycle",
+      "description": "Every action contributes to the cycle. Playing cards restores your health.",
+      "effect": "Regenerate 1 Health per card",
+      "cost": 3,
+      "layer": 6,
+      "requiredSkills": [
+        "circular_defense"
+      ]
+    },
+    {
+      "id": "knowledge_bank",
+      "skillName": "Knowledge Bank",
+      "description": "Expand your knowledge and carry an additional card.",
+      "effect": "Gain 1 more card in hand",
+      "cost": 3,
+      "layer": 7,
+      "requiredSkills": [
+        "circular_defense"
+      ]
+    }
+  ]
+}
