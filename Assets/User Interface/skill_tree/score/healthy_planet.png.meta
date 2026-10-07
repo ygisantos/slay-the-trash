@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2b9ec577781284244a988c53fc4c82be
+guid: d3d78082577952c4b9f5743eeac13223
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6650253864622715059
-    second: itemSlot_cyan_0
+      213: -5773032862636467645
+    second: healthy_planet_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: itemSlot_cyan_0
+      name: healthy_planet_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 10
-        width: 187
-        height: 192
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4f8efc385d85b3a0800000000000000
-      internalID: -6650253864622715059
+      spriteID: 34a95e1c23112efa0800000000000000
+      internalID: -5773032862636467645
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fc923f7955d5b5840b036c794fbe5437
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      itemSlot_cyan_0: -6650253864622715059
+      healthy_planet_0: -5773032862636467645
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

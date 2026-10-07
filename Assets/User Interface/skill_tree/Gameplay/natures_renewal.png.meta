@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2b9ec577781284244a988c53fc4c82be
+guid: bab997182cc4f7a4e9d5116bebf615fb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6650253864622715059
-    second: itemSlot_cyan_0
+      213: -2495941836846152310
+    second: natures_renewal_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: itemSlot_cyan_0
+      name: natures_renewal_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 10
-        width: 187
-        height: 192
+        x: 15
+        y: 15
+        width: 482
+        height: 482
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4f8efc385d85b3a0800000000000000
-      internalID: -6650253864622715059
+      spriteID: a85cfba9f12ac5dd0800000000000000
+      internalID: -2495941836846152310
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fc923f7955d5b5840b036c794fbe5437
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      itemSlot_cyan_0: -6650253864622715059
+      natures_renewal_0: -2495941836846152310
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

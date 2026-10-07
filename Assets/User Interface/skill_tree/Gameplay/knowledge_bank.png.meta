@@ -1,10 +1,25 @@
 fileFormatVersion: 2
-guid: 2b9ec577781284244a988c53fc4c82be
+guid: 52e0233db56002840936c49e7a5a1250
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6650253864622715059
-    second: itemSlot_cyan_0
+      213: -8549646137982076735
+    second: knowledge_bank_0
+  - first:
+      213: -8277773198225469270
+    second: knowledge_bank_1
+  - first:
+      213: -7465606636011931739
+    second: knowledge_bank_2
+  - first:
+      213: 238892927179620327
+    second: knowledge_bank_3
+  - first:
+      213: 7251530829691704019
+    second: knowledge_bank_4
+  - first:
+      213: 4517749269765079979
+    second: knowledge_bank_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +61,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,23 +141,133 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: itemSlot_cyan_0
+      name: knowledge_bank_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 10
-        width: 187
-        height: 192
+        x: 161
+        y: 460
+        width: 31
+        height: 46
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4f8efc385d85b3a0800000000000000
-      internalID: -6650253864622715059
+      spriteID: 1c8b94ea22e895980800000000000000
+      internalID: -8549646137982076735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knowledge_bank_1
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 484
+        width: 20
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa0958c32217f1d80800000000000000
+      internalID: -8277773198225469270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knowledge_bank_2
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 460
+        width: 31
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a7b5bba156d46890800000000000000
+      internalID: -7465606636011931739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knowledge_bank_3
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 0
+        width: 508
+        height: 443
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eff4eff9d7b05300800000000000000
+      internalID: 238892927179620327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knowledge_bank_4
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 423
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d2519d8edc92a460800000000000000
+      internalID: 7251530829691704019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: knowledge_bank_5
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 423
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba3c0a8560542be30800000000000000
+      internalID: 4517749269765079979
       vertices: []
       indices: 
       edges: []
@@ -151,7 +276,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fc923f7955d5b5840b036c794fbe5437
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +286,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      itemSlot_cyan_0: -6650253864622715059
+      knowledge_bank_0: -8549646137982076735
+      knowledge_bank_1: -8277773198225469270
+      knowledge_bank_2: -7465606636011931739
+      knowledge_bank_3: 238892927179620327
+      knowledge_bank_4: 7251530829691704019
+      knowledge_bank_5: 4517749269765079979
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 2b9ec577781284244a988c53fc4c82be
+guid: b2fba4a79a2304b41aa8abdb23b45089
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6650253864622715059
-    second: itemSlot_cyan_0
+      213: 502797787101998241
+    second: life_cycle_0
+  - first:
+      213: -8904610342422087615
+    second: life_cycle_1
+  - first:
+      213: -2865347097899569814
+    second: life_cycle_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +52,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,23 +132,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: itemSlot_cyan_0
+      name: life_cycle_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 10
-        width: 187
-        height: 192
+        y: 30
+        width: 353
+        height: 369
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4f8efc385d85b3a0800000000000000
-      internalID: -6650253864622715059
+      spriteID: 1ac21166ceb4af600800000000000000
+      internalID: 502797787101998241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: life_cycle_1
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 343
+        width: 212
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14879ac72187c6480800000000000000
+      internalID: -8904610342422087615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: life_cycle_2
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 12
+        width: 251
+        height: 471
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6def77eefd3c38d0800000000000000
+      internalID: -2865347097899569814
       vertices: []
       indices: 
       edges: []
@@ -151,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fc923f7955d5b5840b036c794fbe5437
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +211,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      itemSlot_cyan_0: -6650253864622715059
+      life_cycle_0: 502797787101998241
+      life_cycle_1: -8904610342422087615
+      life_cycle_2: -2865347097899569814
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

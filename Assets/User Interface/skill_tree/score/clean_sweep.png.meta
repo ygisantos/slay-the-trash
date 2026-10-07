@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2b9ec577781284244a988c53fc4c82be
+guid: 66b424c746a7b0b489bd1f67241ae169
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6650253864622715059
-    second: itemSlot_cyan_0
+      213: 679890820939854497
+    second: clean_sweep_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: itemSlot_cyan_0
+      name: clean_sweep_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 10
-        width: 187
-        height: 192
+        x: 8
+        y: 6
+        width: 497
+        height: 500
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4f8efc385d85b3a0800000000000000
-      internalID: -6650253864622715059
+      spriteID: 1a23b2479157f6900800000000000000
+      internalID: 679890820939854497
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fc923f7955d5b5840b036c794fbe5437
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      itemSlot_cyan_0: -6650253864622715059
+      clean_sweep_0: 679890820939854497
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

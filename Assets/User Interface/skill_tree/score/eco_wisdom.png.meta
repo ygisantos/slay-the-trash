@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 2b9ec577781284244a988c53fc4c82be
+guid: d1544b03191b68042a9cfc6fb39bc405
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6650253864622715059
-    second: itemSlot_cyan_0
+      213: -3448791386334153711
+    second: eco_wisdom_0
+  - first:
+      213: -2025547213854978933
+    second: eco_wisdom_1
+  - first:
+      213: -1386815396909206386
+    second: eco_wisdom_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +132,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: itemSlot_cyan_0
+      name: eco_wisdom_1
       rect:
         serializedVersion: 2
         x: 0
-        y: 10
-        width: 187
-        height: 192
+        y: 0
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +147,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4f8efc385d85b3a0800000000000000
-      internalID: -6650253864622715059
+      spriteID: b8c44627a8fc3e3e0800000000000000
+      internalID: -2025547213854978933
       vertices: []
       indices: 
       edges: []
@@ -151,7 +157,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: fc923f7955d5b5840b036c794fbe5437
+    spriteID: aec4a86ec6794b34cad622432429973f
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +167,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      itemSlot_cyan_0: -6650253864622715059
+      eco_wisdom_0: -3448791386334153711
+      eco_wisdom_1: -2025547213854978933
+      eco_wisdom_2: -1386815396909206386
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
