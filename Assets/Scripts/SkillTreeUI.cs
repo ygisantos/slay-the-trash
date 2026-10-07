@@ -478,7 +478,7 @@ public class SkillTreeUI : MonoBehaviour
         {
             unlockSkillButton.interactable = false;
 
-            SetUnlockButtonText("Unlock previous skill");
+            SetUnlockButtonText("Unlock prev. skill");
 
             return;
         }
@@ -491,7 +491,7 @@ public class SkillTreeUI : MonoBehaviour
         {
             unlockSkillButton.interactable = false;
 
-            SetUnlockButtonText("Not enough Water");
+            SetUnlockButtonText("Insufficient water");
 
             return;
         }
