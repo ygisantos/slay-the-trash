@@ -45,8 +45,10 @@ public class SkillTreeUI : MonoBehaviour
     public List<SkillData> gameplaySkills = new();
 
     [Header("Skill Visuals")]
-    [SerializeField] private Color availableSkillColor = Color.white;
-    [SerializeField] private Color lockedSkillColor = Color.gray;
+    [SerializeField] private Color unlockedSkillColor = Color.white;
+    [SerializeField] private Color availableSkillColor = new Color(0.55f, 1f, 0.55f, 1f);
+    [SerializeField] private Color nextSkillColor = new Color(1f, 0.85f, 0.45f, 1f);
+    [SerializeField] private Color lockedSkillColor = new Color(0.35f, 0.35f, 0.35f, 1f);
 
     [Header("Skill Information UI")]
     [SerializeField] private TextMeshProUGUI skillTreeTitle;
@@ -74,8 +76,13 @@ public class SkillTreeUI : MonoBehaviour
     [SerializeField] private Color activeTabColor;
     [SerializeField] private Color inactiveTabColor;
 
-    // Temporary debugging resource
-    [SerializeField] private int water = 50;
+    // Available water comes from the Firebase profile
+    private int water =>
+        FBAuthentication.Instance != null
+            ? FBAuthentication.Instance.GetAvailableWater()
+            : 0;
+
+    private bool isSaving;
 
     // Currently selected skill
     private SkillData selectedSkill;
@@ -119,7 +126,25 @@ public class SkillTreeUI : MonoBehaviour
             respecButton.onClick.AddListener(ConfirmRespec);
         }
 
+        ApplySavedUnlocks();
+        UpdateWaterUI();
         UpdateAllSkillVisuals();
+    }
+
+    private void ApplySavedUnlocks()
+    {
+        if (FBAuthentication.Instance == null)
+            return;
+
+        List<string> saved = FBAuthentication.Instance.GetUnlockedSkillIds();
+
+        foreach (SkillData skill in scoringSkills)
+            if (skill != null)
+                skill.isUnlocked = saved.Contains(skill.id);
+
+        foreach (SkillData skill in gameplaySkills)
+            if (skill != null)
+                skill.isUnlocked = saved.Contains(skill.id);
     }
 
 
@@ -185,6 +210,8 @@ public class SkillTreeUI : MonoBehaviour
 
         scoringSkills = data.scoringSkills ?? new List<SkillData>();
         gameplaySkills = data.gameplaySkills ?? new List<SkillData>();
+
+        ApplySavedUnlocks();
 
         Debug.Log(
             $"Loaded {scoringSkills.Count} scoring skills " +
@@ -257,9 +284,17 @@ public class SkillTreeUI : MonoBehaviour
         // VISUAL STATE
         // -----------------------------------------------------
 
-        Color color = skill.isUnlocked || canUnlock
-            ? availableSkillColor
-            : lockedSkillColor;
+        // Unlocked: normal. Buyable: green. Next (needs more water): amber. Locked: gray.
+        Color color;
+
+        if (skill.isUnlocked)
+            color = unlockedSkillColor;
+        else if (canUnlock)
+            color = availableSkillColor;
+        else if (requirementsMet)
+            color = nextSkillColor;
+        else
+            color = lockedSkillColor;
 
         // Apply the color to the Button and every child Graphic.
         Graphic[] graphics =
@@ -364,41 +399,43 @@ public class SkillTreeUI : MonoBehaviour
             return;
         }
 
-        // -----------------------------------------------------
-        // SPEND WATER
-        // -----------------------------------------------------
+        if (isSaving || FBAuthentication.Instance == null)
+            return;
 
-        water -= selectedSkill.cost;
+        // Spend water and save the unlock to Firebase
+        SkillData skill = selectedSkill;
+        isSaving = true;
 
-        // -----------------------------------------------------
-        // UNLOCK
-        // -----------------------------------------------------
+        FBAuthentication.Instance.SaveSkillUnlock(
+            skill.id,
+            skill.cost,
+            () =>
+            {
+                isSaving = false;
+                skill.isUnlocked = true;
 
-        selectedSkill.isUnlocked = true;
+                UpdateWaterUI();
+                UpdateUnlockButton();
+                UpdateAllSkillVisuals();
 
-        Debug.Log(
-            $"Unlocked {selectedSkill.skillName} for " +
-            $"{selectedSkill.cost} Water."
+                ShowToast($"{skill.skillName} unlocked!");
+
+                // TODO:
+                // Apply the actual skill effect here.
+            },
+            error =>
+            {
+                isSaving = false;
+                Debug.LogError($"Failed to save skill unlock: {error}");
+                ShowToast("Could not save skill. Try again.");
+            }
         );
+    }
 
-        // Update UI
-        UpdateWaterUI();
-        UpdateUnlockButton();
-        UpdateAllSkillVisuals();
-
-        // -----------------------------------------------------
-        // SUCCESS TOAST
-        // -----------------------------------------------------
-
+    private void ShowToast(string message)
+    {
         if (DynamicPopupToast.Instance != null)
-        {
-            DynamicPopupToast.Instance.ShowToast(
-                $"{selectedSkill.skillName} unlocked!"
-            );
-        }
-
-        // TODO:
-        // Apply the actual skill effect here.
+            DynamicPopupToast.Instance.ShowToast(message);
     }
 
 
@@ -598,30 +635,36 @@ public class SkillTreeUI : MonoBehaviour
             ref refundedWater
         );
 
-        water += refundedWater;
+        if (isSaving || FBAuthentication.Instance == null)
+            return;
 
-        selectedSkill = null;
+        isSaving = true;
 
-        ClearSkillInfo();
+        FBAuthentication.Instance.SaveSkillRespec(
+            refundedWater,
+            () =>
+            {
+                isSaving = false;
 
-        UpdateWaterUI();
-        UpdateAllSkillVisuals();
+                ClearSkills(scoringSkills);
+                ClearSkills(gameplaySkills);
 
-        Debug.Log(
-            $"Respec complete. Refunded " +
-            $"{refundedWater} Water."
+                selectedSkill = null;
+
+                ClearSkillInfo();
+
+                UpdateWaterUI();
+                UpdateAllSkillVisuals();
+
+                ShowToast($"+{refundedWater} Water refunded.");
+            },
+            error =>
+            {
+                isSaving = false;
+                Debug.LogError($"Failed to save respec: {error}");
+                ShowToast("Could not save respec. Try again.");
+            }
         );
-
-        // -----------------------------------------------------
-        // SUCCESS TOAST
-        // -----------------------------------------------------
-
-        if (DynamicPopupToast.Instance != null)
-        {
-            DynamicPopupToast.Instance.ShowToast(
-                $"+{refundedWater} Water refunded."
-            );
-        }
     }
 
 
@@ -634,14 +677,20 @@ public class SkillTreeUI : MonoBehaviour
 
         foreach (SkillData skill in skills)
         {
-            if (skill == null)
-                continue;
-
-            if (skill.isUnlocked)
-            {
+            if (skill != null && skill.isUnlocked)
                 refundedWater += skill.cost;
+        }
+    }
+
+    private void ClearSkills(List<SkillData> skills)
+    {
+        if (skills == null)
+            return;
+
+        foreach (SkillData skill in skills)
+        {
+            if (skill != null)
                 skill.isUnlocked = false;
-            }
         }
     }
 

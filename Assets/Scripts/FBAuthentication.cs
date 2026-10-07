@@ -857,6 +857,192 @@ public class FBAuthentication : MonoBehaviour
             DataManager.Instance.SetProfile(CurrentProfile);
     }
 
+    // ============================================================
+    // SKILL TREE (stored on the user document)
+    //   currencies.used_water : water spent on skills
+    //   unlocked_skills       : array of unlocked skill ids
+    // ============================================================
+
+    public int GetAvailableWater()
+    {
+        Dictionary<string, object> currencies = GetCachedCurrencies(false);
+
+        if (currencies == null)
+            return 0;
+
+        return Mathf.Max(
+            0,
+            GetInt(currencies, "total_water") -
+            GetInt(currencies, "used_water")
+        );
+    }
+
+    public List<string> GetUnlockedSkillIds()
+    {
+        List<string> ids = new List<string>();
+
+        if (CurrentProfile != null &&
+            CurrentProfile.TryGetValue("unlocked_skills", out object value) &&
+            value is IEnumerable<object> list)
+        {
+            foreach (object item in list)
+            {
+                string id = item?.ToString();
+
+                if (!string.IsNullOrEmpty(id))
+                    ids.Add(id);
+            }
+        }
+
+        return ids;
+    }
+
+    public void SaveSkillUnlock(
+        string skillId,
+        int cost,
+        Action onSuccess = null,
+        Action<string> onError = null)
+    {
+        if (!IsLoggedIn || CurrentProfile == null)
+        {
+            onError?.Invoke("No user is currently logged in.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(skillId))
+        {
+            onError?.Invoke("Skill has no id.");
+            return;
+        }
+
+        if (cost > GetAvailableWater())
+        {
+            onError?.Invoke("Not enough water.");
+            return;
+        }
+
+        string userId = CurrentUserId;
+
+        FirebaseManager.Instance.UpdateDocument(
+            USERS_COLLECTION,
+            userId,
+            new Dictionary<string, object>
+            {
+                { "currencies.used_water", FieldValue.Increment(cost) },
+                { "unlocked_skills", FieldValue.ArrayUnion(skillId) }
+            },
+            () =>
+            {
+                // Read the document back so the cache mirrors what Firebase stored.
+                FirebaseManager.Instance.GetDocument(
+                    USERS_COLLECTION,
+                    userId,
+                    snapshot =>
+                    {
+                        Dictionary<string, object> stored =
+                            snapshot.Exists ? snapshot.ToDictionary() : null;
+
+                        if (stored == null)
+                        {
+                            onError?.Invoke("User profile does not exist.");
+                            return;
+                        }
+
+                        if (stored.TryGetValue("currencies", out object currencies))
+                            CurrentProfile["currencies"] = currencies;
+
+                        if (stored.TryGetValue("unlocked_skills", out object skills))
+                            CurrentProfile["unlocked_skills"] = skills;
+
+                        if (DataManager.Instance != null)
+                            DataManager.Instance.SetProfile(CurrentProfile);
+
+                        if (!GetUnlockedSkillIds().Contains(skillId))
+                        {
+                            Debug.LogError(
+                                $"Skill '{skillId}' was not found in unlocked_skills " +
+                                $"after saving to users/{userId}."
+                            );
+
+                            onError?.Invoke("Skill was not stored.");
+                            return;
+                        }
+
+                        Debug.Log(
+                            $"Saved skill '{skillId}' to users/{userId}/unlocked_skills."
+                        );
+
+                        onSuccess?.Invoke();
+                    },
+                    onError
+                );
+            },
+            onError
+        );
+    }
+
+    public void SaveSkillRespec(
+        int refundedWater,
+        Action onSuccess = null,
+        Action<string> onError = null)
+    {
+        if (!IsLoggedIn || CurrentProfile == null)
+        {
+            onError?.Invoke("No user is currently logged in.");
+            return;
+        }
+
+        FirebaseManager.Instance.UpdateDocument(
+            USERS_COLLECTION,
+            CurrentUserId,
+            new Dictionary<string, object>
+            {
+                {
+                    "currencies.used_water",
+                    FieldValue.Increment(-refundedWater)
+                },
+                { "unlocked_skills", new List<object>() }
+            },
+            () =>
+            {
+                Dictionary<string, object> currencies =
+                    GetCachedCurrencies(true);
+
+                currencies["used_water"] = Mathf.Max(
+                    0,
+                    GetInt(currencies, "used_water") - refundedWater
+                );
+
+                CurrentProfile["unlocked_skills"] = new List<object>();
+
+                if (DataManager.Instance != null)
+                    DataManager.Instance.SetProfile(CurrentProfile);
+
+                onSuccess?.Invoke();
+            },
+            onError
+        );
+    }
+
+    private Dictionary<string, object> GetCachedCurrencies(bool create)
+    {
+        if (CurrentProfile == null)
+            return null;
+
+        if (CurrentProfile.TryGetValue("currencies", out object value) &&
+            value is Dictionary<string, object> currencies)
+        {
+            return currencies;
+        }
+
+        if (!create)
+            return null;
+
+        currencies = new Dictionary<string, object>();
+        CurrentProfile["currencies"] = currencies;
+        return currencies;
+    }
+
     private static int GetInt(
         Dictionary<string, object> data,
         string key)

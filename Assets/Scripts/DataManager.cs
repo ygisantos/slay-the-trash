@@ -104,6 +104,17 @@ public class DataManager : MonoBehaviour
                 value = timestamp.ToDateTime().ToString("O");
             else if (pair.Value is string stringValue)
                 value = stringValue;
+            else if (pair.Value is Dictionary<string, object> ||
+                     pair.Value is System.Collections.IEnumerable)
+            {
+                // Maps and arrays (currencies, unlocked_skills) need real serialization.
+                System.Text.StringBuilder builder =
+                    new System.Text.StringBuilder();
+
+                WriteJson(builder, pair.Value);
+                value = builder.ToString();
+                type = "json";
+            }
 
             cache.entries.Add(
                 new ProfileEntry
@@ -179,11 +190,198 @@ public class DataManager : MonoBehaviour
                 return DateTime.Parse(entry.value);
             case "Timestamp":
                 return entry.value;
+            case "json":
+                return ReadJson(entry.value);
             case "null":
                 return null;
             default:
                 return entry.value;
         }
+    }
+
+    // ---- Minimal JSON for nested profile values ----
+
+    private static void WriteJson(System.Text.StringBuilder sb, object value)
+    {
+        switch (value)
+        {
+            case null:
+                sb.Append("null");
+                break;
+            case bool b:
+                sb.Append(b ? "true" : "false");
+                break;
+            case string s:
+                WriteJsonString(sb, s);
+                break;
+            case int or long or short or byte:
+                sb.Append(Convert.ToInt64(value));
+                break;
+            case float or double or decimal:
+                sb.Append(Convert.ToDouble(value).ToString("R",
+                    System.Globalization.CultureInfo.InvariantCulture));
+                break;
+            case Dictionary<string, object> map:
+                sb.Append('{');
+                bool firstPair = true;
+                foreach (KeyValuePair<string, object> pair in map)
+                {
+                    if (!firstPair) sb.Append(',');
+                    firstPair = false;
+                    WriteJsonString(sb, pair.Key);
+                    sb.Append(':');
+                    WriteJson(sb, pair.Value);
+                }
+                sb.Append('}');
+                break;
+            case System.Collections.IEnumerable list:
+                sb.Append('[');
+                bool firstItem = true;
+                foreach (object item in list)
+                {
+                    if (!firstItem) sb.Append(',');
+                    firstItem = false;
+                    WriteJson(sb, item);
+                }
+                sb.Append(']');
+                break;
+            case Firebase.Firestore.Timestamp ts:
+                WriteJsonString(sb, ts.ToDateTime().ToString("O"));
+                break;
+            default:
+                WriteJsonString(sb, value.ToString());
+                break;
+        }
+    }
+
+    private static void WriteJsonString(System.Text.StringBuilder sb, string s)
+    {
+        sb.Append('"');
+        foreach (char c in s)
+        {
+            switch (c)
+            {
+                case '"': sb.Append("\\\""); break;
+                case '\\': sb.Append("\\\\"); break;
+                case '\n': sb.Append("\\n"); break;
+                case '\r': sb.Append("\\r"); break;
+                case '\t': sb.Append("\\t"); break;
+                default: sb.Append(c); break;
+            }
+        }
+        sb.Append('"');
+    }
+
+    private static object ReadJson(string json)
+    {
+        int index = 0;
+        return ReadJsonValue(json, ref index);
+    }
+
+    private static object ReadJsonValue(string json, ref int i)
+    {
+        SkipSpaces(json, ref i);
+        char c = json[i];
+
+        if (c == '{')
+        {
+            Dictionary<string, object> map = new Dictionary<string, object>();
+            i++;
+            SkipSpaces(json, ref i);
+
+            if (json[i] == '}') { i++; return map; }
+
+            while (true)
+            {
+                SkipSpaces(json, ref i);
+                string key = ReadJsonString(json, ref i);
+                SkipSpaces(json, ref i);
+                i++; // ':'
+                map[key] = ReadJsonValue(json, ref i);
+                SkipSpaces(json, ref i);
+
+                if (json[i++] == '}')
+                    return map;
+            }
+        }
+
+        if (c == '[')
+        {
+            List<object> list = new List<object>();
+            i++;
+            SkipSpaces(json, ref i);
+
+            if (json[i] == ']') { i++; return list; }
+
+            while (true)
+            {
+                list.Add(ReadJsonValue(json, ref i));
+                SkipSpaces(json, ref i);
+
+                if (json[i++] == ']')
+                    return list;
+            }
+        }
+
+        if (c == '"')
+            return ReadJsonString(json, ref i);
+
+        if (string.CompareOrdinal(json, i, "true", 0, 4) == 0) { i += 4; return true; }
+        if (string.CompareOrdinal(json, i, "false", 0, 5) == 0) { i += 5; return false; }
+        if (string.CompareOrdinal(json, i, "null", 0, 4) == 0) { i += 4; return null; }
+
+        int start = i;
+        while (i < json.Length && "+-0123456789.eE".IndexOf(json[i]) >= 0)
+            i++;
+
+        string number = json.Substring(start, i - start);
+
+        if (int.TryParse(number, out int intValue))
+            return intValue;
+
+        if (long.TryParse(number, out long longValue))
+            return longValue;
+
+        return double.Parse(
+            number,
+            System.Globalization.CultureInfo.InvariantCulture
+        );
+    }
+
+    private static string ReadJsonString(string json, ref int i)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        i++; // opening quote
+
+        while (json[i] != '"')
+        {
+            char c = json[i++];
+
+            if (c == '\\')
+            {
+                char escaped = json[i++];
+                sb.Append(escaped switch
+                {
+                    'n' => '\n',
+                    'r' => '\r',
+                    't' => '\t',
+                    _ => escaped
+                });
+            }
+            else
+            {
+                sb.Append(c);
+            }
+        }
+
+        i++; // closing quote
+        return sb.ToString();
+    }
+
+    private static void SkipSpaces(string json, ref int i)
+    {
+        while (i < json.Length && char.IsWhiteSpace(json[i]))
+            i++;
     }
 
     public void ClearAll()
