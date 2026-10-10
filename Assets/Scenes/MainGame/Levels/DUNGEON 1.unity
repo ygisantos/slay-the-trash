@@ -15926,6 +15926,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabed4763a69e5d43989c307da6f1cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bannerBackgroundColor: {r: 0.08, g: 0.08, b: 0.12, a: 0.95}
+  bannerTextColor: {r: 1, g: 1, b: 1, a: 1}
+  bannerDisplayDuration: 1.5
+  bannerFadeDuration: 0.25
+  bannerAnimationDuration: 0.4
+  bannerSize: {x: 650, y: 130}
+  bannerFontSize: 48
   mapParent: {fileID: 581872471}
   mainMap: {fileID: 1884441862}
   player: {fileID: 1016793298}
@@ -15935,6 +15942,21 @@ MonoBehaviour:
   scrollAmount: -450
   scrollDuration: 2
   matchSetupSystem: {fileID: 1527604097}
+  idleFloatAmount: 8
+  idleFloatDuration: 1.2
+  idlePulseScale: 1.06
+  idlePulseDuration: 0.8
+  hopHeight: 65
+  movementTilt: 12
+  arrivalPunchScale: 1.2
+  nodePulseScale: 1.2
+  nodePulseDuration: 0.3
+  enemyIntroText: BATTLE START!
+  bossIntroText: BOSS ENCOUNTER!
+  zoomScale: 1.12
+  zoomDuration: 0.3
+  battleShakeDuration: 0.2
+  battleShakeStrength: 0.06
 --- !u!1 &734153367
 GameObject:
   m_ObjectHideFlags: 0

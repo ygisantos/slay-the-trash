@@ -1420,6 +1420,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23967bc8921fafc47b1b1668e35bef0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  characterButtons: []
+  buttonPopScale: 1.12
+  buttonAnimDuration: 0.2
+  selectedButtonColor: {r: 1, g: 0.8, b: 0.3, a: 1}
+  selectedTextColor: {r: 1, g: 1, b: 1, a: 1}
+  normalTextColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedTextPopScale: 1.12
   characters:
   - characterName: Witch
     onConfirm:
@@ -1538,6 +1545,13 @@ MonoBehaviour:
   - {fileID: 1261605633}
   - {fileID: 1707551345}
   - {fileID: 1695982342}
+  popScale: 1.12
+  selectDuration: 0.3
+  rotationAngle: 5
+  idleFloatAmount: 6
+  idleFloatDuration: 1.2
+  confirmScale: 1.2
+  confirmDuration: 0.15
 --- !u!4 &65591058
 Transform:
   m_ObjectHideFlags: 0
