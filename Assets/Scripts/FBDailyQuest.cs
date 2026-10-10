@@ -34,7 +34,7 @@ public class FBDailyQuest : MonoBehaviour
     // Bump this whenever CreateQuestDocument's shape changes (e.g. adding wasteType),
     // so existing documents created before the change get regenerated instead of
     // silently missing the new fields.
-    private const int CURRENT_SCHEMA_VERSION = 2;
+    private const int CURRENT_SCHEMA_VERSION = 3;
 
     [Header("Inspector Debug")]
     [SerializeField] private int debugQuestNumber = 1;

@@ -188,8 +188,16 @@ public class FBLeaderboard : MonoBehaviour
             _ => null
         };
 
+        // Separate write so a rejected dungeon field can't block the totals above.
         if (dungeonField != null)
-            updates[dungeonField] = FieldValue.Increment(1);
+        {
+            UpdatePoints(
+                username,
+                new Dictionary<string, object> { { dungeonField, FieldValue.Increment(1) } },
+                null,
+                error => Debug.LogError($"Failed to record {dungeonField}: {error}")
+            );
+        }
 
         UpdatePoints(username, updates, onSuccess, onError);
     }

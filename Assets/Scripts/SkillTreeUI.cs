@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
+using DG.Tweening;
 
 public class SkillTreeUI : MonoBehaviour
 {
@@ -44,11 +45,10 @@ public class SkillTreeUI : MonoBehaviour
     public List<SkillData> scoringSkills = new();
     public List<SkillData> gameplaySkills = new();
 
-    [Header("Skill Visuals")]
-    [SerializeField] private Color unlockedSkillColor = Color.white;
-    [SerializeField] private Color availableSkillColor = new Color(0.55f, 1f, 0.55f, 1f);
-    [SerializeField] private Color nextSkillColor = new Color(1f, 0.85f, 0.45f, 1f);
-    [SerializeField] private Color lockedSkillColor = new Color(0.35f, 0.35f, 0.35f, 1f);
+    // Unlocked: normal. Next to unlock: yellow-green. Everything else: grey.
+    private static readonly Color unlockedSkillColor = Color.white;
+    private static readonly Color nextSkillColor = new Color(0.8f, 1f, 0.45f, 1f);
+    private static readonly Color lockedSkillColor = new Color(0.4f, 0.4f, 0.4f, 1f);
 
     [Header("Skill Information UI")]
     [SerializeField] private TextMeshProUGUI skillTreeTitle;
@@ -86,6 +86,38 @@ public class SkillTreeUI : MonoBehaviour
 
     // Currently selected skill
     private SkillData selectedSkill;
+
+    private string lastProfileSignature;
+    private float nextProfileCheck;
+
+    // The profile can finish loading after Start, so re-sync colors when it changes.
+    private void Update()
+    {
+        if (Time.unscaledTime < nextProfileCheck)
+            return;
+
+        nextProfileCheck = Time.unscaledTime + 0.5f;
+
+        if (FBAuthentication.Instance == null)
+            return;
+
+        string signature =
+            string.Join(",", FBAuthentication.Instance.GetUnlockedSkillIds()) +
+            "|" + water;
+
+        if (signature == lastProfileSignature)
+            return;
+
+        lastProfileSignature = signature;
+
+        if (isSaving)
+            return;
+
+        ApplySavedUnlocks();
+        UpdateWaterUI();
+        UpdateAllSkillVisuals();
+        UpdateUnlockButton();
+    }
 
 
     // =========================================================
@@ -275,26 +307,21 @@ public class SkillTreeUI : MonoBehaviour
 
         bool requirementsMet = AreRequirementsMet(skill);
 
-        bool canUnlock =
-            !skill.isUnlocked &&
-            requirementsMet &&
-            water >= skill.cost;
-
         // -----------------------------------------------------
         // VISUAL STATE
         // -----------------------------------------------------
 
-        // Unlocked: normal. Buyable: green. Next (needs more water): amber. Locked: gray.
         Color color;
 
         if (skill.isUnlocked)
             color = unlockedSkillColor;
-        else if (canUnlock)
-            color = availableSkillColor;
         else if (requirementsMet)
             color = nextSkillColor;
         else
             color = lockedSkillColor;
+
+        // The button's own tint would stack on top of this color, so turn it off.
+        skill.clickableObject.transition = Selectable.Transition.None;
 
         // Apply the color to the Button and every child Graphic.
         Graphic[] graphics =
@@ -337,6 +364,14 @@ public class SkillTreeUI : MonoBehaviour
             return;
 
         selectedSkill = skill;
+
+        if (skill.clickableObject != null)
+        {
+            skill.clickableObject.transform.DOKill(true);
+            skill.clickableObject.transform
+                .DOPunchScale(Vector3.one * 0.12f, 0.2f, 6, 0.6f)
+                .SetUpdate(true);
+        }
 
         if (skillTreeTitle != null)
             skillTreeTitle.text = skill.skillName;
@@ -417,6 +452,14 @@ public class SkillTreeUI : MonoBehaviour
                 UpdateWaterUI();
                 UpdateUnlockButton();
                 UpdateAllSkillVisuals();
+
+                if (skill.clickableObject != null)
+                {
+                    skill.clickableObject.transform.DOKill(true);
+                    skill.clickableObject.transform
+                        .DOPunchScale(Vector3.one * 0.3f, 0.45f, 8, 0.7f)
+                        .SetUpdate(true);
+                }
 
                 ShowToast($"{skill.skillName} unlocked!");
 

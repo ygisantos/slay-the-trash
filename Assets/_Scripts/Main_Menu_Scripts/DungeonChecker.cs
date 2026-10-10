@@ -63,6 +63,9 @@ public class DungeonChecker : MonoBehaviour
             _ => 0,
         };
 
+        // Saved cards count too, so progress still shows if the scan counter is missing.
+        currentCards = Math.Max(currentCards, ownedCards);
+
         requirementsText.text = $"{Math.Min(currentCards, requiredAmount)}/{requiredAmount} {requiredType} Cards To Enter";
         if (currentCards >= requiredAmount && ownedCards == 0)
             requirementsText.text += $"\nCollect a {requiredType} card first";

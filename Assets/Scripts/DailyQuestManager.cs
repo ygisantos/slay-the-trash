@@ -38,17 +38,47 @@ public class DailyQuestManager : MonoBehaviour
         // new QuestDefinition { title = "Recycle {0} Items", minAmount = 3, maxAmount = 6, wasteType = "recyclable" },
         // new QuestDefinition { title = "Scan Any {0} Items", minAmount = 3, maxAmount = 6, wasteType = "" }
         
-        // -- ALJ
-        new QuestDefinition { title = "Scan {0} Plastic Items", minAmount = 2, maxAmount = 4, wasteType = "plastic" },
-        new QuestDefinition { title = "Scan {0} Paper Items", minAmount = 2, maxAmount = 4, wasteType = "paper" },
-        new QuestDefinition { title = "Scan {0} Metal Items", minAmount = 1, maxAmount = 3, wasteType = "metal" },
-        new QuestDefinition { title = "Scan {0} E-Waste Items", minAmount = 1, maxAmount = 2, wasteType = "e-waste" },
-        new QuestDefinition { title = "Scan {0} Food Waste Items", minAmount = 2, maxAmount = 4, wasteType = "food waste" },
-        new QuestDefinition { title = "Recycle {0} Items", minAmount = 3, maxAmount = 6, wasteType = "recyclable" },
-        new QuestDefinition { title = "Scan {0} Biodegradable Items", minAmount = 2, maxAmount = 4, wasteType = "biological" },
-        new QuestDefinition { title = "Scan {0} Non-Biodegradable Items", minAmount = 1, maxAmount = 2, wasteType = "non-bio" },
-        new QuestDefinition { title = "Scan Any {0} Items", minAmount = 3, maxAmount = 6, wasteType = "" }
+        // -- Classification quests (ALJ model: e-waste, food waste, metal, paper, plastic)
+        new QuestDefinition
+        {
+            title = "Classify {0} Non-Biodegradable Items",
+            minAmount = 1,
+            maxAmount = 4,
+            wasteType = "non-bio"
+        },
+
+        new QuestDefinition
+        {
+            title = "Recycle {0} Items",
+            minAmount = 1,
+            maxAmount = 4,
+            wasteType = "recyclable"
+        },
+
+        new QuestDefinition
+        {
+            title = "Classify {0} Biodegradable Items",
+            minAmount = 1,
+            maxAmount = 4,
+            wasteType = "biological"
+        },
+
+        new QuestDefinition
+        {
+            title = "Classify {0} Items",
+            minAmount = 3,
+            maxAmount = 7,
+            wasteType = ""
+        }
     };
+
+    // Special wasteType keys (stored in the same Firestore field as normal types).
+    private const string ConfidentKey = "confident";
+    private const string VarietyKey = "variety";
+    private const float ConfidentThreshold = 90f;
+
+    // Waste types identified today; persisted so the variety quest survives restarts.
+    private readonly HashSet<string> seenTypes = new HashSet<string>();
 
     [Header("Settings")]
     [SerializeField] private int seed = 12345;
@@ -204,6 +234,19 @@ public class DailyQuestManager : MonoBehaviour
 
     private void ApplyProgress(Dictionary<string, object> progress)
     {
+        seenTypes.Clear();
+        if (progress != null &&
+            progress.TryGetValue("seen_types", out object seenValue) &&
+            seenValue is IEnumerable<object> seenList)
+        {
+            foreach (object item in seenList)
+            {
+                string seen = item?.ToString();
+                if (!string.IsNullOrEmpty(seen))
+                    seenTypes.Add(seen);
+            }
+        }
+
         for (int index = 0; index < 5; index++)
         {
             int questNumber = index + 1;
@@ -331,29 +374,68 @@ public class DailyQuestManager : MonoBehaviour
         AddQuestProgress(questNumber, amount);
     }
 
-    // Called from CameraHandler.OnScanCompleted. Adds progress to every active,
-    // incomplete quest whose wasteType matches the scanned item (empty wasteType = matches any item).
+    // Called from CameraHandler after every scan. Adds progress to every active,
+    // incomplete quest the classification result satisfies (empty wasteType = any item).
     public void AddProgressForScan(
         string rawLabel,
         string category,
         string displayLabel,
         float confidencePercent)
     {
+        string typeKey = (displayLabel ?? rawLabel ?? "").Trim().ToLowerInvariant();
+        bool isNewType = !string.IsNullOrEmpty(typeKey) && seenTypes.Add(typeKey);
+
+        if (isNewType)
+            SaveSeenTypes();
+
         for (int index = 0; index < 5; index++)
         {
             if (questCompleted[index])
                 continue;
 
             string wasteType = questWasteTypes[index];
-            bool matches =
-                string.IsNullOrWhiteSpace(wasteType) ||
-                string.Equals(wasteType, rawLabel, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(wasteType, category, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(wasteType, displayLabel, StringComparison.OrdinalIgnoreCase);
+            bool matches;
+
+            if (string.Equals(wasteType, VarietyKey, StringComparison.OrdinalIgnoreCase))
+            {
+                matches = isNewType;
+            }
+            else if (string.Equals(wasteType, ConfidentKey, StringComparison.OrdinalIgnoreCase))
+            {
+                matches = confidencePercent >= ConfidentThreshold;
+            }
+            else
+            {
+                matches =
+                    string.IsNullOrWhiteSpace(wasteType) ||
+                    string.Equals(wasteType, rawLabel, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(wasteType, category, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(wasteType, displayLabel, StringComparison.OrdinalIgnoreCase);
+            }
 
             if (matches)
                 AddQuestProgress(index + 1);
         }
+    }
+
+    private void SaveSeenTypes()
+    {
+        if (string.IsNullOrWhiteSpace(currentDate) ||
+            string.IsNullOrWhiteSpace(currentUsername))
+        {
+            return;
+        }
+
+        FBDailyQuest.Instance.SaveUserProgress(
+            currentDate,
+            currentUsername,
+            new Dictionary<string, object>
+            {
+                { "seen_types", new List<string>(seenTypes) }
+            },
+            null,
+            error => Debug.LogError(error)
+        );
     }
 
     public void CompleteQuestForDebug(int questNumber)
