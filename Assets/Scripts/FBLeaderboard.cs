@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
 
@@ -191,7 +192,7 @@ public class FBLeaderboard : MonoBehaviour
         // Separate write so a rejected dungeon field can't block the totals above.
         if (dungeonField != null)
         {
-            UpdatePoints(
+            MergePoints(
                 username,
                 new Dictionary<string, object> { { dungeonField, FieldValue.Increment(1) } },
                 null,
@@ -199,7 +200,85 @@ public class FBLeaderboard : MonoBehaviour
             );
         }
 
-        UpdatePoints(username, updates, onSuccess, onError);
+        MergePoints(username, updates, onSuccess, onError);
+    }
+
+    // Like UpdatePoints, but creates the Points document if it is missing.
+    private void MergePoints(
+        string username,
+        Dictionary<string, object> updates,
+        Action onSuccess,
+        Action<string> onError)
+    {
+        FirebaseManager manager = FirebaseManager.Instance;
+
+        if (manager == null || manager.DB == null)
+        {
+            UpdatePoints(username, updates, onSuccess, onError);
+            return;
+        }
+
+        manager.DB
+            .Collection(POINTS_COLLECTION)
+            .Document(username)
+            .SetAsync(updates, SetOptions.MergeAll)
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    string message = task.Exception != null
+                        ? task.Exception.GetBaseException().Message
+                        : "Write was canceled.";
+                    onError?.Invoke(message);
+                    return;
+                }
+
+                onSuccess?.Invoke();
+            });
+    }
+
+    // Saves the score to dun1..dun5 only if it beats the stored high score.
+    public void SubmitDungeonHighScore(
+        string username,
+        int dungeonNumber,
+        int score,
+        Action<bool> onResult = null,
+        Action<string> onError = null)
+    {
+        if (string.IsNullOrWhiteSpace(username) ||
+            dungeonNumber < 1 || dungeonNumber > 5 ||
+            score <= 0)
+        {
+            onResult?.Invoke(false);
+            return;
+        }
+
+        string field = "dun" + dungeonNumber;
+
+        FirebaseManager.Instance.GetDocument(
+            POINTS_COLLECTION,
+            username,
+            snapshot =>
+            {
+                int best = snapshot.Exists
+                    ? FirebaseDataHelper.GetInt(snapshot.ToDictionary(), field)
+                    : 0;
+
+                if (score <= best)
+                {
+                    onResult?.Invoke(false);
+                    return;
+                }
+
+                MergePoints(
+                    username,
+                    new Dictionary<string, object> { { field, score } },
+                    () => onResult?.Invoke(true),
+                    onError
+                );
+            },
+            onError
+        );
     }
 
     public void ReadLeaderboard(

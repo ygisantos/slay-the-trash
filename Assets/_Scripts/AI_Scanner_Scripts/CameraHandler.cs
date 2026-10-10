@@ -769,13 +769,23 @@ public class CameraHandler : MonoBehaviour
         string statsUsername = GetCurrentUsername();
         if (!string.IsNullOrWhiteSpace(statsUsername))
         {
+            Debug.Log($"Recording scan stats for '{statsUsername}' (category: {category}, type: {label}).");
+
             FBLeaderboard.Instance?.AddScanStats(
                 statsUsername,
                 category,
-                null,
-                error => Debug.LogError($"Failed to record scan stats: {error}"),
+                () => Debug.Log("Scan stats saved."),
+                error =>
+                {
+                    Debug.LogError($"Failed to record scan stats: {error}");
+                    DynamicPopupToast.Instance?.ShowToast("Stats not saved: " + error, 4);
+                },
                 label
             );
+        }
+        else
+        {
+            Debug.LogWarning("Scan stats skipped: no username found in the current profile.");
         }
 
         // ============================================================

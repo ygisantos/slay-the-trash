@@ -1,8 +1,11 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ScoreCanvas : MonoBehaviour
 {
@@ -139,6 +142,57 @@ public class ScoreCanvas : MonoBehaviour
         });
     }
 
+    // Saves the final score as this dungeon's high score if it is a new best.
+    private void SubmitHighScore()
+    {
+        int finalScore = score.GetTotalScore();
+        int dungeon = GetCurrentDungeonNumber();
+        string username = GetCurrentUsername();
+
+        if (dungeon < 1 || finalScore <= 0 ||
+            string.IsNullOrWhiteSpace(username) ||
+            FBLeaderboard.Instance == null)
+        {
+            return;
+        }
+
+        FBLeaderboard.Instance.SubmitDungeonHighScore(
+            username,
+            dungeon,
+            finalScore,
+            isNewRecord =>
+            {
+                if (isNewRecord)
+                    DynamicPopupToast.Instance?.ShowToast($"New Dungeon {dungeon} high score: {finalScore}!", 3);
+            },
+            error => Debug.LogError($"Failed to save dungeon high score: {error}")
+        );
+    }
+
+    // Scene names look like "DUNGEON 3"; falls back to the selection saved on the menu.
+    private static int GetCurrentDungeonNumber()
+    {
+        Match match = Regex.Match(SceneManager.GetActiveScene().name, @"\d+");
+        if (match.Success && int.TryParse(match.Value, out int fromScene) && fromScene >= 1 && fromScene <= 5)
+            return fromScene;
+
+        int saved = PlayerPrefs.GetInt("selected_dungeon_index", -1);
+        return saved >= 0 && saved <= 4 ? saved + 1 : 0;
+    }
+
+    private static string GetCurrentUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
+    }
+
     private IEnumerator PlaySequence()
     {
         if (score == null)
@@ -146,6 +200,7 @@ public class ScoreCanvas : MonoBehaviour
 
         ResetTweens();
         BuildRows();
+        SubmitHighScore();
 
         // Start hidden, with every number at 0.
         foreach (Row row in rows)

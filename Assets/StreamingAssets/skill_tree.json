@@ -24,7 +24,7 @@
       "id": "clean_sweep",
       "skillName": "Clean Sweep",
       "description": "Clearing an entire floor increases your score multiplier.",
-      "effect": "+1x multiplier floor cleared",
+      "effect": "+15x multiplier floor cleared",
       "cost": 4,
       "layer": 3,
       "requiredSkills": [
@@ -46,7 +46,7 @@
       "id": "green_progress",
       "skillName": "Green Progress",
       "description": "Earn additional points every time you clear a floor.",
-      "effect": "+10 points per floor cleared",
+      "effect": "+5 points per floor cleared",
       "cost": 5,
       "layer": 5,
       "requiredSkills": [

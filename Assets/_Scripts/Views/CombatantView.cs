@@ -38,10 +38,11 @@ public class CombatantView : MonoBehaviour
         }
     }
 
-    public void Damage(int damageAmount)
+    public void Damage(int damageAmount, bool isBurn = false)
     {
         int remainingDamage = damageAmount;
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
+        int absorbed = 0;
         Shake.Instance.ShakeCamera();
         SoundManager.Instance.PlaySound(hurtSound);
         if (transform != null)
@@ -55,11 +56,13 @@ public class CombatantView : MonoBehaviour
             {
                 SoundManager.Instance.PlaySound(SoundType.ARMORHIT);
                 RemoveStatusEffect(StatusEffectType.ARMOR, remainingDamage);
+                absorbed = remainingDamage;
                 remainingDamage = 0;
             }
             else
             {
                 RemoveStatusEffect(StatusEffectType.ARMOR, currentArmor);
+                absorbed = currentArmor;
                 remainingDamage -= currentArmor;
             }
         }
@@ -73,9 +76,29 @@ public class CombatantView : MonoBehaviour
         UpdateHealthText();
 
         if (remainingDamage > 0)
-            ShowFloatingText("-" + remainingDamage, new Color(1f, 0.35f, 0.35f));
+        {
+            Color hitColor = isBurn ? BurnColor : DamageColor;
+
+            ShowFloatingText(
+                (isBurn ? "Burn -" : "-") + remainingDamage,
+                hitColor
+            );
+            Flash(hitColor);
+            HitRing(hitColor);
+
+            // A dying combatant is scaled away by its own removal animation.
+            if (CurrentHealth > 0)
+                Squish();
+
+            if (absorbed > 0)
+                ShowFloatingText("Block -" + absorbed, BlockColor, -0.8f);
+        }
         else
-            ShowFloatingText("Blocked", new Color(0.45f, 0.85f, 1f));
+        {
+            ShowFloatingText("Blocked", BlockColor);
+            HitRing(BlockColor);
+            Bump();
+        }
     }
     public void AddHealth(int health)
     {
@@ -120,9 +143,16 @@ public class CombatantView : MonoBehaviour
 
         if (feedback && type == StatusEffectType.ARMOR && stackCount > 0)
         {
-            ShowFloatingText("+" + stackCount + " Shield", new Color(0.45f, 0.85f, 1f));
+            ShowFloatingText("+" + stackCount + " Shield", BlockColor);
             Flash(new Color(0.5f, 0.85f, 1f));
+            HitRing(BlockColor);
             SoundManager.Instance?.PlaySound(SoundType.ARMORUP);
+        }
+        else if (feedback && type == StatusEffectType.BURN && stackCount > 0)
+        {
+            ShowFloatingText("Burn +" + stackCount, BurnColor);
+            Flash(BurnColor);
+            HitRing(BurnColor);
         }
     }
 
@@ -143,6 +173,98 @@ public class CombatantView : MonoBehaviour
     public int GetStatusEffectStacks(StatusEffectType type)
     {
         return statusEffects.ContainsKey(type) ? statusEffects[type] : 0;
+    }
+
+    private static readonly Color DamageColor = new Color(1f, 0.35f, 0.35f);
+    private static readonly Color BlockColor = new Color(0.45f, 0.85f, 1f);
+    private static readonly Color BurnColor = new Color(1f, 0.6f, 0.2f);
+
+    private readonly object fxId = new object();
+    private Vector3? spriteBaseScale;
+    private static Sprite ringSprite;
+
+    // Stretch-and-squash on the sprite when it takes damage.
+    private void Squish()
+    {
+        if (spriteRenderer == null)
+            return;
+
+        Transform t = spriteRenderer.transform;
+
+        DOTween.Kill(fxId, true);
+        if (!spriteBaseScale.HasValue)
+            spriteBaseScale = t.localScale;
+
+        Vector3 b = spriteBaseScale.Value;
+        t.localScale = b;
+
+        Sequence squish = DOTween.Sequence().SetId(fxId);
+        squish.Append(t.DOScale(new Vector3(b.x * 1.3f, b.y * 0.7f, b.z), 0.07f).SetEase(Ease.OutQuad));
+        squish.Append(t.DOScale(b, 0.4f).SetEase(Ease.OutElastic));
+    }
+
+    // Small puff-up when an attack is fully blocked.
+    private void Bump()
+    {
+        if (spriteRenderer == null)
+            return;
+
+        Transform t = spriteRenderer.transform;
+
+        DOTween.Kill(fxId, true);
+        if (!spriteBaseScale.HasValue)
+            spriteBaseScale = t.localScale;
+
+        Vector3 b = spriteBaseScale.Value;
+        t.localScale = b;
+
+        Sequence bump = DOTween.Sequence().SetId(fxId);
+        bump.Append(t.DOScale(b * 1.12f, 0.08f).SetEase(Ease.OutQuad));
+        bump.Append(t.DOScale(b, 0.2f).SetEase(Ease.OutBack));
+    }
+
+    // Expanding ring that shows the type of hit (damage, block, burn).
+    private void HitRing(Color color)
+    {
+        GameObject go = new GameObject("HitRing");
+        go.transform.position = spriteRenderer != null
+            ? spriteRenderer.bounds.center
+            : transform.position;
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = GetRingSprite();
+        sr.color = color;
+        sr.sortingOrder = 150;
+
+        go.transform.localScale = Vector3.one * 0.6f;
+        go.transform.DOScale(2.2f, 0.4f).SetEase(Ease.OutQuad);
+        DOTween.To(() => sr.color, c => sr.color = c, new Color(color.r, color.g, color.b, 0f), 0.4f)
+            .OnComplete(() => { if (go != null) Destroy(go); });
+    }
+
+    private static Sprite GetRingSprite()
+    {
+        if (ringSprite != null)
+            return ringSprite;
+
+        const int size = 128;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+
+        float center = (size - 1) / 2f;
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), new Vector2(center, center)) / (size / 2f);
+                float alpha = Mathf.Clamp01(1f - Mathf.Abs(distance - 0.8f) / 0.15f);
+                texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha * alpha));
+            }
+        }
+
+        texture.Apply();
+        ringSprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 64f);
+        return ringSprite;
     }
 
     private Tween flashTween;
@@ -170,10 +292,10 @@ public class CombatantView : MonoBehaviour
     }
 
     // World-space number that rises above the combatant and fades out.
-    private void ShowFloatingText(string message, Color color)
+    private void ShowFloatingText(string message, Color color, float yOffset = 0f)
     {
         GameObject go = new GameObject("FloatingText");
-        go.transform.position = transform.position + new Vector3(0f, 1.6f, 0f);
+        go.transform.position = transform.position + new Vector3(0f, 1.6f + yOffset, 0f);
 
         TextMeshPro text = go.AddComponent<TextMeshPro>();
         text.text = message;

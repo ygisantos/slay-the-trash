@@ -17,7 +17,7 @@ public class BurnSystem : MonoBehaviour
     {
         CombatantView target = applyBurnGA.Target;
         Instantiate(burnVFX,target.transform.position, Quaternion.identity);
-        target.Damage(applyBurnGA.BurnDamage);
+        target.Damage(applyBurnGA.BurnDamage, true);
         target.RemoveStatusEffect(StatusEffectType.BURN,1);
 
         if (target.CurrentHealth <= 0 && target is EnemyView enemyView)

@@ -46,13 +46,17 @@ public class DungeonChecker : MonoBehaviour
         if (!isActive || requirementsText == null) return;
 
         DungeonsHandler handler = FindAnyObjectByType<DungeonsHandler>();
-        currentCards = requiredType switch
+        if (handler == null)
+            return;
+
+        int scanCount = requiredType switch
         {
             CardTypes.Paper => handler.paperCards,
             CardTypes.Plastic => handler.plasticCards,
             CardTypes.FoodWaste => handler.foodwasteCards,
             _ => 0,
         };
+        currentCards = scanCount;
 
         // A reset collection must block entry even if scan stats are enough.
         ownedCards = requiredType switch
@@ -69,6 +73,10 @@ public class DungeonChecker : MonoBehaviour
         requirementsText.text = $"{Math.Min(currentCards, requiredAmount)}/{requiredAmount} {requiredType} Cards To Enter";
         if (currentCards >= requiredAmount && ownedCards == 0)
             requirementsText.text += $"\nCollect a {requiredType} card first";
+
+        // Editor and development builds show where the numbers come from.
+        if (Debug.isDebugBuild)
+            requirementsText.text += $"\n(scans: {scanCount}, saved cards: {ownedCards})";
 
         // Apply transparency
         UpdateTransparency();

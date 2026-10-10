@@ -79,8 +79,8 @@ public class ScoreManager : MonoBehaviour
 
         if (unlocked.Contains("waste_collector")) enemiesPointsBonus += enemiesCount;
         if (unlocked.Contains("recycling_chain")) enemiesBonus += 0.5f;
-        if (unlocked.Contains("clean_sweep")) floorBonus += 1f;
-        if (unlocked.Contains("green_progress")) floorPointsBonus += 10;
+        if (unlocked.Contains("clean_sweep")) floorBonus += 15f;
+        if (unlocked.Contains("green_progress")) floorPointsBonus += 5;
         if (unlocked.Contains("eco_champion")) bossBonus += 15f;
         if (unlocked.Contains("eco_wisdom")) eventBonus += 15f;
         if (unlocked.Contains("healthy_planet")) healthBonus += 10f;

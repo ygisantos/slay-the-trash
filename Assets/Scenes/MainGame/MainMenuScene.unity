@@ -38878,7 +38878,7 @@ MonoBehaviour:
   - id: clean_sweep
     skillName: Clean Sweep
     description: Clearing an entire floor increases your score multiplier.
-    effect: +1x multiplier floor cleared
+    effect: +10x multiplier floor cleared
     cost: 4
     layer: 3
     requiredSkills:
@@ -38896,7 +38896,7 @@ MonoBehaviour:
   - id: green_progress
     skillName: Green Progress
     description: Earn additional points every time you clear a floor.
-    effect: +10 points per floor cleared
+    effect: +5 points per floor cleared
     cost: 5
     layer: 5
     requiredSkills:
@@ -38984,10 +38984,6 @@ MonoBehaviour:
     requiredSkills:
     - circular_defense
     clickableObject: {fileID: 519387679}
-  unlockedSkillColor: {r: 1, g: 1, b: 1, a: 1}
-  availableSkillColor: {r: 1, g: 1, b: 1, a: 1}
-  nextSkillColor: {r: 1, g: 0.85, b: 0.45, a: 1}
-  lockedSkillColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   skillTreeTitle: {fileID: 1162072716}
   skillTreeDescription: {fileID: 473982393}
   skillTreeEffect: {fileID: 137029933}
