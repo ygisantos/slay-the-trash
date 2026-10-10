@@ -76,6 +76,16 @@ public class CombatantView : MonoBehaviour
     {
         CurrentHealth += health;
         MaxHealth += health;
+        UpdateHealthText();
+    }
+
+    public void Heal(int amount)
+    {
+        if (amount <= 0 || CurrentHealth <= 0)
+            return;
+
+        CurrentHealth = Mathf.Min(CurrentHealth + amount, MaxHealth);
+        UpdateHealthText();
     }
 
     public void AddStatusEffect(StatusEffectType type, int stackCount)

@@ -35,6 +35,9 @@ public class HeroManaChecker : MonoBehaviour
             return;
 
         currentMana = GetHeroCurrentMana();
+        maxMana = manaSystem.MaxMana;
+        if (manaSlider.maxValue != maxMana)
+            manaSlider.maxValue = maxMana;
         manaPercentage = (float)currentMana / maxMana;
 
         // Smooth slider update

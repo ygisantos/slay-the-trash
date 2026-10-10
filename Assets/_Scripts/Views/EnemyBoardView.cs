@@ -64,6 +64,19 @@ public class EnemyBoardView : MonoBehaviour
             scorePanel.SetActive(false);
     }
 
+    // Gameplay skills that trigger after every won battle.
+    private void ApplyEndOfBattleSkills()
+    {
+        HeroView hero = HeroSystem.Instance != null ? HeroSystem.Instance.HeroView : null;
+        if (hero == null)
+            return;
+
+        hero.Heal(GameplaySkills.HealthPerBattle);
+
+        if (GameplaySkills.ShieldPerBattle > 0)
+            hero.AddStatusEffect(StatusEffectType.ARMOR, GameplaySkills.ShieldPerBattle);
+    }
+
     /// ✅ If no remaining enemies, show panel
     private void CheckIfBoardCleared()
     {
@@ -101,6 +114,8 @@ public class EnemyBoardView : MonoBehaviour
             else
                 ScoreManager.Instance.AddFloorClear();
         }
+
+        ApplyEndOfBattleSkills();
 
         if (allClearedPanel != null)
             allClearedPanel.SetActive(true);

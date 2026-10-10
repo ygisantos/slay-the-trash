@@ -26,7 +26,7 @@ public class MatchSetupSystem : MonoBehaviour
 
         EnemyWaves();
         CardSystem.Instance.BeginCombat(CardManager.Instance.GetCardDataList(10));
-        DrawCardsGA drawCardsGA = new(5);
+        DrawCardsGA drawCardsGA = new(GameplaySkills.HandSize);
         ActionSystem.Instance.Perform(drawCardsGA);
     }
 

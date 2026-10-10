@@ -9,7 +9,7 @@ public class ManaSystem : Singleton<ManaSystem>
     public const int MAX_MANA = 5;
 
     public int CurrentMana => currentMana;
-    public int MaxMana => MAX_MANA;
+    public int MaxMana => MAX_MANA + GameplaySkills.BonusMana;
 
     private int currentMana = MAX_MANA;
 
@@ -34,7 +34,7 @@ public class ManaSystem : Singleton<ManaSystem>
 
     public void ResetMana()
     {
-        currentMana = MAX_MANA;
+        currentMana = MaxMana;
         if (manaUI != null)
             manaUI.UpdateManaText(currentMana);
     }

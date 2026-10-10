@@ -7,15 +7,28 @@ public class HeroSystem : Singleton<HeroSystem>
     {
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<PlayCardGA>(PlayCardPostReaction, ReactionTiming.POST);
     }
     void OnDisable()
     {
         ActionSystem.UnSubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE);
         ActionSystem.UnSubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
+        ActionSystem.UnSubscribeReaction<PlayCardGA>(PlayCardPostReaction, ReactionTiming.POST);
     }
     public void Setup(HeroData heroData)
     {
         HeroView.Setup(heroData);
+
+        GameplaySkills.Refresh();
+        HeroView.AddHealth(GameplaySkills.BonusMaxHealth);
+
+        if (GameplaySkills.StartShield > 0)
+            HeroView.AddStatusEffect(StatusEffectType.ARMOR, GameplaySkills.StartShield);
+    }
+
+    private void PlayCardPostReaction(PlayCardGA playCardGA)
+    {
+        HeroView.Heal(GameplaySkills.HealthPerCard);
     }
     private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnGA)
     {
@@ -34,7 +47,7 @@ public class HeroSystem : Singleton<HeroSystem>
             ApplyBurnGA applyBurnGA = new(burnStacks, HeroView);
             ActionSystem.Instance.AddReaction(applyBurnGA);
         }
-        DrawCardsGA drawCardsGA = new(5);
+        DrawCardsGA drawCardsGA = new(GameplaySkills.HandSize);
         ActionSystem.Instance.AddReaction(drawCardsGA);
     }
 }
