@@ -127,6 +127,7 @@ public class EnemyBoardView : MonoBehaviour
 
         if (scorePanel != null && MapManager.Instance.isBossLevel && !isWin)
         {
+            TurnBanner.Hide();
             scorePanel.SetActive(true);
             isWin = true;
         }

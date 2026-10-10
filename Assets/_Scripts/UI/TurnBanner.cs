@@ -10,6 +10,7 @@ public class TurnBanner : MonoBehaviour
     public static readonly Color EnemyColor = new Color(1f, 0.4f, 0.4f, 1f);
 
     private static TurnBanner instance;
+    private static bool blocked;
 
     private CanvasGroup group;
     private RectTransform bar;
@@ -20,6 +21,9 @@ public class TurnBanner : MonoBehaviour
 
     public static void Show(string message, Color color)
     {
+        if (blocked)
+            return;
+
         if (instance == null)
             instance = Create();
 
@@ -29,11 +33,26 @@ public class TurnBanner : MonoBehaviour
     // Call this when entering win/lose screens to ensure the banner never overlaps them.
     public static void Hide()
     {
+        blocked = true;
+        HideCurrent();
+    }
+
+    // Allow banners again when a new combat starts.
+    public static void ResetForCombat()
+    {
+        blocked = false;
+        HideCurrent();
+    }
+
+    private static void HideCurrent()
+    {
         if (instance == null)
             return;
 
         instance.sequence?.Kill();
         instance.group.alpha = 0f;
+        if (instance.bar != null)
+            instance.bar.localScale = new Vector3(1f, 0f, 1f);
     }
 
     private static TurnBanner Create()

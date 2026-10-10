@@ -106,10 +106,12 @@ public class ThrowingInstructionsHandler: MonoBehaviour
             return;
         }
 
-        // Always bump the dungeon scan counter for this trash type, whether the card is
-        // new or a duplicate, so DungeonChecker progress always increments.
-        FBLeaderboard.Instance?.AddDungeonScanCount(
+        // Paper/plastic/food waste plus their bin category (bio / recyclable / non-bio) and total.
+        FBLeaderboard.Instance?.AddScanStats(
             username,
+            prediction,
+            () => Debug.Log("Collection scan stats saved."),
+            error => Debug.LogError($"Failed to record collection scan stats: {error}"),
             prediction
         );
 

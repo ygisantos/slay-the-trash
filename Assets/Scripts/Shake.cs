@@ -144,10 +144,10 @@ public class Shake : MonoBehaviour
     // ─── Camera Zoom ──────────────────────────────────────────────────────────────
     // Punches the orthographic size in toward a world-space target, then eases back.
 
-    [SerializeField, Min(0f)] private float defaultZoomAmount    = 1.2f;  // how many units to shrink ortho size
-    [SerializeField, Min(0f)] private float defaultZoomInTime    = 0.12f; // seconds to zoom in
-    [SerializeField, Min(0f)] private float defaultZoomHoldTime  = 0.08f; // seconds held at peak zoom
-    [SerializeField, Min(0f)] private float defaultZoomOutTime   = 0.22f; // seconds to ease back
+    [SerializeField, Min(0f)] private float defaultZoomAmount    = 0.18f; // how many units to shrink ortho size
+    [SerializeField, Min(0f)] private float defaultZoomInTime    = 0.85f; // seconds to zoom in
+    [SerializeField, Min(0f)] private float defaultZoomHoldTime  = 0.2f; // seconds held at peak zoom
+    [SerializeField, Min(0f)] private float defaultZoomOutTime   = 1.0f; // seconds to ease back
 
     private float baseOrthoSize = -1f;
     private Coroutine zoomRoutine;
@@ -188,15 +188,15 @@ public class Shake : MonoBehaviour
         float targetSize   = Mathf.Max(0.5f, baseOrthoSize - zoomAmount);
         Vector3 startPos   = mainCamera.transform.position;
 
-        // Clamp pan so the camera doesn't leave a comfortable range.
-        Vector3 panTarget  = Vector3.Lerp(startPos, new Vector3(worldTarget.x, worldTarget.y, startPos.z), 0.3f);
+        // Small pan so the zoom eases in instead of slamming toward the target.
+        Vector3 panTarget  = Vector3.Lerp(startPos, new Vector3(worldTarget.x, worldTarget.y, startPos.z), 0.1f);
 
         // ── Zoom in ──
         float elapsed = 0f;
         while (elapsed < zoomInTime)
         {
             float t = elapsed / zoomInTime;
-            float ease = t * t;
+            float ease = t * t * (3f - 2f * t);
             mainCamera.orthographicSize      = Mathf.Lerp(startSize, targetSize, ease);
             mainCamera.transform.position    = Vector3.Lerp(startPos, panTarget, ease);
             elapsed += Time.deltaTime;
@@ -213,7 +213,7 @@ public class Shake : MonoBehaviour
         while (elapsed < zoomOutTime)
         {
             float t = elapsed / zoomOutTime;
-            float ease = 1f - (1f - t) * (1f - t);
+            float ease = t * t * (3f - 2f * t);
             mainCamera.orthographicSize      = Mathf.Lerp(targetSize, baseOrthoSize, ease);
             mainCamera.transform.position    = Vector3.Lerp(panTarget, startPos, ease);
             elapsed += Time.deltaTime;

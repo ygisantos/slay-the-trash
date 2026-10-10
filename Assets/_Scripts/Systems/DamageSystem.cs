@@ -16,6 +16,20 @@ public class DamageSystem : MonoBehaviour
     }
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA)
     {
+        CombatantView firstTarget = null;
+        foreach (var candidate in dealDamageGA.Targets)
+        {
+            if (candidate != null)
+            {
+                firstTarget = candidate;
+                break;
+            }
+        }
+
+        // Player and enemy both step in before the hit lands.
+        if (dealDamageGA.Caster != null && firstTarget != null)
+            yield return dealDamageGA.Caster.PlayAttackLunge(firstTarget.transform.position);
+
         foreach (var target in dealDamageGA.Targets)
         {
             // Guard against null or destroyed targets (e.g., enemy killed itself earlier)
@@ -26,7 +40,7 @@ public class DamageSystem : MonoBehaviour
             if (target != null)
             {
                 Instantiate(damageVFX, target.transform.position, Quaternion.identity);
-                yield return new WaitForSeconds(0.15f);
+                yield return new WaitForSeconds(0.9f);
             }
 
             if (target.CurrentHealth <= 0)

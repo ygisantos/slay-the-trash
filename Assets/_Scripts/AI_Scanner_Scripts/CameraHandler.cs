@@ -761,40 +761,32 @@ public class CameraHandler : MonoBehaviour
             );
         }
 
-        // ============================================================
-        // RECORD FIREBASE STATS (total/non-bio/bio/recyclable counts)
-        // Applies to every scan regardless of Collection vs DailyQuest mode.
-        // ============================================================
-
-        string statsUsername = GetCurrentUsername();
-        if (!string.IsNullOrWhiteSpace(statsUsername))
-        {
-            Debug.Log($"Recording scan stats for '{statsUsername}' (category: {category}, type: {label}).");
-
-            FBLeaderboard.Instance?.AddScanStats(
-                statsUsername,
-                category,
-                () => Debug.Log("Scan stats saved."),
-                error =>
-                {
-                    Debug.LogError($"Failed to record scan stats: {error}");
-                    DynamicPopupToast.Instance?.ShowToast("Stats not saved: " + error, 4);
-                },
-                label
-            );
-        }
-        else
-        {
-            Debug.LogWarning("Scan stats skipped: no username found in the current profile.");
-        }
-
-        // ============================================================
-        // CONTINUE BASED ON SCAN MODE
-        // ============================================================
-
+        // Daily quests record stats immediately. Collection scans record in
+        // ThrowingInstructionsHandler so paper/plastic also bump bio/recyclable + total.
         if (scanMode == ScanMode.DailyQuest)
         {
-            // Stay in the modal; update quest progress and show the result directly.
+            string statsUsername = GetCurrentUsername();
+            if (!string.IsNullOrWhiteSpace(statsUsername))
+            {
+                Debug.Log($"Recording scan stats for '{statsUsername}' (category: {category}, type: {label}).");
+
+                FBLeaderboard.Instance?.AddScanStats(
+                    statsUsername,
+                    category,
+                    () => Debug.Log("Scan stats saved."),
+                    error =>
+                    {
+                        Debug.LogError($"Failed to record scan stats: {error}");
+                        DynamicPopupToast.Instance?.ShowToast("Stats not saved: " + error, 4);
+                    },
+                    label
+                );
+            }
+            else
+            {
+                Debug.LogWarning("Scan stats skipped: no username found in the current profile.");
+            }
+
             DailyQuestManager questManager = FindFirstObjectByType<DailyQuestManager>();
             questManager?.AddProgressForScan(rawLabel, category, label, confidencePercent);
 
@@ -802,7 +794,6 @@ public class CameraHandler : MonoBehaviour
         }
         else
         {
-            // Legacy "add new collection" flow, unchanged.
             sceneHandler?.LoadThrowingInstructionsScene();
         }
     }

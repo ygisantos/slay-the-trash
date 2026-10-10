@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,28 @@ public class CombatantView : MonoBehaviour
             healthSlider.maxValue = MaxHealth;
             healthSlider.value = CurrentHealth;
         }
+    }
+
+    // Step slightly toward the target, then ease back. Impact should happen at the peak.
+    public IEnumerator PlayAttackLunge(Vector3 towardWorld)
+    {
+        if (CurrentHealth <= 0)
+            yield break;
+
+        Vector3 rest = transform.position;
+        float dir = Mathf.Sign(towardWorld.x - rest.x);
+        if (Mathf.Abs(towardWorld.x - rest.x) < 0.05f)
+            dir = this is HeroView ? 1f : -1f;
+
+        const float distance = 0.55f;
+        const float outTime = 0.7f;
+        const float backTime = 0.75f;
+
+        transform.DOKill();
+        Tween lunge = transform.DOMoveX(rest.x + dir * distance, outTime).SetEase(Ease.OutCubic);
+        yield return lunge.WaitForCompletion();
+
+        transform.DOMove(rest, backTime).SetEase(Ease.InOutCubic);
     }
 
     public void Damage(int damageAmount, bool isBurn = false)

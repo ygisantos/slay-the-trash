@@ -130,7 +130,10 @@ public class EndTurnButtonUI : MonoBehaviour
 
         // A new battle just started and it is the player's turn.
         if (CardSystem.Instance != null && CardSystem.Instance.IsCombatActive)
+        {
+            TurnBanner.ResetForCombat();
             TurnBanner.Show("YOUR TURN", TurnBanner.PlayerColor);
+        }
     }
 
     private void OnDisable()
@@ -208,6 +211,13 @@ public class EndTurnButtonUI : MonoBehaviour
 
     private void UpdateTurnTimer()
     {
+        if (CardSystem.Instance == null || !CardSystem.Instance.IsCombatActive)
+        {
+            timerRunning = false;
+            HideWarning();
+            return;
+        }
+
         if (!timerRunning || pressLocked || enemyTurnRunning)
             return;
 
@@ -500,6 +510,8 @@ public class EndTurnButtonUI : MonoBehaviour
 
             if (CardSystem.Instance != null && CardSystem.Instance.IsCombatActive)
                 TurnBanner.Show("YOUR TURN", TurnBanner.PlayerColor);
+            else
+                TurnBanner.Hide();
             // The next player turn will reset the timer
             // when the state transitions back to Ready.
         });

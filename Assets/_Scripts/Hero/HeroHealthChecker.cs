@@ -118,6 +118,14 @@ public class HeroHealthChecker : MonoBehaviour
     private void OnHeroDead()
     {
         hasLost = true;
+        TurnBanner.Hide();
+
+        MatchSetupSystem match = FindFirstObjectByType<MatchSetupSystem>();
+        if (match != null)
+            match.EndCombat();
+        else
+            CardSystem.Instance?.EndCombat();
+
         scorePanel.SetActive(true);
         if (resultTitle != null) resultTitle.text = "You Lost!";
     }

@@ -170,13 +170,7 @@ public class FBLeaderboard : MonoBehaviour
             { "total_trash", FieldValue.Increment(1) }
         };
 
-        string categoryField = category?.Trim().ToLowerInvariant() switch
-        {
-            "non-bio" => "non_bio_trash",
-            "biological" => "bio_trash",
-            "recyclable" => "recicled_trash",
-            _ => null
-        };
+        string categoryField = CategoryField(category);
 
         if (categoryField != null)
             updates[categoryField] = FieldValue.Increment(1);
@@ -201,6 +195,21 @@ public class FBLeaderboard : MonoBehaviour
         }
 
         MergePoints(username, updates, onSuccess, onError);
+    }
+
+    // Maps a scan category or trash type onto the leaderboard field.
+    public static string CategoryField(string categoryOrType)
+    {
+        return categoryOrType?.Trim().ToLowerInvariant() switch
+        {
+            "non-bio" or "nonbio" or "nonbiodegradable" or "non-biodegradable"
+                or "e-waste" or "e_waste" or "trash" or "other" => "non_bio_trash",
+            "biological" or "biodegradable" or "bio"
+                or "paper" or "food waste" or "organic" => "bio_trash",
+            "recyclable" or "recycle"
+                or "plastic" or "plastic bottle" or "metal" or "glass" or "can" => "recicled_trash",
+            _ => null
+        };
     }
 
     // Only bumps the per-type dungeon counter (plastic/paper/food-waste) without touching

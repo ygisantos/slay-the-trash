@@ -17,8 +17,6 @@ public class LosePanel : MonoBehaviour
 
     private void Awake()
     {
-        // Hide the turn notification so it never bleeds into the lose screen.
-        TurnBanner.Hide();
 
         // Setup button listeners
         if (retryButton != null)
@@ -44,6 +42,12 @@ public class LosePanel : MonoBehaviour
         {
             blockingPanel.raycastTarget = true;
         }
+    }
+
+    private void OnEnable()
+    {
+        TurnBanner.Hide();
+        CardSystem.Instance?.EndCombat();
     }
 
     public void OnRetryClicked()
