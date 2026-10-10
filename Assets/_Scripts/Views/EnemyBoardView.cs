@@ -71,10 +71,15 @@ public class EnemyBoardView : MonoBehaviour
         if (hero == null)
             return;
 
-        hero.Heal(GameplaySkills.HealthPerBattle);
+        int healed = hero.Heal(GameplaySkills.HealthPerBattle);
+        if (healed > 0)
+            DynamicPopupToast.Instance?.ShowToast("Nature's Renewal: +" + healed + " Health");
 
         if (GameplaySkills.ShieldPerBattle > 0)
+        {
             hero.AddStatusEffect(StatusEffectType.ARMOR, GameplaySkills.ShieldPerBattle);
+            DynamicPopupToast.Instance?.ShowToast("Circular Defense: +" + GameplaySkills.ShieldPerBattle + " Shield");
+        }
     }
 
     /// ✅ If no remaining enemies, show panel

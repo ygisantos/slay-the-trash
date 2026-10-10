@@ -23,12 +23,12 @@ public class HeroSystem : Singleton<HeroSystem>
         HeroView.AddHealth(GameplaySkills.BonusMaxHealth);
 
         if (GameplaySkills.StartShield > 0)
-            HeroView.AddStatusEffect(StatusEffectType.ARMOR, GameplaySkills.StartShield);
+            HeroView.AddStatusEffect(StatusEffectType.ARMOR, GameplaySkills.StartShield, false);
     }
 
     private void PlayCardPostReaction(PlayCardGA playCardGA)
     {
-        HeroView.Heal(GameplaySkills.HealthPerCard);
+        HeroView.Heal(GameplaySkills.HealthPerCard, false);
     }
     private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnGA)
     {

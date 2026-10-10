@@ -9,6 +9,7 @@ public class MatchSetupSystem : MonoBehaviour
 
     [SerializeField] private List<EnemyData> enemyDatas;
     public HeroHealthChecker hero;
+    private bool skillsAnnounced;
     public EnemyBoardView enemy;
     private void Start()
     {
@@ -21,6 +22,14 @@ public class MatchSetupSystem : MonoBehaviour
 
     public void StartGame()
     {
+        if (!skillsAnnounced)
+        {
+            skillsAnnounced = true;
+            string summary = GameplaySkills.DescribeActive();
+            if (summary != null)
+                DynamicPopupToast.Instance?.ShowToast(summary, 3);
+        }
+
         if (ManaSystem.Instance != null)
             ManaSystem.Instance.ResetMana();
 

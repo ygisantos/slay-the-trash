@@ -14,9 +14,13 @@ public class StatusEffectsUI : MonoBehaviour
     public TMP_Text armorText;
     public int maxShield = 50;
 
+    private bool armorUpdated;
+
+    // Skip the reset if a starting shield was already applied before Start ran.
     private void Start()
     {
-        UpdateArmorSlider(0);
+        if (!armorUpdated)
+            UpdateArmorSlider(0);
     }
 
     public void UpdateStatusEffectUI(StatusEffectType statusEffectType, int stackCount)
@@ -25,6 +29,7 @@ public class StatusEffectsUI : MonoBehaviour
 
         if (statusEffectType == StatusEffectType.ARMOR)
         {
+            armorUpdated = true;
             UpdateArmorSlider(cappedValue);
         }
 
