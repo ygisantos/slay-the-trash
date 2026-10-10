@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -17,6 +17,9 @@ public class LosePanel : MonoBehaviour
 
     private void Awake()
     {
+        // Hide the turn notification so it never bleeds into the lose screen.
+        TurnBanner.Hide();
+
         // Setup button listeners
         if (retryButton != null)
         {

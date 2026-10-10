@@ -136,10 +136,10 @@ public class DailyQuestManager : MonoBehaviour
             );
         }
 
-        if (questItems.Count < 5 || possibleQuests.Count < questItems.Count)
+        if (questItems.Count < 1 || possibleQuests.Count < 1)
         {
             Debug.LogError(
-                $"You need 5 UI items and at least {questItems.Count} unique quests."
+                "You need at least 1 UI item and 1 quest definition."
             );
             return;
         }
@@ -155,6 +155,10 @@ public class DailyQuestManager : MonoBehaviour
 
         for (int index = 0; index < 5; index++)
         {
+            // Refill the pool if we've used every quest type (handles fewer defs than slots).
+            if (availableQuests.Count == 0)
+                availableQuests = new List<QuestDefinition>(possibleQuests);
+
             int randomIndex = random.Next(availableQuests.Count);
             QuestDefinition selectedQuest = availableQuests[randomIndex];
             availableQuests.RemoveAt(randomIndex);

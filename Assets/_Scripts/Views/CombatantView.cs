@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -45,6 +45,10 @@ public class CombatantView : MonoBehaviour
         int absorbed = 0;
         Shake.Instance.ShakeCamera();
         SoundManager.Instance.PlaySound(hurtSound);
+
+        // Zoom toward the combatant that is taking damage (enemy or player).
+        Shake.Instance?.ZoomTo(transform.position);
+
         if (transform != null)
         {
             transform.DOShakePosition(0.2f, 0.5f);

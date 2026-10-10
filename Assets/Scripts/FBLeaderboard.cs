@@ -203,6 +203,40 @@ public class FBLeaderboard : MonoBehaviour
         MergePoints(username, updates, onSuccess, onError);
     }
 
+    // Only bumps the per-type dungeon counter (plastic/paper/food-waste) without touching
+    // total_trash or category stats.  Call this when a card is collected so progress is
+    // always recorded, not just when a duplicate is detected.
+    public void AddDungeonScanCount(
+        string username,
+        string trashType,
+        Action onSuccess = null,
+        Action<string> onError = null)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            onError?.Invoke("Username is required to record dungeon scan count.");
+            return;
+        }
+
+        string dungeonField = trashType?.Trim().ToLowerInvariant() switch
+        {
+            "plastic" or "plastic bottle" => "plastic_scan_count",
+            "paper"                       => "paper_scan_count",
+            "food waste"                  => "food_waste_scan_count",
+            _                             => null
+        };
+
+        if (dungeonField == null)
+            return;
+
+        MergePoints(
+            username,
+            new Dictionary<string, object> { { dungeonField, FieldValue.Increment(1) } },
+            onSuccess,
+            onError
+        );
+    }
+
     // Like UpdatePoints, but creates the Points document if it is missing.
     private void MergePoints(
         string username,

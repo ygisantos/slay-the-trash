@@ -74,7 +74,7 @@ public class CameraHandler : MonoBehaviour
         "non-bio",      // e_waste
         "biological",  // food_waste
         "recyclable",   // metal
-        "recyclable",  // paper
+        "biological",  // paper  ← paper is biodegradable
         "recyclable",  // plastic
     };
 

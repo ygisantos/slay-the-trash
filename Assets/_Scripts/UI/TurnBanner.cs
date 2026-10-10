@@ -26,6 +26,16 @@ public class TurnBanner : MonoBehaviour
         instance.Play(message, color);
     }
 
+    // Call this when entering win/lose screens to ensure the banner never overlaps them.
+    public static void Hide()
+    {
+        if (instance == null)
+            return;
+
+        instance.sequence?.Kill();
+        instance.group.alpha = 0f;
+    }
+
     private static TurnBanner Create()
     {
         GameObject root = new GameObject("TurnBanner", typeof(Canvas), typeof(CanvasScaler), typeof(CanvasGroup));

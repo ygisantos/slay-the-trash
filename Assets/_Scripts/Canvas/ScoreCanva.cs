@@ -63,6 +63,9 @@ public class ScoreCanvas : MonoBehaviour
 
     void OnEnable()
     {
+        // Hide the turn notification so it never bleeds into the score screen.
+        TurnBanner.Hide();
+
         score?.RefreshSkillBonuses();
 
         if (sequence != null)

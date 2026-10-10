@@ -106,6 +106,13 @@ public class ThrowingInstructionsHandler: MonoBehaviour
             return;
         }
 
+        // Always bump the dungeon scan counter for this trash type, whether the card is
+        // new or a duplicate, so DungeonChecker progress always increments.
+        FBLeaderboard.Instance?.AddDungeonScanCount(
+            username,
+            prediction
+        );
+
         FBCardCollection.Instance.AddCardWithStatus(
             username,
             prediction,
