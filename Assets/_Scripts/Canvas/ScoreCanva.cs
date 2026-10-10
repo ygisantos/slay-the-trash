@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Globalization;
 using TMPro;
 
 public class ScoreCanvas : MonoBehaviour
@@ -30,30 +31,55 @@ public class ScoreCanvas : MonoBehaviour
 
     private ScoreManager score => ScoreManager.Instance;
 
+    void OnEnable()
+    {
+        score?.RefreshSkillBonuses();
+    }
+
+    // Shows the skill bonus next to the base, e.g. "X10+0.5".
+    private static string FormatBase(int baseScore, float bonus)
+    {
+        return bonus > 0f
+            ? "X" + baseScore + "+" + bonus.ToString("0.##", CultureInfo.InvariantCulture)
+            : "X" + baseScore;
+    }
+
+    private static string FormatCount(int count, int pointsBonus)
+    {
+        return pointsBonus > 0 && count > 0
+            ? count + "+" + pointsBonus
+            : count.ToString();
+    }
+
+    private static string FormatTotal(int scoreCount, int baseScore, float bonus)
+    {
+        return Mathf.RoundToInt(scoreCount * (baseScore + bonus)).ToString();
+    }
+
     void Update()
     {
         if (score == null) return;
 
         // BASE
-        enemiesBaseText.text = "X" + score.enemiesBaseScore.ToString();
-        bossBaseText.text = "X" + score.bossBaseScore.ToString();
-        eventBaseText.text = "X" + score.eventBaseScore.ToString();
-        healthBaseText.text = "X" + score.healthBaseScore.ToString();
-        floorBaseText.text = "X" + score.floorBaseScore.ToString();
+        enemiesBaseText.text = FormatBase(score.enemiesBaseScore, score.enemiesBonus);
+        bossBaseText.text = FormatBase(score.bossBaseScore, score.bossBonus);
+        eventBaseText.text = FormatBase(score.eventBaseScore, score.eventBonus);
+        healthBaseText.text = FormatBase(score.healthBaseScore, score.healthBonus);
+        floorBaseText.text = FormatBase(score.floorBaseScore, score.floorBonus);
 
         // COUNTS
-        enemiesCountText.text = score.enemiesCount.ToString();
+        enemiesCountText.text = FormatCount(score.enemiesCount, score.enemiesPointsBonus);
         bossCountText.text = score.bossCount.ToString();
         eventCountText.text = score.eventCount.ToString();
         healthCountText.text = score.healthCount.ToString();
-        floorCountText.text = score.floorCount.ToString();
+        floorCountText.text = FormatCount(score.floorCount, score.floorPointsBonus);
 
         // TOTALS
-        enemiesTotalText.text = (score.enemiesCount * score.enemiesBaseScore).ToString();
-        bossTotalText.text = (score.bossCount * score.bossBaseScore).ToString();
-        eventTotalText.text = (score.eventCount * score.eventBaseScore).ToString();
-        healthTotalText.text = (score.healthCount * score.healthBaseScore).ToString();
-        floorTotalText.text = (score.floorCount * score.floorBaseScore).ToString();
+        enemiesTotalText.text = FormatTotal(score.EnemiesScoreCount, score.enemiesBaseScore, score.enemiesBonus);
+        bossTotalText.text = FormatTotal(score.bossCount, score.bossBaseScore, score.bossBonus);
+        eventTotalText.text = FormatTotal(score.eventCount, score.eventBaseScore, score.eventBonus);
+        healthTotalText.text = FormatTotal(score.healthCount, score.healthBaseScore, score.healthBonus);
+        floorTotalText.text = FormatTotal(score.FloorScoreCount, score.floorBaseScore, score.floorBonus);
 
         // FINAL TOTAL
         totalScoreText.text = score.GetTotalScore().ToString();
