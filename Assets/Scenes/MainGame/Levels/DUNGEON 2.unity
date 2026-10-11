@@ -38718,6 +38718,7 @@ GameObject:
   - component: {fileID: 1749190427}
   - component: {fileID: 1749190426}
   - component: {fileID: 1749190425}
+  - component: {fileID: 1749190428}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -38843,6 +38844,66 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1749190428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749190423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Postprocessing.Runtime::UnityEngine.Rendering.PostProcessing.PostProcessLayer
+  volumeTrigger: {fileID: 1749190424}
+  volumeLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  stopNaNPropagation: 1
+  finalBlitToCameraTarget: 0
+  antialiasingMode: 0
+  temporalAntialiasing:
+    jitterSpread: 0.75
+    sharpness: 0.25
+    stationaryBlending: 0.95
+    motionBlending: 0.85
+  subpixelMorphologicalAntialiasing:
+    quality: 2
+  fastApproximateAntialiasing:
+    fastMode: 0
+    keepAlpha: 0
+  fog:
+    enabled: 1
+    excludeSkybox: 1
+  debugLayer:
+    lightMeter:
+      width: 512
+      height: 256
+      showCurves: 1
+    histogram:
+      width: 512
+      height: 256
+      channel: 3
+    waveform:
+      exposure: 0.12
+      height: 256
+    vectorscope:
+      size: 256
+      exposure: 0.12
+    overlaySettings:
+      linearDepth: 0
+      motionColorIntensity: 4
+      motionGridSize: 64
+      colorBlindnessType: 0
+      colorBlindnessStrength: 1
+  m_Resources: {fileID: 11400000, guid: d82512f9c8e5d4a4d938b575d47f88d4, type: 2}
+  m_ShowToolkit: 0
+  m_ShowCustomSorter: 0
+  breakBeforeColorGrading: 0
+  m_BeforeTransparentBundles: []
+  m_BeforeStackBundles: []
+  m_AfterStackBundles: []
 --- !u!1 &1763407525
 GameObject:
   m_ObjectHideFlags: 0
@@ -42538,6 +42599,63 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -265}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1001 &2039601064
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1637474704830223317, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_Name
+      value: PostProcessingManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.61675
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7224
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322618427762466040, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bb4aec6cfcf64894abaeba6c0f26a02d, type: 3}
 --- !u!1001 &2040504152
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42984,6 +43102,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabed4763a69e5d43989c307da6f1cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bannerBackgroundColor: {r: 0.08, g: 0.08, b: 0.12, a: 0.95}
+  bannerTextColor: {r: 1, g: 1, b: 1, a: 1}
+  bannerDisplayDuration: 1.5
+  bannerFadeDuration: 0.25
+  bannerAnimationDuration: 0.4
+  bannerSize: {x: 650, y: 130}
+  bannerFontSize: 48
   mapParent: {fileID: 1641818927}
   mainMap: {fileID: 1651841339}
   player: {fileID: 475639290}
@@ -42993,6 +43118,21 @@ MonoBehaviour:
   scrollAmount: -450
   scrollDuration: 2
   matchSetupSystem: {fileID: 532912708}
+  idleFloatAmount: 8
+  idleFloatDuration: 1.2
+  idlePulseScale: 1.06
+  idlePulseDuration: 0.8
+  hopHeight: 65
+  movementTilt: 12
+  arrivalPunchScale: 1.2
+  nodePulseScale: 1.2
+  nodePulseDuration: 0.3
+  enemyIntroText: BATTLE START!
+  bossIntroText: BOSS ENCOUNTER!
+  zoomScale: 1.12
+  zoomDuration: 0.3
+  battleShakeDuration: 0.2
+  battleShakeStrength: 0.06
 --- !u!114 &2075770939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44298,3 +44438,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 856356533}
+  - {fileID: 2039601064}

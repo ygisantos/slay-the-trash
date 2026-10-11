@@ -46,6 +46,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PostProcessingManager
   volume: {fileID: 3826733397112544482}
+  enablePostProcessing: 1
+  renderType: 0
+  orthographic: 1
+  orthographicSize: 5
+  antiAliasing: 1
 --- !u!1 &5020697090147907638
 GameObject:
   m_ObjectHideFlags: 0
