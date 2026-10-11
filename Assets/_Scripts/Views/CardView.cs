@@ -272,187 +272,129 @@ public class CardView : MonoBehaviour
     // END DRAG
     // ============================================================
 
+    
     public void EndDrag(Vector2 screenPos)
     {
-        if (!interactable)
+        // Always clean up the drag state, even if the card
+        // became non-interactable during the drag.
+        if (!isDragging)
             return;
 
-
-        // Re-enable collider
         if (cardCollider != null)
-        {
             cardCollider.enabled = true;
-        }
 
-
-        // Make all cards interactable again
         if (CardViewCreator.Instance != null)
-        {
             CardViewCreator.Instance.CardInteractable();
-        }
 
+        bool canInteract =
+            interactable &&
+            Interactions.Instance != null &&
+            Interactions.Instance.PlayerCanInteract();
 
-        if (Interactions.Instance == null ||
-            !Interactions.Instance.PlayerCanInteract())
+        if (!canInteract)
         {
             ResetCardPosition();
 
             if (wrapper != null)
                 wrapper.SetActive(true);
-
-            isDragging = false;
-
-            if (Interactions.Instance != null)
-                Interactions.Instance.PlayerIsDragging = false;
-
-            return;
-        }
-
-
-        // ========================================================
-        // TAP ONLY
-        // ========================================================
-
-        if (!hasDragged)
-        {
-            ResetCardPosition();
-
-
-            // Restore normal card
-            if (wrapper != null)
-            {
-                wrapper.SetActive(true);
-            }
-
-
-            // ----------------------------------------------------
-            // IMPORTANT:
-            //
-            // A TAP should show the enlarged card so the player
-            // can read the description.
-            // ----------------------------------------------------
-
-            if (CardViewHoverSystem.Instance != null)
-            {
-                Vector3 pos = transform.position;
-
-                pos.y = -2f;
-                pos.z = transform.position.z - 0.5f;
-
-                CardViewHoverSystem.Instance.Show(
-                    Card,
-                    pos
-                );
-            }
-
 
             isDragging = false;
             hasDragged = false;
 
-
             if (Interactions.Instance != null)
-            {
                 Interactions.Instance.PlayerIsDragging = false;
-            }
 
+            if (CardViewHoverSystem.Instance != null)
+                CardViewHoverSystem.Instance.Hide();
 
             return;
         }
 
+        // TAP: show the enlarged card preview.
+        if (!hasDragged)
+        {
+            ResetCardPosition();
 
-        // ========================================================
+            if (wrapper != null)
+                wrapper.SetActive(true);
+
+            if (CardViewHoverSystem.Instance != null)
+            {
+                Vector3 pos = transform.position;
+                pos.y = -2f;
+                pos.z = transform.position.z - 0.5f;
+
+                CardViewHoverSystem.Instance.Show(Card, pos);
+            }
+
+            isDragging = false;
+            hasDragged = false;
+            Interactions.Instance.PlayerIsDragging = false;
+            return;
+        }
+
         // MANUAL TARGETING
-        // ========================================================
-
         if (Card != null && Card.ManualTargetEffect != null)
         {
             EnemyView target =
                 ManualTargetSystem.Instance?.EndTargeting(screenPos);
 
-
             if (target != null &&
                 ManaSystem.Instance != null &&
-                ManaSystem.Instance.HasEnoughMana(Card.Mana))
+                ManaSystem.Instance.HasEnoughMana(Card.Mana) &&
+                ActionSystem.Instance != null &&
+                Interactions.Instance.PlayerCanInteract())
             {
-                PlayCardGA playCardGA =
-                    new PlayCardGA(Card, target);
-
-                if (ActionSystem.Instance != null)
-                {
-                    ActionSystem.Instance.Perform(playCardGA);
-                }
+                ActionSystem.Instance.Perform(
+                    new PlayCardGA(Card, target)
+                );
             }
             else
             {
                 ResetCardPosition();
             }
-
-
-            isDragging = false;
-
-
-            if (Interactions.Instance != null)
-            {
-                Interactions.Instance.PlayerIsDragging = false;
-            }
         }
-
-
-        // ========================================================
         // NORMAL CARD
-        // ========================================================
-
         else
         {
+            bool played = false;
+
             if (cam == null)
-            {
                 cam = Camera.main;
-            }
 
-
-            if (cam != null)
+            if (cam != null &&
+                ManaSystem.Instance != null &&
+                ManaSystem.Instance.HasEnoughMana(Card.Mana) &&
+                ActionSystem.Instance != null &&
+                Interactions.Instance.PlayerCanInteract())
             {
-                Ray ray =
-                    cam.ScreenPointToRay(screenPos);
+                Ray ray = cam.ScreenPointToRay(screenPos);
 
+                if (Physics.Raycast(
+                    ray,
+                    out RaycastHit hit,
+                    100f,
+                    dropLayer))
+                {
+                    ActionSystem.Instance.Perform(
+                        new PlayCardGA(Card)
+                    );
 
-                if (ManaSystem.Instance != null &&
-                    ManaSystem.Instance.HasEnoughMana(Card.Mana) &&
-                    Physics.Raycast(
-                        ray,
-                        out RaycastHit hit,
-                        100f,
-                        dropLayer
-                    ))
-                {
-                    if (ActionSystem.Instance != null)
-                    {
-                        ActionSystem.Instance.Perform(
-                            new PlayCardGA(Card)
-                        );
-                    }
-                }
-                else
-                {
-                    ResetCardPosition();
+                    played = true;
                 }
             }
-            else
-            {
+
+            if (!played)
                 ResetCardPosition();
-            }
-
-
-            isDragging = false;
-
-
-            if (Interactions.Instance != null)
-            {
-                Interactions.Instance.PlayerIsDragging = false;
-            }
         }
-    }
 
+        isDragging = false;
+        hasDragged = false;
+        Interactions.Instance.PlayerIsDragging = false;
+
+        if (wrapper != null)
+            wrapper.SetActive(true);
+    }
 
     // ============================================================
     // RESET POSITION

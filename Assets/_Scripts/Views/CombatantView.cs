@@ -20,6 +20,35 @@ public class CombatantView : MonoBehaviour
     private Dictionary<StatusEffectType, int> statusEffects = new();
     private SoundType hurtSound;
 
+    private readonly List<Tween> activeFeedbackTweens = new();
+
+    private void TrackFeedbackTween(Tween tween)
+    {
+        if (tween != null && tween.IsActive())
+            activeFeedbackTweens.Add(tween);
+    }
+
+    public IEnumerator WaitForDamageFeedback()
+    {
+        // Remove completed or inactive tweens.
+        activeFeedbackTweens.RemoveAll(
+            tween => tween == null || !tween.IsActive()
+        );
+
+        // Wait for every feedback animation currently being tracked.
+        Tween[] pending = activeFeedbackTweens.ToArray();
+
+        foreach (Tween tween in pending)
+        {
+            if (tween != null && tween.IsActive())
+                yield return tween.WaitForCompletion();
+        }
+
+        activeFeedbackTweens.RemoveAll(
+            tween => tween == null || !tween.IsActive()
+        );
+    }
+
     protected void SetupBase(int health, Sprite image, SoundType sound = SoundType.SMALLENEMYHURT)
     {
         MaxHealth = CurrentHealth = health;
@@ -40,13 +69,16 @@ public class CombatantView : MonoBehaviour
     }
 
     // Step slightly toward the target, then ease back. Impact should happen at the peak.
+    
     public IEnumerator PlayAttackLunge(Vector3 towardWorld)
     {
         if (CurrentHealth <= 0)
             yield break;
 
         Vector3 rest = transform.position;
+
         float dir = Mathf.Sign(towardWorld.x - rest.x);
+
         if (Mathf.Abs(towardWorld.x - rest.x) < 0.05f)
             dir = this is HeroView ? 1f : -1f;
 
@@ -55,10 +87,21 @@ public class CombatantView : MonoBehaviour
         const float backTime = 0.75f;
 
         transform.DOKill();
-        Tween lunge = transform.DOMoveX(rest.x + dir * distance, outTime).SetEase(Ease.OutCubic);
+
+        Tween lunge = transform
+            .DOMoveX(rest.x + dir * distance, outTime)
+            .SetEase(Ease.OutCubic);
+
         yield return lunge.WaitForCompletion();
 
-        transform.DOMove(rest, backTime).SetEase(Ease.InOutCubic);
+        if (this == null)
+            yield break;
+
+        Tween returnTween = transform
+            .DOMove(rest, backTime)
+            .SetEase(Ease.InOutCubic);
+
+        yield return returnTween.WaitForCompletion();
     }
 
     public void Damage(int damageAmount, bool isBurn = false)
@@ -74,7 +117,9 @@ public class CombatantView : MonoBehaviour
 
         if (transform != null)
         {
-            transform.DOShakePosition(0.2f, 0.5f);
+            TrackFeedbackTween(
+                transform.DOShakePosition(0.2f, 0.5f)
+            );
         }
 
         if (currentArmor > 0)
@@ -219,6 +264,7 @@ public class CombatantView : MonoBehaviour
         Transform t = spriteRenderer.transform;
 
         DOTween.Kill(fxId, true);
+
         if (!spriteBaseScale.HasValue)
             spriteBaseScale = t.localScale;
 
@@ -226,8 +272,19 @@ public class CombatantView : MonoBehaviour
         t.localScale = b;
 
         Sequence squish = DOTween.Sequence().SetId(fxId);
-        squish.Append(t.DOScale(new Vector3(b.x * 1.3f, b.y * 0.7f, b.z), 0.07f).SetEase(Ease.OutQuad));
-        squish.Append(t.DOScale(b, 0.4f).SetEase(Ease.OutElastic));
+
+        squish.Append(
+            t.DOScale(
+                new Vector3(b.x * 1.3f, b.y * 0.7f, b.z),
+                0.07f
+            ).SetEase(Ease.OutQuad)
+        );
+
+        squish.Append(
+            t.DOScale(b, 0.4f).SetEase(Ease.OutElastic)
+        );
+
+        TrackFeedbackTween(squish);
     }
 
     // Small puff-up when an attack is fully blocked.
@@ -239,6 +296,7 @@ public class CombatantView : MonoBehaviour
         Transform t = spriteRenderer.transform;
 
         DOTween.Kill(fxId, true);
+
         if (!spriteBaseScale.HasValue)
             spriteBaseScale = t.localScale;
 
@@ -246,14 +304,23 @@ public class CombatantView : MonoBehaviour
         t.localScale = b;
 
         Sequence bump = DOTween.Sequence().SetId(fxId);
-        bump.Append(t.DOScale(b * 1.12f, 0.08f).SetEase(Ease.OutQuad));
-        bump.Append(t.DOScale(b, 0.2f).SetEase(Ease.OutBack));
+
+        bump.Append(
+            t.DOScale(b * 1.12f, 0.08f).SetEase(Ease.OutQuad)
+        );
+
+        bump.Append(
+            t.DOScale(b, 0.2f).SetEase(Ease.OutBack)
+        );
+
+        TrackFeedbackTween(bump);
     }
 
     // Expanding ring that shows the type of hit (damage, block, burn).
     private void HitRing(Color color)
     {
         GameObject go = new GameObject("HitRing");
+
         go.transform.position = spriteRenderer != null
             ? spriteRenderer.bounds.center
             : transform.position;
@@ -264,11 +331,31 @@ public class CombatantView : MonoBehaviour
         sr.sortingOrder = 150;
 
         go.transform.localScale = Vector3.one * 0.6f;
-        go.transform.DOScale(2.2f, 0.4f).SetEase(Ease.OutQuad);
-        DOTween.To(() => sr.color, c => sr.color = c, new Color(color.r, color.g, color.b, 0f), 0.4f)
-            .OnComplete(() => { if (go != null) Destroy(go); });
-    }
 
+        Sequence ring = DOTween.Sequence();
+
+        ring.Join(
+            go.transform.DOScale(2.2f, 0.4f)
+                .SetEase(Ease.OutQuad)
+        );
+
+        ring.Join(
+            DOTween.To(
+                () => sr.color,
+                c => sr.color = c,
+                new Color(color.r, color.g, color.b, 0f),
+                0.4f
+            )
+        );
+
+        ring.OnComplete(() =>
+        {
+            if (go != null)
+                Destroy(go);
+        });
+
+        TrackFeedbackTween(ring);
+    }
     private static Sprite GetRingSprite()
     {
         if (ringSprite != null)
@@ -310,19 +397,27 @@ public class CombatantView : MonoBehaviour
             spriteBaseColor = spriteRenderer.color;
 
         spriteRenderer.color = spriteBaseColor.Value;
+
         flashTween = DOTween.To(
             () => spriteRenderer.color,
             c => spriteRenderer.color = c,
             color,
             0.15f
         ).SetLoops(2, LoopType.Yoyo);
+
+        TrackFeedbackTween(flashTween);
     }
 
     // World-space number that rises above the combatant and fades out.
-    private void ShowFloatingText(string message, Color color, float yOffset = 0f)
+    private void ShowFloatingText(
+        string message,
+        Color color,
+        float yOffset = 0f)
     {
         GameObject go = new GameObject("FloatingText");
-        go.transform.position = transform.position + new Vector3(0f, 1.6f + yOffset, 0f);
+
+        go.transform.position =
+            transform.position + new Vector3(0f, 1.6f + yOffset, 0f);
 
         TextMeshPro text = go.AddComponent<TextMeshPro>();
         text.text = message;
@@ -334,10 +429,37 @@ public class CombatantView : MonoBehaviour
         text.rectTransform.sizeDelta = new Vector2(8f, 2f);
 
         go.transform.localScale = Vector3.one * 0.6f;
-        go.transform.DOScale(1f, 0.25f).SetEase(Ease.OutBack);
-        go.transform.DOMoveY(go.transform.position.y + 1.2f, 1f).SetEase(Ease.OutCubic);
-        DOTween.To(() => text.alpha, a => text.alpha = a, 0f, 0.4f)
-            .SetDelay(0.6f)
-            .OnComplete(() => { if (go != null) Destroy(go); });
+
+        Sequence floatingText = DOTween.Sequence();
+
+        floatingText.Join(
+            go.transform.DOScale(1f, 0.25f)
+                .SetEase(Ease.OutBack)
+        );
+
+        floatingText.Join(
+            go.transform.DOMoveY(
+                go.transform.position.y + 1.2f,
+                1f
+            ).SetEase(Ease.OutCubic)
+        );
+
+        floatingText.Insert(
+            0.6f,
+            DOTween.To(
+                () => text.alpha,
+                a => text.alpha = a,
+                0f,
+                0.4f
+            )
+        );
+
+        floatingText.OnComplete(() =>
+        {
+            if (go != null)
+                Destroy(go);
+        });
+
+        TrackFeedbackTween(floatingText);
     }
 }
