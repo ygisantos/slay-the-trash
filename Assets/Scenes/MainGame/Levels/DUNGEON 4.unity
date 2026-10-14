@@ -6990,7 +6990,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &186927822
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20943,6 +20943,108 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 774076635}
   m_CullTransparentMesh: 1
+--- !u!1001 &780086079
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2004476607}
+    m_Modifications:
+    - target: {fileID: 2138196637581516493, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_Name
+      value: MapBackground
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7659.5747
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 94620585644059849bb3519c008aec6b, type: 3}
+--- !u!224 &780086080 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7722044437387229025, guid: 94620585644059849bb3519c008aec6b, type: 3}
+  m_PrefabInstance: {fileID: 780086079}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &787838124
 GameObject:
   m_ObjectHideFlags: 0
@@ -42929,6 +43031,7 @@ RectTransform:
   m_Children:
   - {fileID: 215463855}
   - {fileID: 186927822}
+  - {fileID: 780086080}
   - {fileID: 1924763282}
   - {fileID: 1030865436}
   - {fileID: 201804949}
@@ -42952,6 +43055,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabed4763a69e5d43989c307da6f1cf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bannerBackgroundColor: {r: 0.08, g: 0.08, b: 0.12, a: 0.95}
+  bannerTextColor: {r: 1, g: 1, b: 1, a: 1}
+  bannerDisplayDuration: 1.5
+  bannerFadeDuration: 0.25
+  bannerAnimationDuration: 0.4
+  bannerSize: {x: 650, y: 130}
+  bannerFontSize: 48
   mapParent: {fileID: 725217077}
   mainMap: {fileID: 1924763282}
   player: {fileID: 1276676655}
@@ -42961,6 +43071,21 @@ MonoBehaviour:
   scrollAmount: -450
   scrollDuration: 2
   matchSetupSystem: {fileID: 691248624}
+  idleFloatAmount: 8
+  idleFloatDuration: 1.2
+  idlePulseScale: 1.06
+  idlePulseDuration: 0.8
+  hopHeight: 65
+  movementTilt: 12
+  arrivalPunchScale: 1.2
+  nodePulseScale: 1.2
+  nodePulseDuration: 0.3
+  enemyIntroText: BATTLE START!
+  bossIntroText: BOSS ENCOUNTER!
+  zoomScale: 1.12
+  zoomDuration: 0.3
+  battleShakeDuration: 0.2
+  battleShakeStrength: 0.06
 --- !u!114 &2004476609
 MonoBehaviour:
   m_ObjectHideFlags: 0
