@@ -75,8 +75,8 @@ public class DungeonChecker : MonoBehaviour
             requirementsText.text += $"\nCollect a {requiredType} card first";
 
         // Editor and development builds show where the numbers come from.
-        if (Debug.isDebugBuild)
-            requirementsText.text += $"\n(scans: {scanCount}, saved cards: {ownedCards})";
+        // if (Debug.isDebugBuild)
+        //     requirementsText.text += $"\n(scans: {scanCount}, saved cards: {ownedCards})";
 
         // Apply transparency
         UpdateTransparency();
