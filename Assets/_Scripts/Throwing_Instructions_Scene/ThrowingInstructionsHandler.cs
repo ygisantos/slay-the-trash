@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
-
+using System.Collections;
+ 
 public class ThrowingInstructionsHandler: MonoBehaviour
 {
+    private bool isLoading = false;
     public TextMeshProUGUI trashTypeText;
     public TextMeshProUGUI trashBinsText;
     public TextMeshProUGUI cardGet;
@@ -22,6 +24,7 @@ public class ThrowingInstructionsHandler: MonoBehaviour
 
     void Start()
     {
+        _ = DynamicPopupToast.Instance;
         predictionPath = System.IO.Path.Combine(Application.persistentDataPath, "Prediction", "prediction.txt");
         prediction = "";
 
@@ -131,10 +134,25 @@ public class ThrowingInstructionsHandler: MonoBehaviour
                     DynamicPopupToast.Instance?.ShowToast(
                         $"Duplicate card: {cardToGet}. Scan counted toward dungeon progress.", 6
                     );
+                    StartCoroutine(LoadWithDelay("DungeonSelection", 3f));
+                }
+                else
+                {
+                    StartCoroutine(LoadWithDelay("DungeonSelection", 0.1f));
                 }
             },
             error => Debug.LogError($"Failed to save card to collection: {error}")
         );
+    }
+
+    
+    private IEnumerator LoadWithDelay(string sceneName, float delay)
+    {
+        if (isLoading) yield break;
+        isLoading = true;
+
+        yield return new WaitForSeconds(delay);
+        Transitioner.Instance.TransitionToScene(sceneName);
     }
 
     private string GetCurrentUsername()
@@ -219,6 +237,6 @@ public class ThrowingInstructionsHandler: MonoBehaviour
             decker.UpdateCardsList();
         }
 
-        StartCollection();
+        // StartCollection();
     }
 }
