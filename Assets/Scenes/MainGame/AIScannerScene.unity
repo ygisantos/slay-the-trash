@@ -533,11 +533,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8926727268880837457, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadThrowingInstructionsScene
+      value: ProcessFrameForAI
       objectReference: {fileID: 0}
     - target: {fileID: 8926727268880837457, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: AIScannerSceneHandlerScript, Assembly-CSharp
+      value: CameraHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8926727268880837457, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

@@ -25195,7 +25195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0253f5d972f9f9949bea12f511d6c839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LogController
-  enableLogging: 0
+  enableLogging: 1
 --- !u!4 &1162215292
 Transform:
   m_ObjectHideFlags: 0
@@ -28923,7 +28923,8 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5484627399920827859, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b0b125786bba46b40a05d23d032cc586, type: 3}
