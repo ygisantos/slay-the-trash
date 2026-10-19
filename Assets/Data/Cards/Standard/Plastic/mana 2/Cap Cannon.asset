@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Cap Cannon
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 4 Damage to all enemies and add 5 shield.
+  <Description>k__BackingField: Add 5 armor and deal 8 damage to all enemies.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 5644484708096582255, guid: 84e2de72b0528844c81c5052d1976e8a, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}

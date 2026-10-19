@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Overclock
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Add 15 Armor and Draw 2 cards.
+  <Description>k__BackingField: Add 18 armor and draw 2 cards.
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: -3801665504657179299, guid: 0d84ba561b732b441970a892583cd19c, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}
@@ -40,7 +40,7 @@ MonoBehaviour:
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 0
-        stackCount: 15
+        stackCount: 18
     - rid: 1877740996430397823
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:

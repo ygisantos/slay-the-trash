@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Banana Splitter
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 40 Damage  and Deal 20 to yourself.
+  <Description>k__BackingField: Deal 20 damage to all enemies and 40 damage to an enemy.
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: 1785315174152355936, guid: a9e006c07e3b39148a522f71c07f6be9, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}

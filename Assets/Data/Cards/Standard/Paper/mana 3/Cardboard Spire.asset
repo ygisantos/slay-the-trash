@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Cardboard Spire
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 12  to an enemy and bleed 3.
+  <Description>k__BackingField: Apply 3 burn and deal 12 damage to an enemy.
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: -228979274590501208, guid: 0e6b09fc7a32ebd47b4bff9d7c732f76, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}

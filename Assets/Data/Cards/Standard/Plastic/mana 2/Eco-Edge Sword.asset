@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Eco-Edge Sword
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 5 Damage to all enemy and add 2 armor.
+  <Description>k__BackingField: Add 2 armor and deal 5 damage to all enemies.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: 6127623386843746201, guid: 9526c4b6ddc65094494c0c12e050746e, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}

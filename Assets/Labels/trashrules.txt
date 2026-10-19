@@ -1,5 +1,7 @@
 e-waste:non-biodegradable
+e-waste:e-waste
 food waste:biodegradable
+food waste:food waste
 metal:recyclable
 metal:metal
 paper:biodegradable

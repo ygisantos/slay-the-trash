@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 4e9c6071ef7c5d246b20966a90e4d424
+guid: e16ac9bd655223f01f889d892a22fd39
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1114885995536370877
+      213: -2919069179838431551
     second: METAL_SAMURAI_SWORD_0
   externalObjects: {}
   serializedVersion: 13
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3433ffe08112780f0800000000000000
-      internalID: -1114885995536370877
+      spriteID: 92429093e3b0d161ab3c9fd883258db5
+      internalID: -2919069179838431551
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      METAL_SAMURAI_SWORD_0: -1114885995536370877
+      METAL_SAMURAI_SWORD_0: -2919069179838431551
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

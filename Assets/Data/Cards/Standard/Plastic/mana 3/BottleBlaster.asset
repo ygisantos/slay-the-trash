@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: BottleBlaster
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 15 damage to enemy and add 5 Armor.
+  <Description>k__BackingField: Add 5 armor and deal 15 damage to an enemy.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: -1687354043983902729, guid: 94fef95161f57354f9c897140990bb9e, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}

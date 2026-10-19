@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Steel Katana
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 35 Damage to an enemy and add 10 Armor to yourself.
+  <Description>k__BackingField: Deal 42 damage to an enemy and add 14 armor to yourself.
   <Mana>k__BackingField: 4
-  <Image>k__BackingField: {fileID: -1114885995536370877, guid: 4e9c6071ef7c5d246b20966a90e4d424, type: 3}
+  <Image>k__BackingField: {fileID: -2919069179838431551, guid: e16ac9bd655223f01f889d892a22fd39, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
   <ManualTargetEffect>k__BackingField:
     rid: -2
@@ -39,7 +39,7 @@ MonoBehaviour:
     - rid: 1877740996430397862
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
-        damageAmount: 35
+        damageAmount: 42
     - rid: 1877740996430397863
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -54,5 +54,4 @@ MonoBehaviour:
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 0
-        stackCount: 10
-
+        stackCount: 14

@@ -27,6 +27,8 @@ public class CardCollectionSceneScript : MonoBehaviour
     public Sprite plasticFrame;
     public Sprite bioFrame;
     public Sprite otherFrame;
+    public Sprite metalFrame;
+    public Sprite ewasteFrame;
 
     [Header("Rarity Badges")]
     public Sprite bronzeBadge;
@@ -248,13 +250,19 @@ public class CardCollectionSceneScript : MonoBehaviour
             case "Paper": return paperFrame;
             case "Plastic": return plasticFrame;
             case "Food Waste": return bioFrame;
-            case "Metal": return otherFrame;
-            case "E-Waste": return otherFrame;
+            case "Metal": return metalFrame != null ? metalFrame : otherFrame;
+            case "E-Waste": return ewasteFrame != null ? ewasteFrame : otherFrame;
             default: return otherFrame;
         }
     }
 
     // Child names follow the template hierarchy: Image/{Title, Description, Mana, Cardtype, CardImage}.
+    //
+    // Every CardData.Image is a COMPLETE card face: it already contains the frame,
+    // the illustration and the category label, and leaves the title banner, mana box
+    // and description panel empty. So the card face is data.Image itself and only
+    // the text has to be overlaid. The category frame is kept purely as a fallback
+    // for a card that has no image yet.
     private void Populate(GameObject card, string displayName, CardData data, string typeLabel, Sprite frame)
     {
         Transform frameTransform = card.transform.Find("Image");
@@ -264,22 +272,32 @@ public class CardCollectionSceneScript : MonoBehaviour
             return;
         }
 
-        if (frame != null && frameTransform.TryGetComponent(out Image frameImage))
-            frameImage.sprite = frame;
+        bool hasCardFace = data != null && data.Image != null;
+
+        if (frameTransform.TryGetComponent(out Image frameImage))
+        {
+            frameImage.sprite = hasCardFace ? data.Image : frame;
+            frameImage.color = Color.white;
+
+            // Fill the existing card rect without preserving aspect. The baked
+            // banner / mana box / panel positions then scale together with the
+            // overlaid text, so everything stays aligned.
+            frameImage.preserveAspect = false;
+        }
 
         SetText(frameTransform, "Title", displayName);
         SetText(frameTransform, "Description", data.Description);
         SetText(frameTransform, "Mana", data.Mana.ToString());
-        SetText(frameTransform, "Cardtype", typeLabel);
+
+        // The category label is painted into the card face, so the separate label
+        // widget and the separate art slot are both redundant now.
+        Transform typeText = frameTransform.Find("Cardtype");
+        if (typeText != null)
+            typeText.gameObject.SetActive(false);
 
         Transform art = frameTransform.Find("CardImage");
-        if (art != null && art.TryGetComponent(out Image artImage))
-        {
-            artImage.sprite = data.Image;
-            artImage.color = Color.white;
-            artImage.preserveAspect = true;
-            artImage.enabled = data.Image != null;
-        }
+        if (art != null)
+            art.gameObject.SetActive(false);
     }
 
     private static void SetText(Transform parent, string childName, string value)

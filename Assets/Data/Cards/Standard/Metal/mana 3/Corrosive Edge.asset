@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Corrosive Edge
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 16 Damage and Apply 3 Burn to all enemies.
+  <Description>k__BackingField: Deal 20 damage and apply 4 burn to all enemies.
   <Mana>k__BackingField: 3
   <Image>k__BackingField: {fileID: -7759319440252179475, guid: acdd914feb2c16d4cb310fe4a231e549, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}
@@ -39,7 +39,7 @@ MonoBehaviour:
     - rid: 1877740996430397852
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
-        damageAmount: 16
+        damageAmount: 20
     - rid: 1877740996430397853
       type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -54,5 +54,4 @@ MonoBehaviour:
       type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
       data:
         statusEffectType: 1
-        stackCount: 3
-
+        stackCount: 4

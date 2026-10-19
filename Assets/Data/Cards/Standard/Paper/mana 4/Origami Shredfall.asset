@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Origami Shredfall
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: 'Deal 15 Damage to an enemy and deal bleed  for 2
+  <Description>k__BackingField: Apply 2 burn to all enemies and deal 15 damage to an enemy.
     to all. '
   <Mana>k__BackingField: 4
   <Image>k__BackingField: {fileID: -7830335678430251233, guid: d9ef260d96a14af499559221a541247d, type: 3}

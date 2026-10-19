@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Scrap Cleaver
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 14 Damage to an enemy.
+  <Description>k__BackingField: Deal 18 damage to an enemy.
   <Mana>k__BackingField: 2
   <Image>k__BackingField: {fileID: -847277579473667567, guid: 2d012e3c9f8835547b259e362e02650e, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 3ed12d3e91e8ae843953d66443d2731e, type: 3}
@@ -38,5 +38,4 @@ MonoBehaviour:
     - rid: 1877740996430397842
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
-        damageAmount: 14
-
+        damageAmount: 18

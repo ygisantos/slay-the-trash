@@ -54,8 +54,48 @@ public class CardView : MonoBehaviour
         if (mana != null)
             mana.text = card.Mana.ToString();
 
-        if (imageSR != null)
+        bool hasCardFace = imageSR != null && card.Image != null;
+
+        if (hasCardFace)
+        {
+            // Card faces are complete card images (frame + art + category label).
+            // They come from different source resolutions, so normalise to the card
+            // base's world width instead of relying on pixels-per-unit.
             imageSR.sprite = card.Image;
+
+            float targetWidth = 4f;
+            Vector3 targetPosition = new Vector3(0f, -0.8f, 0f);
+
+            if (cardBaseSR != null)
+            {
+                targetPosition = cardBaseSR.transform.localPosition;
+                if (cardBaseSR.sprite != null)
+                {
+                    targetWidth = cardBaseSR.sprite.rect.width /
+                                  Mathf.Max(1f, cardBaseSR.sprite.pixelsPerUnit);
+                }
+            }
+
+            float spriteWidth = card.Image.rect.width /
+                                Mathf.Max(1f, card.Image.pixelsPerUnit);
+            float fit = targetWidth / Mathf.Max(0.0001f, spriteWidth);
+
+            imageSR.transform.localScale = new Vector3(fit, fit, 1f);
+            imageSR.transform.localPosition = targetPosition;
+        }
+
+        // The face carries its own frame, so hide the static base — but only when a
+        // face was actually drawn. Otherwise a card whose sprite failed to load would
+        // render as nothing at all; this way it still shows the frame.
+        if (cardBaseSR != null)
+        {
+            cardBaseSR.enabled = !hasCardFace;
+            if (!hasCardFace)
+            {
+                Debug.LogWarning(
+                    $"[CardView] '{card.Title}' has no card image; showing the base frame instead.");
+            }
+        }
 
         if (cardBadgeSR != null)
             cardBadgeSR.sprite = card.cardBadge;

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Bottle Barrage
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 13 Damage to all enemies and add 5 armor to
+  <Description>k__BackingField: Add 5 armor and deal 13 damage to all enemies.
     self.
   <Mana>k__BackingField: 5
   <Image>k__BackingField: {fileID: 1103535671110772074, guid: 283ce872751f1c4478508f52885ebc30, type: 3}

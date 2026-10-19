@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: ShredStorm
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 30 damage and 3 bleed to all enemies.
+  <Description>k__BackingField: Apply 3 burn and deal 30 damage to all enemies.
   <Mana>k__BackingField: 5
   <Image>k__BackingField: {fileID: -1420492936205774750, guid: fb142b97df1a7c94bb0a1797c81b706e, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}

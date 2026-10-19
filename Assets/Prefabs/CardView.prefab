@@ -52,7 +52,7 @@ MonoBehaviour:
   mana: {fileID: 2239829206517226681}
   imageSR: {fileID: 8945986092713811179}
   wrapper: {fileID: 4960065779672638312}
-  cardBaseSR: {fileID: 3031550834026517861}
+  cardBaseSR: {fileID: 2075194074260871213}
   cardBadgeSR: {fileID: 3031550834026517861}
   interactable: 1
   sg: {fileID: 0}

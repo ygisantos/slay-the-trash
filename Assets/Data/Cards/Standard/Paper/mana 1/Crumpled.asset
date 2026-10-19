@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
   m_Name: Crumpled
   m_EditorClassIdentifier: 
-  <Description>k__BackingField: Deal 8 to an enemy.
+  <Description>k__BackingField: Deal 8 damage to an enemy.
   <Mana>k__BackingField: 1
   <Image>k__BackingField: {fileID: -3658666161772414871, guid: 9d897fa2fb0aa27429a1213c1ade6dc2, type: 3}
   <ImageBadge>k__BackingField: {fileID: 21300000, guid: 3ed12d3e91e8ae843953d66443d2731e, type: 3}

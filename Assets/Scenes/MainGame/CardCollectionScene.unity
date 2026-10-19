@@ -1526,6 +1526,8 @@ MonoBehaviour:
   plasticFrame: {fileID: -247543761466552167, guid: 99cb0d1d4cd118f42ad3d279f12794d8, type: 3}
   bioFrame: {fileID: 6136552343478849868, guid: 1d7df298258f6304cae48dd669f8f88b, type: 3}
   otherFrame: {fileID: 733519108555454443, guid: 930452f365b50e044999f307e246083b, type: 3}
+  metalFrame: {fileID: -9100982724545388661, guid: 154cd2b6d2545994c977a98325ffcef1, type: 3}
+  ewasteFrame: {fileID: -2148677767312902303, guid: efa0d564ef25c7c4193bee0bfbe3a311, type: 3}
   bronzeBadge: {fileID: 21300000, guid: 3ed12d3e91e8ae843953d66443d2731e, type: 3}
   silverBadge: {fileID: 21300000, guid: 65fbf0eda18c4404498b55cc4d04802f, type: 3}
   goldBadge: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
