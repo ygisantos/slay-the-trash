@@ -109,14 +109,10 @@ public class ThrowingInstructionsHandler: MonoBehaviour
             return;
         }
 
-        // Paper/plastic/food waste plus their bin category (bio / recyclable / non-bio) and total.
-        FBLeaderboard.Instance?.AddScanStats(
-            username,
-            prediction,
-            () => Debug.Log("Collection scan stats saved."),
-            error => Debug.LogError($"Failed to record collection scan stats: {error}"),
-            prediction
-        );
+        // NOTE: the scan itself is already recorded by CameraHandler.Predict ->
+        // FBLeaderboard.AddScanStats. Recording it here as well incremented
+        // paper/plastic_scan_count twice per scan, which made dungeon progress
+        // advance two steps for every one scanned. Only the card is saved here.
 
         FBCardCollection.Instance.AddCardWithStatus(
             username,
