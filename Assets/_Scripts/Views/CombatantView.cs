@@ -109,24 +109,44 @@ public class CombatantView : MonoBehaviour
         int remainingDamage = damageAmount;
         int currentArmor = GetStatusEffectStacks(StatusEffectType.ARMOR);
         int absorbed = 0;
-        Shake.Instance.ShakeCamera();
-        SoundManager.Instance.PlaySound(hurtSound);
 
-        // Zoom toward the combatant that is taking damage (enemy or player).
-        Shake.Instance?.ZoomTo(transform.position);
+        if (isBurn)
+        {
+            // Pokémon-style screen burn overlay: flash screen with fiery heat wave
+            ScreenBurnOverlay.Show();
+            SoundManager.Instance?.PlaySound(hurtSound, 0.85f);
+        }
+        else
+        {
+            Shake.Instance?.ShakeCamera();
+            SoundManager.Instance?.PlaySound(hurtSound);
+
+            // Zoom toward the combatant that is taking damage (enemy or player).
+            Shake.Instance?.ZoomTo(transform.position);
+        }
 
         if (transform != null)
         {
-            TrackFeedbackTween(
-                transform.DOShakePosition(0.2f, 0.5f)
-            );
+            if (isBurn)
+            {
+                // Rapid status shudder / trembling reaction (Pokémon style)
+                TrackFeedbackTween(
+                    transform.DOShakePosition(0.35f, new Vector3(0.14f, 0.03f, 0f), 24, 0f)
+                );
+            }
+            else
+            {
+                TrackFeedbackTween(
+                    transform.DOShakePosition(0.2f, 0.5f)
+                );
+            }
         }
 
         if (currentArmor > 0)
         {
             if (currentArmor >= damageAmount)
             {
-                SoundManager.Instance.PlaySound(SoundType.ARMORHIT);
+                SoundManager.Instance?.PlaySound(SoundType.ARMORHIT);
                 RemoveStatusEffect(StatusEffectType.ARMOR, remainingDamage);
                 absorbed = remainingDamage;
                 remainingDamage = 0;
@@ -156,11 +176,20 @@ public class CombatantView : MonoBehaviour
                 hitColor
             );
             Flash(hitColor);
-            HitRing(hitColor);
 
-            // A dying combatant is scaled away by its own removal animation.
-            if (CurrentHealth > 0)
-                Squish();
+            if (isBurn)
+            {
+                // Play Pokémon-style burn sprite and rising ember particles on combatant
+                PlayBurnEffect();
+            }
+            else
+            {
+                HitRing(hitColor);
+
+                // A dying combatant is scaled away by its own removal animation.
+                if (CurrentHealth > 0)
+                    Squish();
+            }
 
             if (absorbed > 0)
                 ShowFloatingText("Block -" + absorbed, BlockColor, -0.8f);
@@ -379,6 +408,138 @@ public class CombatantView : MonoBehaviour
         texture.Apply();
         ringSprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 64f);
         return ringSprite;
+    }
+
+    // Procedurally generated flame sprite for status burn animations
+    private static Sprite flameSprite;
+    private static Sprite GetFlameSprite()
+    {
+        if (flameSprite != null)
+            return flameSprite;
+
+        const int size = 64;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.wrapMode = TextureWrapMode.Clamp;
+
+        float centerX = (size - 1) / 2f;
+        for (int y = 0; y < size; y++)
+        {
+            float ny = (float)y / size;
+            float maxWidth;
+            if (ny < 0.2f)
+                maxWidth = Mathf.Lerp(0.18f, 0.42f, ny / 0.2f);
+            else if (ny < 0.55f)
+                maxWidth = Mathf.Lerp(0.42f, 0.35f, (ny - 0.2f) / 0.35f);
+            else
+                maxWidth = Mathf.Lerp(0.35f, 0.0f, (ny - 0.55f) / 0.45f);
+
+            for (int x = 0; x < size; x++)
+            {
+                float nx = Mathf.Abs((x - centerX) / (size / 2f));
+                if (nx < maxWidth && ny < 0.95f)
+                {
+                    float edgeDist = nx / maxWidth;
+                    float alpha = Mathf.Clamp01(1f - edgeDist * edgeDist);
+                    alpha *= Mathf.Clamp01((ny - 0.02f) / 0.12f);
+                    alpha *= Mathf.Clamp01((0.95f - ny) / 0.15f);
+                    texture.SetPixel(x, y, new Color(1f, 1f, 1f, alpha));
+                }
+                else
+                {
+                    texture.SetPixel(x, y, Color.clear);
+                }
+            }
+        }
+
+        texture.Apply();
+        flameSprite = Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 64f);
+        return flameSprite;
+    }
+
+    // Pokémon-style burn damage visual: status icon pops up and rises with ember sparks
+    private void PlayBurnEffect()
+    {
+        Vector3 center = spriteRenderer != null ? spriteRenderer.bounds.center : transform.position;
+        int baseSortingOrder = spriteRenderer != null ? spriteRenderer.sortingOrder : 10;
+
+        // 1. Central Burn / Status Sprite Popup
+        Sprite spriteToUse = (statusEffectsUI != null && statusEffectsUI.BurnSprite != null)
+            ? statusEffectsUI.BurnSprite
+            : GetFlameSprite();
+
+        GameObject iconObj = new GameObject("BurnStatusIconFX");
+        iconObj.transform.position = center;
+        iconObj.transform.localScale = Vector3.one * 0.2f;
+
+        SpriteRenderer iconSr = iconObj.AddComponent<SpriteRenderer>();
+        iconSr.sprite = spriteToUse;
+        iconSr.sortingOrder = baseSortingOrder + 25;
+        iconSr.color = new Color(1f, 0.55f, 0.15f, 1f);
+
+        Sequence iconSeq = DOTween.Sequence();
+        iconSeq.Join(
+            iconObj.transform.DOScale(1.4f, 0.12f).SetEase(Ease.OutBack)
+        );
+        iconSeq.Join(
+            iconObj.transform.DOMoveY(center.y + 0.85f, 0.48f).SetEase(Ease.OutQuad)
+        );
+        iconSeq.Insert(
+            0.15f,
+            DOTween.To(() => iconSr.color, c => iconSr.color = c, new Color(1f, 0.25f, 0.05f, 0f), 0.33f)
+                .SetEase(Ease.InQuad)
+        );
+        iconSeq.OnComplete(() =>
+        {
+            if (iconObj != null)
+                Destroy(iconObj);
+        });
+        TrackFeedbackTween(iconSeq);
+
+        // 2. Fiery Embers dancing and rising around the combatant
+        for (int i = 0; i < 4; i++)
+        {
+            GameObject emberObj = new GameObject($"BurnEmberFX_{i}");
+            float offsetX = Random.Range(-0.45f, 0.45f);
+            float offsetY = Random.Range(-0.35f, 0.25f);
+            emberObj.transform.position = center + new Vector3(offsetX, offsetY, 0f);
+            emberObj.transform.localScale = Vector3.one * 0.1f;
+
+            SpriteRenderer emberSr = emberObj.AddComponent<SpriteRenderer>();
+            emberSr.sprite = GetFlameSprite();
+            emberSr.sortingOrder = baseSortingOrder + 24;
+            emberSr.color = (i % 2 == 0)
+                ? new Color(1f, 0.75f, 0.15f, 0.9f)
+                : new Color(1f, 0.35f, 0.05f, 0.9f);
+
+            float floatHeight = Random.Range(0.6f, 1.1f);
+            float driftX = Random.Range(-0.25f, 0.25f);
+            float delay = i * 0.04f;
+
+            Sequence emberSeq = DOTween.Sequence();
+            if (delay > 0f)
+                emberSeq.AppendInterval(delay);
+
+            emberSeq.Join(
+                emberObj.transform.DOScale(Random.Range(0.4f, 0.65f), 0.12f).SetEase(Ease.OutBack)
+            );
+            emberSeq.Join(
+                emberObj.transform.DOMove(
+                    emberObj.transform.position + new Vector3(driftX, floatHeight, 0f),
+                    0.42f
+                ).SetEase(Ease.OutQuad)
+            );
+            emberSeq.Insert(
+                delay + 0.15f,
+                DOTween.To(() => emberSr.color, c => emberSr.color = c, new Color(emberSr.color.r, emberSr.color.g, emberSr.color.b, 0f), 0.27f)
+                    .SetEase(Ease.InQuad)
+            );
+            emberSeq.OnComplete(() =>
+            {
+                if (emberObj != null)
+                    Destroy(emberObj);
+            });
+            TrackFeedbackTween(emberSeq);
+        }
     }
 
     private Tween flashTween;

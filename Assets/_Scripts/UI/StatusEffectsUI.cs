@@ -8,6 +8,9 @@ public class StatusEffectsUI : MonoBehaviour
     [SerializeField] private StatusEffectUI statusEffectUIPrefab;
     [SerializeField] private Sprite armorSprite, burnSprite;
 
+    public Sprite BurnSprite => burnSprite;
+    public Sprite ArmorSprite => armorSprite;
+
     private Dictionary<StatusEffectType, StatusEffectUI> statusEffectUIs = new();
 
     public Slider armorSlider;
