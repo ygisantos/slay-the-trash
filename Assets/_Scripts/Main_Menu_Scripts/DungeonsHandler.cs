@@ -8,9 +8,13 @@ public class DungeonsHandler : MonoBehaviour
     [HideInInspector] public int plasticCards = 0;
     [HideInInspector] public int paperCards = 0;
     [HideInInspector] public int foodwasteCards = 0;
+    [HideInInspector] public int metalCards = 0;
+    [HideInInspector] public int ewasteCards = 0;
     [HideInInspector] public int ownedPlastic = 0;
     [HideInInspector] public int ownedPaper = 0;
     [HideInInspector] public int ownedFoodWaste = 0;
+    [HideInInspector] public int ownedMetal = 0;
+    [HideInInspector] public int ownedEWaste = 0;
 
     void OnEnable()
     {
@@ -33,6 +37,7 @@ public class DungeonsHandler : MonoBehaviour
             cards =>
             {
                 ownedPlastic = ownedPaper = ownedFoodWaste = 0;
+                ownedMetal = ownedEWaste = 0;
 
                 foreach (var card in cards)
                 {
@@ -42,10 +47,14 @@ public class DungeonsHandler : MonoBehaviour
                         case "plastic bottle": ownedPlastic++; break;
                         case "paper": ownedPaper++; break;
                         case "food waste": ownedFoodWaste++; break;
+                        case "metal": ownedMetal++; break;
+                        case "e-waste":
+                        case "e_waste":
+                        case "ewaste": ownedEWaste++; break;
                     }
                 }
 
-                Debug.Log($"[Dungeons] Saved cards: {cards.Count} (plastic {ownedPlastic}, paper {ownedPaper}, food waste {ownedFoodWaste}).");
+                Debug.Log($"[Dungeons] Saved cards: {cards.Count} (plastic {ownedPlastic}, paper {ownedPaper}, food waste {ownedFoodWaste}, metal {ownedMetal}, e-waste {ownedEWaste}).");
             },
             error => Debug.LogError($"Failed to load owned cards: {error}")
         );
@@ -82,8 +91,10 @@ public class DungeonsHandler : MonoBehaviour
                 plasticCards = FirebaseDataHelper.GetInt(points, "plastic_scan_count");
                 paperCards = FirebaseDataHelper.GetInt(points, "paper_scan_count");
                 foodwasteCards = FirebaseDataHelper.GetInt(points, "food_waste_scan_count");
+                metalCards = FirebaseDataHelper.GetInt(points, "metal_scan_count");
+                ewasteCards = FirebaseDataHelper.GetInt(points, "e_waste_scan_count");
 
-                Debug.Log($"[Dungeons] Scan counters for '{username}': plastic {plasticCards}, paper {paperCards}, food waste {foodwasteCards}.");
+                Debug.Log($"[Dungeons] Scan counters for '{username}': plastic {plasticCards}, paper {paperCards}, food waste {foodwasteCards}, metal {metalCards}, e-waste {ewasteCards}.");
             },
             error => Debug.LogError($"Failed to load dungeon counters: {error}")
         );

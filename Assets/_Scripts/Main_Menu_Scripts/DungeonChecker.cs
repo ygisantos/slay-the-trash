@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using TMPro;
@@ -33,8 +33,18 @@ public class DungeonChecker : MonoBehaviour
     {
         Paper,
         Plastic,
-        FoodWaste
+        FoodWaste,
+        Metal,
+        EWaste
     }
+
+    // Player-facing name for the requirement, used in the label.
+    private string TypeLabel => requiredType switch
+    {
+        CardTypes.FoodWaste => "Food Waste",
+        CardTypes.EWaste => "E-Waste",
+        _ => requiredType.ToString()
+    };
 
     void Start()
     {
@@ -54,6 +64,8 @@ public class DungeonChecker : MonoBehaviour
             CardTypes.Paper => handler.paperCards,
             CardTypes.Plastic => handler.plasticCards,
             CardTypes.FoodWaste => handler.foodwasteCards,
+            CardTypes.Metal => handler.metalCards,
+            CardTypes.EWaste => handler.ewasteCards,
             _ => 0,
         };
         currentCards = scanCount;
@@ -64,15 +76,17 @@ public class DungeonChecker : MonoBehaviour
             CardTypes.Paper => handler.ownedPaper,
             CardTypes.Plastic => handler.ownedPlastic,
             CardTypes.FoodWaste => handler.ownedFoodWaste,
+            CardTypes.Metal => handler.ownedMetal,
+            CardTypes.EWaste => handler.ownedEWaste,
             _ => 0,
         };
 
         // Saved cards count too, so progress still shows if the scan counter is missing.
         currentCards = Math.Max(currentCards, ownedCards);
 
-        requirementsText.text = $"{Math.Min(currentCards, requiredAmount)}/{requiredAmount} {requiredType} Cards To Enter";
+        requirementsText.text = $"{Math.Min(currentCards, requiredAmount)}/{requiredAmount} {TypeLabel} Cards To Enter";
         if (currentCards >= requiredAmount && ownedCards == 0)
-            requirementsText.text += $"\nCollect a {requiredType} card first";
+            requirementsText.text += $"\nCollect a {TypeLabel} card first";
 
         // Editor and development builds show where the numbers come from.
         // if (Debug.isDebugBuild)

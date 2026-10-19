@@ -705,7 +705,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requirementsText: {fileID: 1876809792}
-  requiredType: 1
+  requiredType: 4
   requiredAmount: 50
   sceneToLoad: DUNGEON 5
   notEnough: {fileID: 1043042022}
@@ -3177,7 +3177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requirementsText: {fileID: 1876809792}
-  requiredType: 2
+  requiredType: 3
   requiredAmount: 40
   sceneToLoad: DUNGEON 4
   notEnough: {fileID: 1043042022}

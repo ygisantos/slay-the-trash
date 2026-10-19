@@ -180,6 +180,8 @@ public class FBLeaderboard : MonoBehaviour
             "plastic" or "plastic bottle" => "plastic_scan_count",
             "paper" => "paper_scan_count",
             "food waste" => "food_waste_scan_count",
+            "metal" => "metal_scan_count",
+            "e-waste" or "e_waste" or "ewaste" => "e_waste_scan_count",
             _ => null
         };
 
@@ -232,6 +234,8 @@ public class FBLeaderboard : MonoBehaviour
             "plastic" or "plastic bottle" => "plastic_scan_count",
             "paper"                       => "paper_scan_count",
             "food waste"                  => "food_waste_scan_count",
+            "metal"                       => "metal_scan_count",
+            "e-waste" or "e_waste" or "ewaste" => "e_waste_scan_count",
             _                             => null
         };
 
