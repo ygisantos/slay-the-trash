@@ -81,9 +81,16 @@ public class DeckManager : MonoBehaviour
 
         foreach (var entry in cardEntries)
         {
+            string entryClean = entry.cardName?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+
             for (int i = 0; i < cardTypes.Count; i++)
             {
-                if (cardTypes[i].name == entry.cardName)
+                if (cardTypes[i] == null) continue;
+
+                string assetName = cardTypes[i].name;
+                string assetClean = assetName?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+
+                if (string.Equals(assetName, entry.cardName, StringComparison.OrdinalIgnoreCase) || assetClean == entryClean)
                 {
                     heroData.Deck.Add(cardTypes[i]);
                     RarityTypes rar = entry.rarity switch

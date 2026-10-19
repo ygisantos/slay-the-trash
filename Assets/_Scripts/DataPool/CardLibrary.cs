@@ -7,7 +7,9 @@ public enum CardType
     Paper,
     Plastic,
     BioWaste,
-    Draw
+    Draw,
+    Metal,
+    EWaste
 }
 public enum CardRarity
 {

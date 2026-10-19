@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
+  m_Name: Steel Katana
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: Deal 35 Damage to an enemy and add 10 Armor to yourself.
+  <Mana>k__BackingField: 4
+  <Image>k__BackingField: {fileID: -1114885995536370877, guid: 4e9c6071ef7c5d246b20966a90e4d424, type: 3}
+  <ImageBadge>k__BackingField: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - rid: 1877740996430397860
+  - rid: 1877740996430397863
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1877740996430397860
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740996430397861
+        <Effect>k__BackingField:
+          rid: 1877740996430397862
+    - rid: 1877740996430397861
+      type: {class: RandomEnemyTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740996430397862
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        damageAmount: 35
+    - rid: 1877740996430397863
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740996430397864
+        <Effect>k__BackingField:
+          rid: 1877740996430397865
+    - rid: 1877740996430397864
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740996430397865
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 10
+

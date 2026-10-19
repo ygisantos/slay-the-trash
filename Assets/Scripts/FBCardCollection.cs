@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Firebase.Firestore;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 // Persists earned cards to Firestore per user, replacing the old local card_collection.txt file.
 public class FBCardCollection : MonoBehaviour
@@ -28,6 +29,134 @@ public class FBCardCollection : MonoBehaviour
     }
 
     public const string COLLECTION = "card_collections";
+
+    public enum CardRarityDebug
+    {
+        Bronze = 0,
+        Silver = 1,
+        Gold = 2
+    }
+
+    [BoxGroup("Debug Card Giver")]
+    [Tooltip("Card library asset used to populate the dropdown list of cards.")]
+    public CardLibrary cardLibrary;
+
+    [BoxGroup("Debug Card Giver")]
+    [ValueDropdown("GetCardNameOptions")]
+    public string debugCardName = "Scavenge";
+
+    [BoxGroup("Debug Card Giver")]
+    public CardRarityDebug debugRarity = CardRarityDebug.Bronze;
+
+    private IEnumerable<string> GetCardNameOptions()
+    {
+        if (cardLibrary != null && cardLibrary.cards != null && cardLibrary.cards.Count > 0)
+        {
+            List<string> names = new List<string>();
+            foreach (var card in cardLibrary.cards)
+            {
+                if (!string.IsNullOrEmpty(card.Name) && !names.Contains(card.Name))
+                    names.Add(card.Name);
+            }
+            return names;
+        }
+
+        return new List<string>
+        {
+            "Scavenge",
+            "Crumpled", "Paper Shuriken", "Mache Plateguard", "Cardboard Spire", "Box Slam", "Origami Shredfall", "Shredstorm Hurricane",
+            "Bottle Cap Barrage", "Eco-Edge Sword", "Bottle Blaster", "Bottle Barrage", "Recycled Polywall", "Plastic Wave",
+            "Banana Splitter", "Popping Wrapper", "Croissant", "The Bonkstick",
+            "Recharge", "Static Surge", "Overclock",
+            "Tin Carapace", "Scrap Cleaver", "Corrosive Edge", "Steel Katana"
+        };
+    }
+
+    private string InferTrashType(string cName)
+    {
+        if (cardLibrary != null && cardLibrary.cards != null)
+        {
+            foreach (var card in cardLibrary.cards)
+            {
+                if (string.Equals(card.Name, cName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return card.Type switch
+                    {
+                        CardType.Paper => "paper",
+                        CardType.Plastic => "plastic",
+                        CardType.BioWaste => "food waste",
+                        CardType.Metal => "metal",
+                        CardType.EWaste => "e-waste",
+                        _ => "other"
+                    };
+                }
+            }
+        }
+
+        string upper = cName.ToUpperInvariant();
+        if (upper.StartsWith("METAL") || upper.Contains("TIN") || upper.Contains("SCRAP") || upper.Contains("CORROSIVE") || upper.Contains("KATANA")) return "metal";
+        if (upper.StartsWith("EWASTE") || upper.Contains("RECHARGE") || upper.Contains("STATIC") || upper.Contains("OVERCLOCK") || upper.Contains("BATTERY")) return "e-waste";
+        if (upper == "CRUMPLED" || upper.Contains("PAPER") || upper.Contains("SHRED") || upper.Contains("MACHE") || upper.Contains("CARDBOARD") || upper.Contains("BOX")) return "paper";
+        if (upper.Contains("BOTTLE") || upper.Contains("PLASTIC") || upper.Contains("POLY") || upper.Contains("CAP") || upper.Contains("ECO-EDGE")) return "plastic";
+        if (upper.Contains("BANANA") || upper.Contains("WRAPPER") || upper.Contains("CROISSANT") || upper.Contains("BONK")) return "food waste";
+
+        return "other";
+    }
+
+    [BoxGroup("Debug Card Giver")]
+    [Button("Give Card To Collection", ButtonSizes.Medium)]
+    public void DebugGiveCard()
+    {
+        string username = GetDebugUsername();
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            Debug.LogError("[FBCardCollection] Cannot give card: No logged-in username found. Make sure to log in or run in play mode.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(debugCardName))
+        {
+            Debug.LogError("[FBCardCollection] Card name cannot be empty.");
+            return;
+        }
+
+        string trashType = InferTrashType(debugCardName);
+        int rarityVal = (int)debugRarity;
+
+        Debug.Log($"[FBCardCollection] Giving card '{debugCardName}' (TrashType: '{trashType}', Rarity: {debugRarity}) to user '{username}'...");
+
+        AddCardWithStatus(
+            username,
+            trashType,
+            debugCardName,
+            rarityVal,
+            isDuplicate =>
+            {
+                string msg = isDuplicate
+                    ? $"[Debug] Added duplicate card '{debugCardName}' to {username}'s collection."
+                    : $"[Debug] Added new card '{debugCardName}' to {username}'s collection!";
+                Debug.Log(msg);
+                DynamicPopupToast.Instance?.ShowToast(msg);
+
+                DeckManager deck = FindFirstObjectByType<DeckManager>();
+                if (deck != null) deck.UpdateCardsList();
+            },
+            error => Debug.LogError($"[FBCardCollection] Failed to add card: {error}")
+        );
+    }
+
+    private string GetDebugUsername()
+    {
+        Dictionary<string, object> profile =
+            FBAuthentication.Instance != null
+                ? FBAuthentication.Instance.CurrentProfile
+                : null;
+
+        if (profile == null && DataManager.Instance != null)
+            profile = DataManager.Instance.GetProfile();
+
+        return FirebaseDataHelper.GetString(profile, "username");
+    }
 
     private void Awake()
     {

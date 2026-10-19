@@ -49,3 +49,17 @@ MonoBehaviour:
     Amount: 3
   - Name: Crumpled
     Amount: 3
+  - Name: Recharge
+    Amount: 3
+  - Name: Static Surge
+    Amount: 3
+  - Name: Overclock
+    Amount: 3
+  - Name: Tin Carapace
+    Amount: 3
+  - Name: Scrap Cleaver
+    Amount: 3
+  - Name: Corrosive Edge
+    Amount: 3
+  - Name: Steel Katana
+    Amount: 3

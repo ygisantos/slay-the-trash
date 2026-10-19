@@ -200,6 +200,26 @@ public class ThrowingInstructionsHandler: MonoBehaviour
                 if (rand > 90 && rand <= 100)
                     cardToGet = "The Bonkstick";
                 break;
+            case "metal":
+                if (rand >= 1 && rand <= 40)
+                    cardToGet = "Tin Carapace";
+                else if (rand > 40 && rand <= 70)
+                    cardToGet = "Scrap Cleaver";
+                else if (rand > 70 && rand <= 90)
+                    cardToGet = "Corrosive Edge";
+                else
+                    cardToGet = "Steel Katana";
+                break;
+            case "e-waste":
+            case "ewaste":
+            case "e_waste":
+                if (rand >= 1 && rand <= 50)
+                    cardToGet = "Recharge";
+                else if (rand > 50 && rand <= 80)
+                    cardToGet = "Overclock";
+                else
+                    cardToGet = "Static Surge";
+                break;
             default:
                 cardToGet = "Unknown";
                 Debug.LogWarning($"{prediction} not found! Are you missing some variables?");

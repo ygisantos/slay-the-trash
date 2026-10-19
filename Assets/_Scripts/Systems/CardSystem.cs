@@ -12,6 +12,7 @@ public class CardSystem : Singleton<CardSystem>
     private readonly List<Card> discardPile = new();
     private readonly List<Card> hand = new();
 
+    public int HandCount => hand.Count;
     public bool IsCombatActive { get; private set; }
 
     void Start()

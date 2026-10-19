@@ -64,4 +64,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9b2ba71cec46d9c428091c727addcf52, type: 2}
   - {fileID: 11400000, guid: 758d1ef0590592445ac3b9671c80fd71, type: 2}
   - {fileID: 11400000, guid: f8fb4233618710c478dc0f57f3d6480d, type: 2}
+  - {fileID: 11400000, guid: 7287a5acbde4475f80b6215b91de4731, type: 2}
+  - {fileID: 11400000, guid: 6b65c79bbca24710a0627f9dbeda6016, type: 2}
+  - {fileID: 11400000, guid: fe7438d49c1748a4b59853bedca42d4c, type: 2}
+  - {fileID: 11400000, guid: 14e3d7cb35d04699977ad36f06bdd5d3, type: 2}
+  - {fileID: 11400000, guid: bc843156d5f443a29ddf73536dd4707b, type: 2}
+  - {fileID: 11400000, guid: 79dcb0e27a244ccd8eddeddc1eda9af4, type: 2}
+  - {fileID: 11400000, guid: fedf3df3e2d64a68b3cedcc8daacc5f1, type: 2}
   cardRarity: 

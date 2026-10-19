@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -107,6 +108,8 @@ public class CardCollectionSceneScript : MonoBehaviour
         ("Paper", "Paper", new[] { "Crumpled", "Paper Shuriken", "Mache Plateguard", "Cardboard Spire", "Box Slam", "Origami Shredfall", "Shredstorm Hurricane" }),
         ("Plastic", "Plastic", new[] { "Bottle Cap Barrage", "Eco-Edge Sword", "Bottle Blaster", "Bottle Barrage", "Recycled Polywall", "Plastic Wave" }),
         ("Food Waste", "Bio", new[] { "Banana Splitter", "Popping Wrapper", "Croissant", "The Bonkstick" }),
+        ("E-Waste", "E-Waste", new[] { "Recharge", "Static Surge", "Overclock" }),
+        ("Metal", "Metal", new[] { "Tin Carapace", "Scrap Cleaver", "Corrosive Edge", "Steel Katana" }),
         ("Other", "Utility", new[] { "Scavenge" }),
     };
 
@@ -123,17 +126,22 @@ public class CardCollectionSceneScript : MonoBehaviour
             yield break;
         }
 
-        HashSet<string> owned = new HashSet<string>();
-        Dictionary<string, int> bestRarity = new Dictionary<string, int>();
+        HashSet<string> owned = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, int> bestRarity = new Dictionary<string, int>(System.StringComparer.OrdinalIgnoreCase);
         foreach (string card in cards)
         {
             string[] c = card.Split(':');
-            owned.Add(c[1]);
-            cardNames.Add(c[1]);
+            string rawName = c[1];
+            owned.Add(rawName);
+            string normName = rawName.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+            owned.Add(normName);
+            cardNames.Add(rawName);
 
             int.TryParse(c.Length > 2 ? c[2] : "0", out int rarity);
-            if (!bestRarity.TryGetValue(c[1], out int best) || rarity > best)
-                bestRarity[c[1]] = rarity;
+            if (!bestRarity.TryGetValue(rawName, out int best) || rarity > best)
+                bestRarity[rawName] = rarity;
+            if (!bestRarity.TryGetValue(normName, out int bestNorm) || rarity > bestNorm)
+                bestRarity[normName] = rarity;
         }
 
         float totalRows = 0f;
@@ -170,10 +178,28 @@ public class CardCollectionSceneScript : MonoBehaviour
                     new Vector2(x * cardDistance.x, startingY - row * cardDistance.y);
                 Populate(card, group.names[i], data, group.typeLabel, FrameFor(group.category));
 
-                if (!owned.Contains(group.names[i]))
+                string dispName = group.names[i];
+                string normDispName = dispName.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+                string dataName = data != null ? data.name : "";
+                string normDataName = dataName.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+
+                bool isOwned = owned.Contains(dispName) || owned.Contains(normDispName) ||
+                               (!string.IsNullOrEmpty(dataName) && (owned.Contains(dataName) || owned.Contains(normDataName)));
+
+                if (!isOwned)
+                {
                     GreyOut(card);
+                }
                 else
-                    pendingBadges.Add((card.GetComponent<RectTransform>(), bestRarity[group.names[i]]));
+                {
+                    int rarity = 0;
+                    if (!bestRarity.TryGetValue(dispName, out rarity))
+                        if (!bestRarity.TryGetValue(normDispName, out rarity))
+                            if (!string.IsNullOrEmpty(dataName) && !bestRarity.TryGetValue(dataName, out rarity))
+                                bestRarity.TryGetValue(normDataName, out rarity);
+
+                    pendingBadges.Add((card.GetComponent<RectTransform>(), rarity));
+                }
 
                 yield return new WaitForSeconds(.05f);
             }
@@ -188,9 +214,29 @@ public class CardCollectionSceneScript : MonoBehaviour
 
     private CardData FindCardData(string cardName)
     {
+        if (library == null || library.cards == null) return null;
+
+        string cleanTarget = cardName?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+
         foreach (NamedCard entry in library.cards)
-            if (entry.Name == cardName)
+        {
+            if (string.Equals(entry.Name, cardName, StringComparison.OrdinalIgnoreCase))
                 return entry.Data;
+
+            if (entry.Data != null && string.Equals(entry.Data.name, cardName, StringComparison.OrdinalIgnoreCase))
+                return entry.Data;
+
+            string cleanEntry = entry.Name?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+            if (cleanEntry == cleanTarget)
+                return entry.Data;
+
+            if (entry.Data != null)
+            {
+                string cleanDataName = entry.Data.name?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+                if (cleanDataName == cleanTarget)
+                    return entry.Data;
+            }
+        }
 
         return null;
     }
@@ -202,6 +248,8 @@ public class CardCollectionSceneScript : MonoBehaviour
             case "Paper": return paperFrame;
             case "Plastic": return plasticFrame;
             case "Food Waste": return bioFrame;
+            case "Metal": return otherFrame;
+            case "E-Waste": return otherFrame;
             default: return otherFrame;
         }
     }

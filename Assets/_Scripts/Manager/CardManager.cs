@@ -136,10 +136,26 @@ public class CardManager : MonoBehaviour
     {
         if (library == null || library.cards == null) return null;
 
+        string cleanTarget = name?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+
         foreach (var c in library.cards)
         {
-            if (c.Name == name)
+            if (string.Equals(c.Name, name, System.StringComparison.OrdinalIgnoreCase))
                 return c.Data;
+
+            if (c.Data != null && string.Equals(c.Data.name, name, System.StringComparison.OrdinalIgnoreCase))
+                return c.Data;
+
+            string cleanEntry = c.Name?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+            if (cleanEntry == cleanTarget)
+                return c.Data;
+
+            if (c.Data != null)
+            {
+                string cleanDataName = c.Data.name?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
+                if (cleanDataName == cleanTarget)
+                    return c.Data;
+            }
         }
 
         Debug.LogWarning($"[CardManager] Card not found in library: {name}");

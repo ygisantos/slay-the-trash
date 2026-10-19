@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef66ecd84930414c9ad3653d145c72a, type: 3}
+  m_Name: Tin Carapace
+  m_EditorClassIdentifier: 
+  <Description>k__BackingField: Add 8 Armor to yourself.
+  <Mana>k__BackingField: 1
+  <Image>k__BackingField: {fileID: 2520632290958525892, guid: 65a582626407a3a46893a0c657a5f05d, type: 3}
+  <ImageBadge>k__BackingField: {fileID: 21300000, guid: 3ed12d3e91e8ae843953d66443d2731e, type: 3}
+  <ManualTargetEffect>k__BackingField:
+    rid: -2
+  <OtherEffects>k__BackingField:
+  - rid: 1877740996430397830
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1877740996430397830
+      type: {class: AutoTargetEffect, ns: , asm: Assembly-CSharp}
+      data:
+        <TargetMode>k__BackingField:
+          rid: 1877740996430397831
+        <Effect>k__BackingField:
+          rid: 1877740996430397832
+    - rid: 1877740996430397831
+      type: {class: HeroTM, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1877740996430397832
+      type: {class: AddStatusEffectEffect, ns: , asm: Assembly-CSharp}
+      data:
+        statusEffectType: 0
+        stackCount: 8
+
