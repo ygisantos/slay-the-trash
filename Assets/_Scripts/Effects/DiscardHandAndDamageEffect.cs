@@ -22,6 +22,10 @@ public class DiscardHandAndDamageEffect : Effect
         ActionSystem.Instance.AddReaction(new DiscardAllCardsGA());
 
         int totalDamage = baseDamage + (cardCount * damagePerCard);
+
+        if (CharacterStats.IsHeroAttack(caster, targets))
+            totalDamage = CharacterStats.ScaleDamage(totalDamage);
+
         return new DealDamageGA(totalDamage, targets, caster);
     }
 }

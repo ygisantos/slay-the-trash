@@ -1,4 +1,4 @@
-﻿
+
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
@@ -20,6 +20,7 @@ public class CharacterSelector : MonoBehaviour
         public TMPro.TMP_Text buttonText;
 
         [HideInInspector] public Vector3 originalScale;
+        [HideInInspector] public Vector3 originalTextScale;
         [HideInInspector] public Color originalButtonColor;
         [HideInInspector] public Color originalTextColor;
     }
@@ -39,6 +40,10 @@ public class CharacterSelector : MonoBehaviour
 
     [Header("Character Info (4 total)")]
     public CharacterInfo[] characters;
+
+    [Header("Stats Description")]
+    [Tooltip("TMP text that displays the selected character's stat modifiers.")]
+    [SerializeField] private TMPro.TMP_Text statsDescription;
 
     [Header("Character Image Objects (4 total)")]
     public GameObject[] characterImages;
@@ -90,6 +95,10 @@ public class CharacterSelector : MonoBehaviour
             if (characterImages[i] != null)
                 characterImages[i].SetActive(false);
         }
+
+        // Reflect a character that was already chosen earlier in the session.
+        if (SelectedCharacter.index >= 0)
+            ShowStats(SelectedCharacter.index);
     }
 
     public void OnCharacterButtonPressed(int index)
@@ -111,6 +120,8 @@ public class CharacterSelector : MonoBehaviour
             AnimateButtonSelection(index);
             currentIndex = index;
             waitingForConfirm = true;
+
+            ShowStats(index);
 
             SoundManager.Instance?.PlaySound(SoundType.CLICK);
 
@@ -140,24 +151,33 @@ public class CharacterSelector : MonoBehaviour
         if (characterButtons == null) return;
 
         foreach (var item in characterButtons)
+            CaptureButtonBaseline(item);
+    }
+
+    // Records the authored scale/colour so the animations can return to them.
+    // These elements are authored small and scaled up by their parent, so the
+    // text scale must be preserved rather than reset to 1.
+    private void CaptureButtonBaseline(CharacterButtonUI item)
+    {
+        if (item == null) return;
+
+        if (item.button != null)
         {
-            if (item == null) continue;
+            item.originalScale = item.button.transform.localScale;
+            if (item.originalScale == Vector3.zero)
+                item.originalScale = Vector3.one;
 
-            if (item.button != null)
-            {
-                item.originalScale = item.button.transform.localScale;
+            if (item.button.targetGraphic != null)
+                item.originalButtonColor = item.button.targetGraphic.color;
+        }
 
-                if (item.button.targetGraphic != null)
-                    item.originalButtonColor =
-                        item.button.targetGraphic.color;
-            }
+        if (item.buttonText != null)
+        {
+            item.originalTextColor = item.buttonText.color;
 
-            if (item.buttonText != null)
-            {
-                item.originalTextColor = item.buttonText.color;
-                item.buttonText.transform.localScale =
-                    Vector3.one;
-            }
+            item.originalTextScale = item.buttonText.transform.localScale;
+            if (item.originalTextScale == Vector3.zero)
+                item.originalTextScale = Vector3.one;
         }
     }
 
@@ -169,6 +189,11 @@ public class CharacterSelector : MonoBehaviour
         {
             var item = characterButtons[i];
             if (item == null) continue;
+
+            // If the array was assigned after Awake the baselines are still zero,
+            // which would scale the element away instead of animating it.
+            if (item.originalScale == Vector3.zero)
+                CaptureButtonBaseline(item);
 
             bool selected = i == selectedIndex;
 
@@ -200,13 +225,16 @@ public class CharacterSelector : MonoBehaviour
 
             if (item.buttonText != null)
             {
+                // If the array was assigned after Awake the baseline is still zero.
+                if (item.originalTextScale == Vector3.zero)
+                    CaptureButtonBaseline(item);
+
                 Transform textTransform = item.buttonText.transform;
                 textTransform.DOKill();
 
                 textTransform.DOScale(
-                    selected
-                        ? Vector3.one * selectedTextPopScale
-                        : Vector3.one,
+                    item.originalTextScale *
+                    (selected ? selectedTextPopScale : 1f),
                     buttonAnimDuration
                 )
                 .SetEase(Ease.OutBack)
@@ -234,6 +262,9 @@ public class CharacterSelector : MonoBehaviour
         var item = characterButtons[index];
         if (item == null) return;
 
+        if (item.originalScale == Vector3.zero || item.originalTextScale == Vector3.zero)
+            CaptureButtonBaseline(item);
+
         if (item.button != null)
         {
             Transform t = item.button.transform;
@@ -252,7 +283,7 @@ public class CharacterSelector : MonoBehaviour
             Transform t = item.buttonText.transform;
             t.DOKill();
 
-            t.DOPunchScale(Vector3.one * 0.15f, 0.3f, 8, 0.7f)
+            t.DOPunchScale(item.originalTextScale * 0.15f, 0.3f, 8, 0.7f)
                 .SetUpdate(true);
         }
     }
@@ -346,6 +377,15 @@ public class CharacterSelector : MonoBehaviour
     public void ConfirmCharacter(int i)
     {
         SelectedCharacter.index = i;
+    }
+
+    // Fills the description panel with the highlighted character's stat modifiers.
+    private void ShowStats(int index)
+    {
+        if (statsDescription == null)
+            return;
+
+        statsDescription.text = CharacterStats.Describe(index);
     }
 
     private void OnDisable()
