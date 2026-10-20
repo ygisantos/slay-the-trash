@@ -55,6 +55,10 @@ public class CardManager : MonoBehaviour
             foreach (var name in deck.cardNames)
             {
                 if (string.IsNullOrWhiteSpace(name)) continue;
+
+                // Cards disabled in the collection screen never enter the battle pool.
+                if (deck.IsCardDisabled(name)) continue;
+
                 if (!cardCounts.ContainsKey(name))
                     cardCounts[name] = 0;
                 cardCounts[name]++;

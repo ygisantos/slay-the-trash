@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using DG.Tweening;
 
 public class StatusEffectsUI : MonoBehaviour
 {
@@ -16,6 +17,19 @@ public class StatusEffectsUI : MonoBehaviour
     public Slider armorSlider;
     public TMP_Text armorText;
     public int maxShield = 50;
+
+    [Header("Shield Bar Polish")]
+    [Tooltip("How long the bar takes to slide to a new value.")]
+    [SerializeField] private float armorBarDuration = 0.28f;
+    [SerializeField] private float armorPunchAmount = 0.10f;
+    [SerializeField] private Color armorFlashColor = Color.white;
+    [SerializeField] private float armorFlashDuration = 0.25f;
+
+    private Vector3 armorBaseScale = Vector3.one;
+    private bool armorBaseScaleCached;
+    private Color armorBaseColor = Color.white;
+    private Image armorFill;
+    private bool armorFillCached;
 
     private bool armorUpdated;
 
@@ -84,12 +98,65 @@ public class StatusEffectsUI : MonoBehaviour
     {
         if (armorSlider == null) return;
 
+        int target = Mathf.Clamp(currentShield, 0, maxShield);
+        int previous = Mathf.RoundToInt(armorSlider.value);
+
         armorSlider.maxValue = maxShield;
-        armorSlider.value = Mathf.Clamp(currentShield, 0, maxShield);
+
+        CacheArmorVisuals();
+
+        // Slide to the new value; the label always shows the true number.
+        armorSlider.DOKill();
+        armorSlider.DOValue(target, armorBarDuration)
+            .SetEase(Ease.OutQuad);
 
         if (armorText != null)
         {
-            armorText.text = $"{armorSlider.value} / {maxShield}";
+            armorText.text = $"{target} / {maxShield}";
         }
+
+        // Pop outward when shield is gained, squash inward when it breaks.
+        if (target > previous)
+            PunchArmor(armorPunchAmount, 0.30f);
+        else if (target < previous && target == 0)
+            PunchArmor(-armorPunchAmount, 0.35f);
+
+        if (armorFill != null)
+        {
+            armorFill.DOKill();
+            armorFill.color = armorFlashColor;
+            armorFill.DOColor(armorBaseColor, armorFlashDuration);
+        }
+    }
+
+    private void CacheArmorVisuals()
+    {
+        if (!armorBaseScaleCached)
+        {
+            armorBaseScale = armorSlider.transform.localScale;
+            armorBaseScaleCached = true;
+        }
+
+        if (!armorFillCached)
+        {
+            if (armorSlider.fillRect != null &&
+                armorSlider.fillRect.TryGetComponent(out Image fillImage))
+            {
+                armorFill = fillImage;
+                armorBaseColor = fillImage.color;
+            }
+
+            armorFillCached = true;
+        }
+    }
+
+    private void PunchArmor(float amount, float duration)
+    {
+        if (!armorBaseScaleCached) return;
+
+        armorSlider.transform.DOKill();
+        armorSlider.transform.localScale = armorBaseScale;
+        armorSlider.transform
+            .DOPunchScale(armorBaseScale * amount, duration, 9, 0.6f);
     }
 }

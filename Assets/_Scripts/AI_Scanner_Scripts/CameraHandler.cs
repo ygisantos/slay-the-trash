@@ -131,6 +131,7 @@ public class CameraHandler : MonoBehaviour
 
     void Start()
     {
+        _ = DynamicPopupToast.Instance;
         StartCoroutine(InitializeAI());
         StartCamera();
     }

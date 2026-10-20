@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -26,6 +26,19 @@ public class HeroHealthChecker : MonoBehaviour
     [SerializeField] private Color lowHealthColor = Color.red;
     [SerializeField] private float colorLerpSpeed = 5f;
 
+    [Header("Impact Polish")]
+    [SerializeField] private Color damageFlashColor = Color.white;
+    [SerializeField] private float damageFlashDuration = 0.18f;
+    [Tooltip("Below this health fraction the bar starts pulsing.")]
+    [SerializeField] private float lowHealthPulseThreshold = 0.3f;
+    [SerializeField] private float lowHealthPulseSpeed = 6f;
+    [SerializeField] private float lowHealthPulseAmount = 0.03f;
+
+    private int lastHealth = -1;
+    private float damageFlashTimer;
+    private Vector3 sliderBaseScale = Vector3.one;
+    private bool sliderBaseScaleCached;
+
     [Header("Health Bar Text")]
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private bool showMaxHealth = true; // toggle if you want "current / max" or just "current"
@@ -44,6 +57,8 @@ public class HeroHealthChecker : MonoBehaviour
 
         if (healthSlider != null)
         {
+            sliderBaseScale = healthSlider.transform.localScale;
+            sliderBaseScaleCached = true;
             healthSlider.value = GetHeroHealthPercentage(); // just 0-1 normalized
         }
     }
@@ -63,10 +78,32 @@ public class HeroHealthChecker : MonoBehaviour
                 ScoreManager.Instance.healthCount = currentHealth;
                 healthPercentage = GetHeroHealthPercentage();
 
+                // Detect a health drop so the bar can flash.
+                if (lastHealth >= 0 && currentHealth < lastHealth)
+                    damageFlashTimer = damageFlashDuration;
+
+                lastHealth = currentHealth;
+
+                if (damageFlashTimer > 0f)
+                    damageFlashTimer -= Time.deltaTime;
+
                 // Smooth slider update (0-1)
                 if (healthSlider != null)
                 {
                     healthSlider.value = Mathf.Lerp(healthSlider.value, healthPercentage, Time.deltaTime * sliderSmoothSpeed);
+
+                    // Heartbeat while the hero is low on health.
+                    if (healthPercentage > 0f && healthPercentage <= lowHealthPulseThreshold)
+                    {
+                        float pulse =
+                            1f + Mathf.Sin(Time.time * lowHealthPulseSpeed) * lowHealthPulseAmount;
+
+                        healthSlider.transform.localScale = sliderBaseScale * pulse;
+                    }
+                    else if (sliderBaseScaleCached)
+                    {
+                        healthSlider.transform.localScale = sliderBaseScale;
+                    }
                 }
 
                 // Update health text
@@ -78,11 +115,21 @@ public class HeroHealthChecker : MonoBehaviour
                         healthText.text = currentHealth.ToString();
                 }
 
-                // Smooth color change based on % HP
+                // Smooth color change based on % HP, unless a hit just flashed the bar.
                 if (healthFillImage != null)
                 {
-                    Color targetColor = (healthPercentage <= 0.3f) ? lowHealthColor : normalColor;
-                    healthFillImage.color = Color.Lerp(healthFillImage.color, targetColor, Time.deltaTime * colorLerpSpeed);
+                    if (damageFlashTimer > 0f)
+                    {
+                        healthFillImage.color = damageFlashColor;
+                    }
+                    else
+                    {
+                        Color targetColor = (healthPercentage <= lowHealthPulseThreshold)
+                            ? lowHealthColor
+                            : normalColor;
+
+                        healthFillImage.color = Color.Lerp(healthFillImage.color, targetColor, Time.deltaTime * colorLerpSpeed);
+                    }
                 }
 
                 if (currentHealth <= 0 && !hasLost)

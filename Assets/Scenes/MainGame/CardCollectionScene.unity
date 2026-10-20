@@ -465,7 +465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00007201274}
+  m_AnchoredPosition: {x: 0, y: -0.000013937828}
   m_SizeDelta: {x: 0, y: 482.66}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &761088762
@@ -1533,6 +1533,12 @@ MonoBehaviour:
   goldBadge: {fileID: 21300000, guid: 00a84c8d8fddd644b915839de55bed39, type: 3}
   badgeSize: {x: 80, y: 80}
   badgeOffset: {x: 110, y: -110}
+  disableIcon: {fileID: 6450540676361686358, guid: 59dbfa2cc0aa999409c0c5d065a54a91, type: 3}
+  disableIconScale: 0.62
+  armDisableColor: {r: 1, g: 0.78, b: 0.2, a: 0.95}
+  disabledColor: {r: 0.9, g: 0.25, b: 0.25, a: 0.95}
+  armEnableColor: {r: 0.35, g: 0.9, b: 0.45, a: 0.95}
+  confirmWindow: 3
 --- !u!4 &1352884071
 Transform:
   m_ObjectHideFlags: 0

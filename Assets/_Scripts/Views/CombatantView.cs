@@ -61,12 +61,55 @@ public class CombatantView : MonoBehaviour
     {
         healthText.text = "HP: " + CurrentHealth;
 
-        if (healthSlider != null)
+        if (healthSlider == null)
+            return;
+
+        healthSlider.maxValue = MaxHealth;
+
+        if (!healthBarCached)
         {
-            healthSlider.maxValue = MaxHealth;
-            healthSlider.value = CurrentHealth;
+            healthBarBaseScale = healthSlider.transform.localScale;
+
+            if (healthSlider.fillRect != null &&
+                healthSlider.fillRect.TryGetComponent(out Image fillImage))
+            {
+                healthBarFill = fillImage;
+                healthBarBaseColor = fillImage.color;
+            }
+
+            healthBarCached = true;
         }
+
+        // Drain/fill smoothly instead of snapping the value.
+        healthSlider.DOKill();
+        healthSlider.DOValue(CurrentHealth, healthBarDuration)
+            .SetEase(Ease.OutQuad);
+
+        // Brief flash so a hit reads at a glance.
+        if (healthBarFill != null)
+        {
+            healthBarFill.DOKill();
+            healthBarFill.color = healthBarFlashColor;
+            healthBarFill.DOColor(healthBarBaseColor, healthBarFlashDuration);
+        }
+
+        // Reset first: killing a punch mid-flight would otherwise leave the bar
+        // permanently squashed and each new punch would build on that.
+        healthSlider.transform.DOKill();
+        healthSlider.transform.localScale = healthBarBaseScale;
+        healthSlider.transform
+            .DOPunchScale(healthBarBaseScale * 0.08f, 0.25f, 8, 0.6f);
     }
+
+    private Vector3 healthBarBaseScale = Vector3.one;
+    private Color healthBarBaseColor = Color.white;
+    private Image healthBarFill;
+    private bool healthBarCached;
+
+    [Header("Health Bar Polish")]
+    [SerializeField] private float healthBarDuration = 0.28f;
+    [SerializeField] private float healthBarFlashDuration = 0.3f;
+    [SerializeField] private Color healthBarFlashColor = new Color(1f, 0.92f, 0.92f);
 
     // Step slightly toward the target, then ease back. Impact should happen at the peak.
     

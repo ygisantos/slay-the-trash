@@ -19,6 +19,9 @@ public class DeckManager : MonoBehaviour
     public static event Action OnDeckUpdated;
     public List<string> cardNames = new List<string>();
 
+    // Normalised names of cards the player switched off in the collection screen.
+    private readonly HashSet<string> disabledCards = new HashSet<string>();
+
     public enum RarityTypes
     {
         Bronze,
@@ -66,12 +69,66 @@ public class DeckManager : MonoBehaviour
             cards =>
             {
                 cardEntries = cards;
-                UpdateDeck();
-                UpdateCardNames();
-                OnDeckUpdated?.Invoke();
+
+                // The disabled set has to be known before the deck is rebuilt,
+                // otherwise a disabled card could reach the battle pool.
+                FBCardCollection.Instance.GetDisabledCards(
+                    username,
+                    disabled =>
+                    {
+                        SetDisabledCards(disabled);
+                        RebuildDeck();
+                    },
+                    error =>
+                    {
+                        Debug.LogError($"Failed to load disabled cards: {error}");
+                        RebuildDeck();
+                    }
+                );
             },
             error => Debug.LogError($"Failed to load card collection: {error}")
         );
+    }
+
+    private void RebuildDeck()
+    {
+        UpdateDeck();
+        UpdateCardNames();
+        OnDeckUpdated?.Invoke();
+    }
+
+    // ---- disabled cards ----
+
+    public void SetDisabledCards(IEnumerable<string> names)
+    {
+        disabledCards.Clear();
+
+        if (names == null)
+            return;
+
+        foreach (string name in names)
+        {
+            string clean = NormalizeCardName(name);
+
+            if (!string.IsNullOrEmpty(clean))
+                disabledCards.Add(clean);
+        }
+    }
+
+    public bool IsCardDisabled(string cardName)
+    {
+        string clean = NormalizeCardName(cardName);
+        return !string.IsNullOrEmpty(clean) && disabledCards.Contains(clean);
+    }
+
+    // Card names are compared without case, spaces or underscores so that
+    // "Bottle Blaster" and "BottleBlaster" resolve to the same card.
+    public static string NormalizeCardName(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName))
+            return string.Empty;
+
+        return cardName.Trim().Replace(" ", string.Empty).Replace("_", string.Empty).ToLowerInvariant();
     }
 
     void UpdateDeck()
@@ -81,6 +138,10 @@ public class DeckManager : MonoBehaviour
 
         foreach (var entry in cardEntries)
         {
+            // Cards the player disabled are left out of the deck entirely.
+            if (IsCardDisabled(entry.cardName))
+                continue;
+
             string entryClean = entry.cardName?.Trim().Replace(" ", "").Replace("_", "").ToLowerInvariant();
 
             for (int i = 0; i < cardTypes.Count; i++)

@@ -1,9 +1,11 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 
 public class CardCollectionSceneScript : MonoBehaviour
@@ -38,9 +40,35 @@ public class CardCollectionSceneScript : MonoBehaviour
     [Tooltip("Offset from the card's center.")]
     public Vector2 badgeOffset = new Vector2(110f, -110f);
 
+    [Header("Disable Card")]
+    [Tooltip("Overlay icon drawn on top of a card (Assets/User Interface/disable.png).")]
+    public Sprite disableIcon;
+    [Tooltip("Size of the overlay icon relative to the card width.")]
+    public float disableIconScale = 0.62f;
+    [Tooltip("First click: the card is armed to be disabled.")]
+    public Color armDisableColor = new Color(1f, 0.78f, 0.2f, 0.95f);
+    [Tooltip("Card is disabled and will not appear in battle.")]
+    public Color disabledColor = new Color(0.90f, 0.25f, 0.25f, 0.95f);
+    [Tooltip("First click on a disabled card: armed to be re-enabled.")]
+    public Color armEnableColor = new Color(0.35f, 0.90f, 0.45f, 0.95f);
+    [Tooltip("How long the armed state waits for the confirming second click.")]
+    public float confirmWindow = 3f;
+
     private List<string> cards;
     private Coroutine buildRoutine;
     private readonly List<GameObject> headers = new List<GameObject>();
+
+    private string username;
+    private readonly HashSet<string> disabledCards = new HashSet<string>();
+    private readonly Dictionary<string, Image> disableOverlays = new Dictionary<string, Image>();
+    private readonly Dictionary<string, RectTransform> overlayRects = new Dictionary<string, RectTransform>();
+    private readonly Dictionary<string, RectTransform> cardRects = new Dictionary<string, RectTransform>();
+    private readonly Dictionary<string, Vector3> cardBaseScales = new Dictionary<string, Vector3>();
+    private readonly Dictionary<string, Quaternion> cardBaseRotations = new Dictionary<string, Quaternion>();
+    private readonly Dictionary<string, string> displayNames = new Dictionary<string, string>();
+
+    private string armedCardKey;
+    private float armedAt;
 
     [Button("Refresh UI")]
     private void RefreshUI()
@@ -62,6 +90,13 @@ public class CardCollectionSceneScript : MonoBehaviour
         actualCards.Clear();
         headers.Clear();
         cardNames.Clear();
+        disableOverlays.Clear();
+        overlayRects.Clear();
+        cardRects.Clear();
+        cardBaseScales.Clear();
+        cardBaseRotations.Clear();
+        displayNames.Clear();
+        armedCardKey = null;
         if (noCards != null) noCards.SetActive(false);
 
         buildRoutine = StartCoroutine(ConvertToPrefabs());
@@ -69,13 +104,33 @@ public class CardCollectionSceneScript : MonoBehaviour
 
     void Start()
     {
-        string username = GetCurrentUsername();
+        username = GetCurrentUsername();
         if (string.IsNullOrWhiteSpace(username))
         {
             Debug.LogWarning("Cannot load card collection without a logged-in username.");
             return;
         }
 
+        // Load the disabled set first, so every card is built with the right overlay.
+        FBCardCollection.Instance.GetDisabledCards(
+            username,
+            names =>
+            {
+                SetDisabledCards(names);
+                LoadCards();
+            },
+            error =>
+            {
+                Debug.LogError($"Failed to load disabled cards: {error}");
+                LoadCards();
+            }
+        );
+
+        _ = DynamicPopupToast.Instance;
+    }
+
+    private void LoadCards()
+    {
         FBCardCollection.Instance.GetCards(
             username,
             entries =>
@@ -201,6 +256,9 @@ public class CardCollectionSceneScript : MonoBehaviour
                                 bestRarity.TryGetValue(normDataName, out rarity);
 
                     pendingBadges.Add((card.GetComponent<RectTransform>(), rarity));
+
+                    // Only cards the player owns can be switched off.
+                    SetupDisableOverlay(card, dispName);
                 }
 
                 yield return new WaitForSeconds(.05f);
@@ -363,5 +421,302 @@ public class CardCollectionSceneScript : MonoBehaviour
             Color c = graphic.color;
             graphic.color = new Color(c.r * LockedBrightness, c.g * LockedBrightness, c.b * LockedBrightness, c.a);
         }
+    }
+
+    // ================================================================
+    // DISABLE / ENABLE A CARD
+    //
+    // Double click toggles a card. The first click arms the card and shows the
+    // overlay tinted with the pending action; the confirming click applies it.
+    // Disabled cards keep the overlay visible and are left out of the battle deck.
+    // ================================================================
+
+    private void SetDisabledCards(IEnumerable<string> names)
+    {
+        disabledCards.Clear();
+
+        if (names == null)
+            return;
+
+        foreach (string name in names)
+        {
+            string key = DeckManager.NormalizeCardName(name);
+
+            if (!string.IsNullOrEmpty(key))
+                disabledCards.Add(key);
+        }
+    }
+
+    private void SetupDisableOverlay(GameObject card, string cardName)
+    {
+        if (disableIcon == null)
+        {
+            Debug.LogWarning("Disable icon is not assigned; card disabling will not be shown.");
+            return;
+        }
+
+        Transform frame = card.transform.Find("Image");
+        if (frame == null)
+            return;
+
+        string key = DeckManager.NormalizeCardName(cardName);
+        if (string.IsNullOrEmpty(key))
+            return;
+
+        displayNames[key] = cardName;
+
+        // The card face has to receive pointer clicks.
+        if (frame.TryGetComponent(out Image frameImage))
+            frameImage.raycastTarget = true;
+
+        GameObject overlayObject = new GameObject(
+            "Disable Overlay",
+            typeof(RectTransform),
+            typeof(Image)
+        );
+
+        overlayObject.transform.SetParent(frame, false);
+
+        RectTransform frameRect = frame as RectTransform;
+        float cardWidth = frameRect != null && frameRect.rect.width > 1f
+            ? frameRect.rect.width
+            : 247.9f;
+
+        float side = Mathf.Max(16f, cardWidth * Mathf.Clamp01(disableIconScale));
+
+        RectTransform rect = overlayObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = new Vector2(side, side);
+        rect.localRotation = Quaternion.identity;
+
+        Image overlay = overlayObject.GetComponent<Image>();
+        overlay.sprite = disableIcon;
+        overlay.preserveAspect = true;
+        overlay.raycastTarget = false;
+        overlay.enabled = false;
+
+        disableOverlays[key] = overlay;
+        overlayRects[key] = rect;
+
+        if (card.transform is RectTransform cardRect)
+        {
+            cardRects[key] = cardRect;
+            cardBaseScales[key] = cardRect.localScale;
+            cardBaseRotations[key] = cardRect.localRotation;
+        }
+
+        CardClickRelay relay = frame.gameObject.GetComponent<CardClickRelay>();
+        if (relay == null)
+            relay = frame.gameObject.AddComponent<CardClickRelay>();
+
+        relay.Setup(this, key);
+
+        ApplyOverlay(key, instant: true);
+    }
+
+    private void ApplyOverlay(string key, bool instant = false)
+    {
+        if (string.IsNullOrEmpty(key) ||
+            !disableOverlays.TryGetValue(key, out Image overlay) ||
+            overlay == null)
+        {
+            return;
+        }
+
+        bool disabled = disabledCards.Contains(key);
+        bool armed = key == armedCardKey;
+
+        bool shouldShow = disabled || armed;
+        Color targetColor = disabled
+            ? (armed ? armEnableColor : disabledColor)
+            : armDisableColor;
+
+        RectTransform rect = overlayRects.TryGetValue(key, out RectTransform stored)
+            ? stored
+            : overlay.rectTransform;
+
+        rect.DOKill();
+        overlay.DOKill();
+
+        if (instant)
+        {
+            overlay.enabled = shouldShow;
+            overlay.color = targetColor;
+            rect.localScale = Vector3.one;
+            return;
+        }
+
+        if (shouldShow)
+        {
+            bool wasVisible = overlay.enabled;
+
+            overlay.enabled = true;
+
+            if (!wasVisible)
+            {
+                // Pop in: grow from small while fading up.
+                overlay.color = new Color(targetColor.r, targetColor.g, targetColor.b, 0f);
+                rect.localScale = Vector3.one * 0.55f;
+
+                rect.DOScale(Vector3.one, 0.24f)
+                    .SetEase(Ease.OutBack)
+                    .SetUpdate(true);
+
+                overlay.DOColor(targetColor, 0.16f).SetUpdate(true);
+            }
+            else
+            {
+                // Already showing: just cross-fade to the new state colour.
+                overlay.DOColor(targetColor, 0.2f).SetUpdate(true);
+            }
+
+            return;
+        }
+
+        if (!overlay.enabled)
+            return;
+
+        // Shrink and fade away.
+        Color fade = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0f);
+
+        overlay.DOColor(fade, 0.14f).SetUpdate(true);
+
+        rect.DOScale(Vector3.one * 0.5f, 0.14f)
+            .SetEase(Ease.InBack)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                if (overlay != null)
+                    overlay.enabled = false;
+            });
+    }
+
+    // Small impact so toggling a card feels physical.
+    private void PunchCard(string key, bool disabling)
+    {
+        if (!cardRects.TryGetValue(key, out RectTransform card) || card == null)
+            return;
+
+        Vector3 baseScale = cardBaseScales.TryGetValue(key, out Vector3 storedScale)
+            ? storedScale
+            : Vector3.one;
+
+        Quaternion baseRotation = cardBaseRotations.TryGetValue(key, out Quaternion storedRot)
+            ? storedRot
+            : Quaternion.identity;
+
+        card.DOKill();
+
+        // Reset first, so killing a punch mid-flight cannot leave the card offset.
+        card.localScale = baseScale;
+        card.localRotation = baseRotation;
+
+        card.DOPunchScale(baseScale * 0.06f, 0.32f, 9, 0.6f).SetUpdate(true);
+
+        if (disabling)
+        {
+            card.DOPunchRotation(new Vector3(0f, 0f, 3f), 0.32f, 8, 0.5f)
+                .SetUpdate(true);
+        }
+    }
+
+    // Called by CardClickRelay when a card is clicked.
+    public void HandleCardClicked(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+            return;
+
+        bool confirming = key == armedCardKey &&
+                          Time.unscaledTime - armedAt <= confirmWindow;
+
+        if (confirming)
+        {
+            armedCardKey = null;
+            ToggleDisabled(key);
+            return;
+        }
+
+        string previouslyArmed = armedCardKey;
+        armedCardKey = key;
+        armedAt = Time.unscaledTime;
+
+        if (!string.IsNullOrEmpty(previouslyArmed) && previouslyArmed != key)
+            ApplyOverlay(previouslyArmed);
+
+        ApplyOverlay(key);
+    }
+
+    private void ToggleDisabled(string key)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+            return;
+
+        string cardName = displayNames.TryGetValue(key, out string named) ? named : key;
+        bool makeDisabled = !disabledCards.Contains(key);
+
+        // Apply locally first so the icon reacts instantly.
+        SetLocalDisabled(key, makeDisabled);
+        ApplyOverlay(key);
+        PunchCard(key, makeDisabled);
+
+        FBCardCollection.Instance.SetCardDisabled(
+            username,
+            cardName,
+            makeDisabled,
+            () =>
+            {
+                DynamicPopupToast.Instance?.ShowToast(
+                    makeDisabled
+                        ? $"{cardName} disabled. It will not appear in battle."
+                        : $"{cardName} enabled again.",
+                    3
+                );
+
+                // Rebuild the battle pool with the new set.
+                if (DeckManager.instance != null)
+                    DeckManager.instance.UpdateCardsList();
+            },
+            error =>
+            {
+                // Put the previous state back if the write failed.
+                SetLocalDisabled(key, !makeDisabled);
+                ApplyOverlay(key);
+
+                Debug.LogError($"Failed to update disabled card: {error}");
+                DynamicPopupToast.Instance?.ShowToast(
+                    $"Could not update {cardName}. Please try again.",
+                    3
+                );
+            }
+        );
+    }
+
+    private void SetLocalDisabled(string key, bool disabled)
+    {
+        if (disabled)
+            disabledCards.Add(key);
+        else
+            disabledCards.Remove(key);
+    }
+}
+
+// Forwards UI clicks on a card to the collection screen.
+public class CardClickRelay : MonoBehaviour, IPointerClickHandler
+{
+    private CardCollectionSceneScript owner;
+    private string cardKey;
+
+    public void Setup(CardCollectionSceneScript scene, string key)
+    {
+        owner = scene;
+        cardKey = key;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (owner != null)
+            owner.HandleCardClicked(cardKey);
     }
 }

@@ -29,6 +29,108 @@ public class FBCardCollection : MonoBehaviour
     }
 
     public const string COLLECTION = "card_collections";
+    public const string DISABLED_FIELD = "disabled_cards";
+
+    // Names of the cards the player has switched off for battle.
+    public void GetDisabledCards(
+        string username,
+        Action<List<string>> onSuccess,
+        Action<string> onError = null)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            onError?.Invoke("Username is required to load disabled cards.");
+            return;
+        }
+
+        FirebaseManager.Instance.GetDocument(
+            COLLECTION,
+            username,
+            snapshot =>
+            {
+                List<string> names = new List<string>();
+
+                if (snapshot.Exists)
+                {
+                    Dictionary<string, object> data = snapshot.ToDictionary();
+
+                    if (data.TryGetValue(DISABLED_FIELD, out object raw) &&
+                        raw is List<object> stored)
+                    {
+                        foreach (object item in stored)
+                        {
+                            if (item is string name && !string.IsNullOrWhiteSpace(name))
+                                names.Add(name);
+                        }
+                    }
+                }
+
+                onSuccess?.Invoke(names);
+            },
+            onError
+        );
+    }
+
+    public void SetCardDisabled(
+        string username,
+        string cardName,
+        bool disabled,
+        Action onSuccess = null,
+        Action<string> onError = null)
+    {
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(cardName))
+        {
+            onError?.Invoke("Username and card name are required to update a disabled card.");
+            return;
+        }
+
+        Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            {
+                DISABLED_FIELD,
+                disabled
+                    ? FieldValue.ArrayUnion(cardName)
+                    : FieldValue.ArrayRemove(cardName)
+            }
+        };
+
+        FirebaseManager.Instance.GetDocument(
+            COLLECTION,
+            username,
+            snapshot =>
+            {
+                if (snapshot.Exists)
+                {
+                    FirebaseManager.Instance.UpdateDocument(
+                        COLLECTION,
+                        username,
+                        updates,
+                        onSuccess,
+                        onError
+                    );
+                    return;
+                }
+
+                Dictionary<string, object> newDocument = new Dictionary<string, object>
+                {
+                    { "username", username },
+                    {
+                        DISABLED_FIELD,
+                        disabled ? new List<object> { cardName } : new List<object>()
+                    }
+                };
+
+                FirebaseManager.Instance.CreateDocument(
+                    COLLECTION,
+                    username,
+                    newDocument,
+                    _ => onSuccess?.Invoke(),
+                    onError
+                );
+            },
+            onError
+        );
+    }
 
     public enum CardRarityDebug
     {
