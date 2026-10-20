@@ -22,6 +22,16 @@ public class ThrowingInstructionsHandler: MonoBehaviour
     private string cardToGet;
     private int cardRarity = 0;
 
+    // Category colours win over the bin colour, so categories that share a bin stay
+    // distinguishable (metal shares "recyclable" with plastic, but reads grey).
+    private static readonly Dictionary<string, Color> CategoryColors = new Dictionary<string, Color>
+    {
+        { "metal",   new Color(0.72f, 0.74f, 0.78f) },  // grey
+        { "e-waste", new Color(0.90f, 0.35f, 0.32f) },  // red
+        { "e_waste", new Color(0.90f, 0.35f, 0.32f) },
+        { "ewaste",  new Color(0.90f, 0.35f, 0.32f) },
+    };
+
     void Start()
     {
         _ = DynamicPopupToast.Instance;
@@ -31,7 +41,7 @@ public class ThrowingInstructionsHandler: MonoBehaviour
         if (System.IO.File.Exists(predictionPath))
         {
             prediction = System.IO.File.ReadAllText(predictionPath).Trim().ToLower();
-            trashTypeText.text = prediction;
+            trashTypeText.text = DisplayName(prediction);
             StartRandomCard();
         }
         else
@@ -69,31 +79,125 @@ public class ThrowingInstructionsHandler: MonoBehaviour
         }
         string binFirst = matchingBins.Count > 0 ? matchingBins[0] : "None";
         string correctBin = string.Join(" or ", matchingBins);
-        Popup.color = binFirst switch
-        {
-            "recyclable" => Color.green,
-            "biodegradable" => Color.yellow,
-            "nonbiodegradable" => Color.red,
-            _ => Color.white
-        };
 
-        trashBinsText.text = matchingBins.Count > 0 ? $"Please Throw in {correctBin.ToUpper()} Bin!" : "No matching bins.";
+        Popup.color = ColorForCategory(prediction, binFirst);
+
+        trashBinsText.text = matchingBins.Count > 0
+            ? $"Please throw it in the {TitleCase(correctBin)} bin!"
+            : "No matching bins.";
+    }
+
+    // A category colour (metal grey, e-waste red) wins over the bin colour, so
+    // categories that share a bin stay visually distinct. Falls back to the bin.
+    private static Color ColorForCategory(string trashType, string binLabel)
+    {
+        if (!string.IsNullOrEmpty(trashType) &&
+            CategoryColors.TryGetValue(trashType, out Color categoryColor))
+        {
+            return categoryColor;
+        }
+
+        switch (NormalizeKey(binLabel))
+        {
+            case "recyclable": return Color.green;
+            case "biodegradable": return Color.yellow;
+            case "nonbiodegradable": return Color.red;
+            default: return Color.white;
+        }
+    }
+
+    // Drops hyphens/underscores/spaces so "non-biodegradable" matches "nonbiodegradable".
+    private static string NormalizeKey(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        return value.Trim().ToLowerInvariant()
+            .Replace("-", string.Empty)
+            .Replace("_", string.Empty)
+            .Replace(" ", string.Empty);
+    }
+
+    private static string TitleCase(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        string[] words = value.Split(' ');
+        for (int i = 0; i < words.Length; i++)
+        {
+            if (words[i].Length == 0)
+                continue;
+
+            words[i] = char.ToUpperInvariant(words[i][0]) + words[i].Substring(1);
+        }
+
+        return string.Join(" ", words);
+    }
+
+    // Player-facing trash name: "e-waste" reads "E-Waste", "paper" reads "Paper".
+    private static string DisplayName(string trashType)
+    {
+        switch (trashType)
+        {
+            case "e-waste":
+            case "e_waste":
+            case "ewaste":
+                return "E-Waste";
+            case "food waste":
+                return "Food Waste";
+            default:
+                return TitleCase(trashType);
+        }
     }
 
     void LoadTrashTypeImage(string prediction)
     {
         if (trashTypeImage == null) return;
 
-        string imageName = prediction.Replace(" ", "_");
+        string imageName = TrashTypeImageName(prediction);
         Texture2D tex = Resources.Load<Texture2D>("TrashTypeImage/" + imageName);
 
         if (tex != null)
         {
             trashTypeImage.texture = tex;
+            trashTypeImage.enabled = true;
         }
         else
         {
-            Debug.LogWarning("Image not found in Resources/TrashTypeImage/: " + imageName);
+            // Without this the previous scan's icon would stay on screen, which reads
+            // as the wrong trash type. Hide it until the sprite is added.
+            trashTypeImage.texture = null;
+            trashTypeImage.enabled = false;
+            Debug.LogWarning(
+                "Image not found in Resources/TrashTypeImage/: " + imageName +
+                " (the trash-type image is hidden until one is added)");
+        }
+    }
+
+    // Sprite name in Resources/TrashTypeImage for each scanned category.
+    private static string TrashTypeImageName(string trashType)
+    {
+        switch (trashType)
+        {
+            case "metal":
+                return "Metal";
+            case "e-waste":
+            case "e_waste":
+            case "ewaste":
+                return "EWaste";
+            case "plastic bottle":
+                return "plastic_bottle";
+            case "plastic":
+                return "plastic";
+            case "food waste":
+                return "food_waste";
+            case "paper":
+                return "paper";
+            default:
+                return string.IsNullOrEmpty(trashType)
+                    ? "paper"
+                    : trashType.Replace(" ", "_");
         }
     }
 

@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using TMPro;
 using Unity.Barracuda;
+using Sirenix.OdinInspector;
 
 public class CameraHandler : MonoBehaviour
 {
@@ -1371,6 +1372,141 @@ public class CameraHandler : MonoBehaviour
             webCamTexture.Stop();
 
             isCameraReady = false;
+        }
+    }
+
+    // ================================================================
+    // ODIN DEBUG BUTTONS
+    // ================================================================
+
+    [FoldoutGroup("Debug Actions")]
+    [Button("Log Scan Diagnostics")]
+    private void DebugLogScanDiagnostics()
+    {
+        System.Text.StringBuilder report = new System.Text.StringBuilder();
+
+        report.AppendLine("=== SCAN DIAGNOSTICS ===");
+        report.AppendLine($"Scan mode            : {scanMode}");
+        report.AppendLine($"AI initialised       : {isAiInitialized}");
+        report.AppendLine($"Worker               : {(worker == null ? "none" : selectedWorkerType.ToString())}");
+        report.AppendLine($"Model asset          : {(modelAsset == null ? "none" : modelAsset.name)}");
+        report.AppendLine($"Camera ready         : {isCameraReady}");
+        report.AppendLine($"Currently processing : {isProcessing}");
+
+        if (webCamTexture != null)
+        {
+            report.AppendLine($"Camera texture       : {webCamTexture.width}x{webCamTexture.height} (playing={webCamTexture.isPlaying})");
+            report.AppendLine($"Rotation angle       : {webCamTexture.videoRotationAngle}");
+            report.AppendLine($"Vertically mirrored  : {webCamTexture.videoVerticallyMirrored}");
+        }
+        else
+        {
+            report.AppendLine("Camera texture       : null");
+        }
+
+        report.AppendLine($"Crop fraction        : {CENTER_CROP_FRACTION}");
+        report.AppendLine($"Confidence threshold : {CONFIDENCE_THRESHOLD:P0}");
+        report.AppendLine($"Margin threshold     : {MARGIN_THRESHOLD:P0}");
+        report.AppendLine($"Scan square shown    : {showSquare}");
+        report.AppendLine($"Debug PNGs enabled   : {saveFullFrameForDebug}");
+        report.AppendLine($"Class labels         : {string.Join(", ", classLabels)}");
+
+        string predictionPath = Path.Combine(Application.persistentDataPath, "Prediction", "prediction.txt");
+        string savedPrediction = File.Exists(predictionPath)
+            ? File.ReadAllText(predictionPath).Trim()
+            : "(none)";
+
+        report.AppendLine($"Last saved prediction: {savedPrediction}");
+        report.AppendLine($"Debug image folder   : {Path.Combine(Application.persistentDataPath, "Compared")}");
+
+        Debug.Log(report.ToString());
+    }
+
+    [FoldoutGroup("Debug Actions")]
+    [Button("Force Scan")]
+    private void DebugForceScan()
+    {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("[Debug] Enter Play Mode before forcing a scan.");
+            return;
+        }
+
+        if (!isCameraReady || webCamTexture == null || reusableTexture == null)
+        {
+            Debug.LogWarning("[Debug] Camera or AI is not ready yet; scan ignored.");
+            return;
+        }
+
+        Debug.Log("[Debug] Forcing a scan.");
+        ProcessFrameForAI();
+    }
+
+    [FoldoutGroup("Debug Actions")]
+    [Button("Reset Worker To Default")]
+    private void DebugResetWorker()
+    {
+        if (runtimeModel == null)
+        {
+            Debug.LogWarning("[Debug] Model is not loaded yet; cannot reset the worker.");
+            return;
+        }
+
+        try
+        {
+            CreateWorker(WorkerFactory.Type.CSharpBurst);
+            RestoreWorkerDropdownSelection();
+            Debug.Log($"[Debug] Worker reset to {selectedWorkerType}.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[Debug] Could not reset worker: {e}");
+        }
+    }
+
+    [FoldoutGroup("Debug Actions")]
+    [Button("Clear Debug Files")]
+    private void DebugClearDebugFiles()
+    {
+        if (isProcessing)
+        {
+            Debug.LogWarning("[Debug] Cannot clear debug files while a scan is running.");
+            return;
+        }
+
+        try
+        {
+            string comparedFolder = Path.Combine(Application.persistentDataPath, "Compared");
+
+            if (Directory.Exists(comparedFolder))
+            {
+                string[] images = Directory.GetFiles(comparedFolder, "*.png");
+
+                for (int i = 0; i < images.Length; i++)
+                    File.Delete(images[i]);
+
+                Debug.Log($"[Debug] Deleted {images.Length} debug image(s) from {comparedFolder}.");
+            }
+            else
+            {
+                Debug.Log("[Debug] No debug image folder to clear.");
+            }
+
+            string predictionFile = Path.Combine(
+                Application.persistentDataPath,
+                "Prediction",
+                "prediction.txt"
+            );
+
+            if (File.Exists(predictionFile))
+            {
+                File.Delete(predictionFile);
+                Debug.Log("[Debug] Cleared prediction.txt.");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[Debug] Failed to clear debug files: {e}");
         }
     }
 }

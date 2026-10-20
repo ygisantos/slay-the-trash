@@ -49,7 +49,7 @@ public class DailyQuestManager : MonoBehaviour
 
         new QuestDefinition
         {
-            title = "Recycle {0} Items",
+            title = "Classify Recyclable {0} Items",
             minAmount = 1,
             maxAmount = 4,
             wasteType = "recyclable"
