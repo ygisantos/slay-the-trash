@@ -68,7 +68,15 @@ public class FBAuthentication : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // Restores the saved session so an auto-login player is signed in before
+            // the app-open entry is written.
             RestoreCachedSession();
+
+            // If Firestore is already up, this writes the app-open entry now.
+            // Otherwise FirebaseManager writes it when Firestore finishes starting;
+            // the entry is only written once either way.
+            FBActivityLog.LogAppOpenOnce();
         }
         else if (instance != this)
         {
@@ -246,6 +254,13 @@ public class FBAuthentication : MonoBehaviour
                         CurrentUserId = id;
                         CurrentProfile = profile;
                         MergePointsIntoProfile(CurrentProfile, points);
+
+                        FBActivityLog.Log(
+                            username,
+                            FBActivityLog.Authentication,
+                            "User created an account"
+                        );
+
                         onSuccess?.Invoke(id);
                     },
                     onError
@@ -421,7 +436,8 @@ public class FBAuthentication : MonoBehaviour
                     document.Id,
                     profile,
                     onSuccess,
-                    onError
+                    onError,
+                    isLogin: true
                 );
             },
 
@@ -431,7 +447,8 @@ public class FBAuthentication : MonoBehaviour
                     document.Id,
                     profile,
                     onSuccess,
-                    null
+                    null,
+                    isLogin: true
                 );
             }
         );
@@ -522,6 +539,11 @@ public class FBAuthentication : MonoBehaviour
                     newPassword;
                 CurrentProfile["password_update_at"] =
                     now;
+
+                FBActivityLog.LogCurrent(
+                    FBActivityLog.Authentication,
+                    "User changed their password"
+                );
 
                 onSuccess?.Invoke();
             },
@@ -621,6 +643,11 @@ public class FBAuthentication : MonoBehaviour
                             newEmail;
                         CurrentProfile["email_update_at"] =
                             now;
+
+                        FBActivityLog.LogCurrent(
+                            FBActivityLog.Authentication,
+                            "User changed their email address"
+                        );
 
                         onSuccess?.Invoke();
                     },
@@ -776,12 +803,21 @@ public class FBAuthentication : MonoBehaviour
 
     public void Logout()
     {
+        // Capture the username first: the profile is cleared right below.
+        string username = FirebaseDataHelper.GetString(CurrentProfile, "username");
+
         CurrentUserId = null;
         CurrentProfile = null;
         DungeonBackgroundManager.ResetSavedSelection();
 
         if (DataManager.Instance != null)
             DataManager.Instance.ClearAll();
+
+        FBActivityLog.Log(
+            username,
+            FBActivityLog.Authentication,
+            "User has logged out"
+        );
     }
 
     public void AddDailyQuestReward(
@@ -826,6 +862,13 @@ public class FBAuthentication : MonoBehaviour
                     () =>
                     {
                         IncrementCachedReward();
+
+                        FBActivityLog.Log(
+                            username,
+                            FBActivityLog.DailyQuest,
+                            "User claimed a daily quest reward"
+                        );
+
                         onSuccess?.Invoke();
                     },
                     onError
@@ -972,6 +1015,12 @@ public class FBAuthentication : MonoBehaviour
                             $"Saved skill '{skillId}' to users/{userId}/unlocked_skills."
                         );
 
+                        FBActivityLog.Log(
+                            FirebaseDataHelper.GetString(CurrentProfile, "username"),
+                            FBActivityLog.Game,
+                            $"User bought the skill '{skillId}' for {cost} water"
+                        );
+
                         onSuccess?.Invoke();
                     },
                     onError
@@ -1017,6 +1066,11 @@ public class FBAuthentication : MonoBehaviour
 
                 if (DataManager.Instance != null)
                     DataManager.Instance.SetProfile(CurrentProfile);
+
+                FBActivityLog.LogCurrent(
+                    FBActivityLog.Game,
+                    $"User reset their skills and refunded {refundedWater} water"
+                );
 
                 onSuccess?.Invoke();
             },
@@ -1081,11 +1135,14 @@ public class FBAuthentication : MonoBehaviour
         CurrentProfile = cachedProfile;
     }
 
+    // isLogin is true only on an explicit Login(). Profile refreshes (MainMenu,
+    // ProfileManager) also come through here and must not be logged as logins.
     private void CompleteProfileLoad(
         string userId,
         Dictionary<string, object> profile,
         Action<Dictionary<string, object>> onSuccess,
-        Action<string> onError)
+        Action<string> onError,
+        bool isLogin = false)
     {
         FirebaseManager.Instance.GetDocument(
             POINTS_COLLECTION,
@@ -1098,7 +1155,8 @@ public class FBAuthentication : MonoBehaviour
                         userId,
                         profile,
                         pointsSnapshot.ToDictionary(),
-                        onSuccess
+                        onSuccess,
+                        isLogin
                     );
                     return;
                 }
@@ -1125,7 +1183,8 @@ public class FBAuthentication : MonoBehaviour
                         userId,
                         profile,
                         defaultPoints,
-                        onSuccess
+                        onSuccess,
+                        isLogin
                     ),
                     onError
                 );
@@ -1141,11 +1200,22 @@ public class FBAuthentication : MonoBehaviour
         string userId,
         Dictionary<string, object> profile,
         Dictionary<string, object> points,
-        Action<Dictionary<string, object>> onSuccess)
+        Action<Dictionary<string, object>> onSuccess,
+        bool isLogin = false)
     {
         CurrentUserId = userId;
         CurrentProfile = profile;
         MergePointsIntoProfile(CurrentProfile, points);
+
+        if (isLogin)
+        {
+            FBActivityLog.Log(
+                FirebaseDataHelper.GetString(profile, "username"),
+                FBActivityLog.Authentication,
+                "User has logged in"
+            );
+        }
+
         onSuccess?.Invoke(CurrentProfile);
     }
 

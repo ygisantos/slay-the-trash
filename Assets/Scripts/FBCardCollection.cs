@@ -105,7 +105,11 @@ public class FBCardCollection : MonoBehaviour
                         COLLECTION,
                         username,
                         updates,
-                        onSuccess,
+                        () =>
+                        {
+                            LogCardDisabled(username, cardName, disabled);
+                            onSuccess?.Invoke();
+                        },
                         onError
                     );
                     return;
@@ -124,11 +128,26 @@ public class FBCardCollection : MonoBehaviour
                     COLLECTION,
                     username,
                     newDocument,
-                    _ => onSuccess?.Invoke(),
+                    _ =>
+                    {
+                        LogCardDisabled(username, cardName, disabled);
+                        onSuccess?.Invoke();
+                    },
                     onError
                 );
             },
             onError
+        );
+    }
+
+    private static void LogCardDisabled(string username, string cardName, bool disabled)
+    {
+        FBActivityLog.Log(
+            username,
+            FBActivityLog.Collection,
+            disabled
+                ? $"User disabled the card '{cardName}'"
+                : $"User enabled the card '{cardName}'"
         );
     }
 
@@ -330,7 +349,11 @@ public class FBCardCollection : MonoBehaviour
                         COLLECTION,
                         username,
                         updates,
-                        () => onSuccess?.Invoke(isDuplicate),
+                        () =>
+                        {
+                            LogCardObtained(username, cardName, trashType, isDuplicate);
+                            onSuccess?.Invoke(isDuplicate);
+                        },
                         onError
                     );
                 }
@@ -346,13 +369,30 @@ public class FBCardCollection : MonoBehaviour
                         COLLECTION,
                         username,
                         newDocument,
-                        _ => onSuccess?.Invoke(false),
+                        _ =>
+                        {
+                            LogCardObtained(username, cardName, trashType, false);
+                            onSuccess?.Invoke(false);
+                        },
                         onError
                     );
                 }
             },
             onError
         );
+    }
+
+    private static void LogCardObtained(
+        string username,
+        string cardName,
+        string trashType,
+        bool isDuplicate)
+    {
+        string description = isDuplicate
+            ? $"User obtained a duplicate card '{cardName}' ({trashType})"
+            : $"User obtained the card '{cardName}' ({trashType})";
+
+        FBActivityLog.Log(username, FBActivityLog.Collection, description);
     }
 
     public void GetDungeonCounters(
@@ -572,7 +612,11 @@ public class FBCardCollection : MonoBehaviour
                         {
                             { "cards", new List<object>() }
                         },
-                        onSuccess,
+                        () =>
+                        {
+                            LogCollectionReset(username);
+                            onSuccess?.Invoke();
+                        },
                         onError
                     );
                     return;
@@ -586,11 +630,24 @@ public class FBCardCollection : MonoBehaviour
                         { "username", username },
                         { "cards", new List<object>() }
                     },
-                    _ => onSuccess?.Invoke(),
+                    _ =>
+                    {
+                        LogCollectionReset(username);
+                        onSuccess?.Invoke();
+                    },
                     onError
                 );
             },
             onError
+        );
+    }
+
+    private static void LogCollectionReset(string username)
+    {
+        FBActivityLog.Log(
+            username,
+            FBActivityLog.Collection,
+            "User reset their whole card collection"
         );
     }
 }

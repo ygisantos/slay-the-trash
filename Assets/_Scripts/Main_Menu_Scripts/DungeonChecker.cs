@@ -140,12 +140,33 @@ public class DungeonChecker : MonoBehaviour
         if (MeetsRequirement)
         {
             SoundManager.Instance.PlayMusic(SoundType.GAMEMUSIC);
+
+            FBActivityLog.LogCurrent(
+                FBActivityLog.Game,
+                $"User played {DungeonLabel(sceneToLoad)}"
+            );
+
             Transitioner.Instance.TransitionToScene(sceneToLoad);
         }
         else
         {
             DynamicPopupToast.Instance.ShowToast("Not enough cards to enter the dungeon!");
         }
+    }
+
+    // "DUNGEON 4" reads as "Dungeon 4" in the activity log.
+    private static string DungeonLabel(string sceneName)
+    {
+        if (string.IsNullOrWhiteSpace(sceneName))
+            return "a dungeon";
+
+        string trimmed = sceneName.Trim();
+        int lastSpace = trimmed.LastIndexOf(' ');
+
+        if (lastSpace >= 0 && lastSpace < trimmed.Length - 1)
+            trimmed = trimmed.Substring(lastSpace + 1);
+
+        return "Dungeon " + trimmed;
     }
 
 }

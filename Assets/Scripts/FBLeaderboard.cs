@@ -196,6 +196,14 @@ public class FBLeaderboard : MonoBehaviour
             );
         }
 
+        FBActivityLog.Log(
+            username,
+            FBActivityLog.Leaderboard,
+            string.IsNullOrWhiteSpace(trashType)
+                ? $"User scanned an item ({category})"
+                : $"User scanned a {trashType} item ({category})"
+        );
+
         MergePoints(username, updates, onSuccess, onError);
     }
 

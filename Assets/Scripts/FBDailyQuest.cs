@@ -387,6 +387,12 @@ public class FBDailyQuest : MonoBehaviour
                         return;
                     }
 
+                    FBActivityLog.Log(
+                        username,
+                        FBActivityLog.DailyQuest,
+                        $"User updated their daily quest progress for {date}"
+                    );
+
                     onSuccess?.Invoke();
                 });
             },

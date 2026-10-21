@@ -72,6 +72,11 @@ public class FirebaseManager : MonoBehaviour
                     Debug.Log(
                         "Firebase Firestore initialized successfully."
                     );
+
+                    // Firestore is available now, so this is the first point where the
+                    // app-open entry can actually be written. FBActivityLog guards it
+                    // so it only ever fires once per launch.
+                    FBActivityLog.LogAppOpenOnce();
                 }
                 else
                 {
